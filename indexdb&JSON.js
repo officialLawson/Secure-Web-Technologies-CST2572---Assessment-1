@@ -11,6 +11,7 @@ let db = null;
 // Optional encryption placeholder (for future use)
 const ENCRYPTION_KEY = 'myEncryptionKey'; 
 
+// Placeholder raw URLs 
 const JSON_URLS = {
   admins:  'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/admin.json',
   doctors: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/doctors.json',
@@ -342,7 +343,7 @@ async function fetchAllJsons(urls = JSON_URLS) {
     fetchJson(urls.users).catch(err => {console.error('users fetch error',err); return[];}),
     fetchJson(urls.medicalRecord).catch(err => {console.error('medicale Record fetch error',err); return[]}),
     fetchJson(urls.appointment).catch(err => {console.error('appointment fetch erroe',err); return []}),
-    fetchJson(ur .notification).catch(err => {console.error('notif fetch error', err); return[]})
+    fetchJson(urls .notification).catch(err => {console.error('notif fetch error', err); return[]})
 
   ]);
 
@@ -553,40 +554,28 @@ async function createDoctorAccountByAdmin(adminUsername, doctorId, usernameForDo
 }
 
 //login
+// login
 async function login(username, password) {
   if (!db) throw new Error('DB not opened');
-  if (!username || !password) {
-    alert('Please enter both username and password.');
-    return;
-  }
+  if (!username || !password)
+    return { success: false, message: 'Please enter both username and password.' };
 
   const tx = db.transaction('users', 'readonly');
   const store = tx.objectStore('users');
   const index = store.index('username');
-  
+
   const user = await new Promise((resolve, reject) => {
     const req = index.get(username);
     req.onsuccess = e => resolve(e.target.result);
     req.onerror = () => reject(req.error);
   });
 
-  if (!user) {
-    alert('User not found.');
-    return;
-  }
-
-  if (user.password !== password) {
-    alert('Invalid password.');
-    return;
-  }
+  if (!user) return { success: false, message: 'User not found.' };
+  if (user.password !== password) return { success: false, message: 'Invalid password.' };
 
   console.log(`✅ Login successful as ${user.role}`);
-
-  if (user.role === 'admin') window.location.href = 'admin.html';
-  else if (user.role === 'doctor') window.location.href = 'doctor.html';
-  else if (user.role === 'patient') window.location.href = 'patient.html';
+  return { success: true, userRecord: user, role: user.role, message: 'Login successful!' };
 }
-
 
 
 
@@ -663,16 +652,19 @@ window.clinicDB = {
   fetchAllJsons,
   importFetchedDataToDB,
   fetchAndImportAll,
-  generateLoginTables,
   registerPatientAccount,
   createDoctorAccountByAdmin,
   login,
   clearData,
   queryAllAndLog,
   showFirstN,
+  getItem,            
+  getAllItems,        
+  addItem,           
+  updateItem,         
+  deleteItem, 
   closeDB,
   // caches for debugging
   _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
   JSON_URLS
 };
-
