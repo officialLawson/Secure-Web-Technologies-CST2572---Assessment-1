@@ -1,57 +1,653 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Patient Home</title>
+  <meta charset="UTF-8">
+  <title>Patient Dashboard</title>
   <script src="indexdb&JSON.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      background: #f4f7fa;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    aside {
+      width: 240px;
+      background: #005a8e;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    aside h2 {
+      font-size: 1.4em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    aside ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    aside li {
+      margin: 10px 0;
+    }
+
+    aside a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+      border-radius: 6px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    aside a:hover,
+    aside a.active {
+      background: #007bbd;
+    }
+
+    .logout {
+      margin-top: auto;
+      background: #ff5555;
+      border: none;
+      padding: 10px;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Main layout */
+    main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    header {
+      background: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #005a8e;
+    }
+
+    /* Collapsible containers */
+    section.container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-top: 15px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    section .section-header {
+      padding: 15px 20px;
+      background: #007bbd;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    section .section-header:hover {
+      background: #005a8e;
+    }
+
+    section .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding: 0 20px;
+    }
+
+    section.active .section-content {
+      max-height: 1000px; /* enough to expand for content */
+      padding: 15px 20px;
+    }
+
+    /* Search bar */
+    .search-bar {
+      margin-bottom: 10px;
+      text-align: right;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      width: 250px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background: #007bbd;
+      color: white;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background: #007bbd;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #005a8e;
+    }
+
+    .deleteBtn {
+      background: #ff5555;
+    }
+
+    .deleteBtn:hover {
+      background: #e04343;
+    }
+
+    /* Status labels */
+    .status {
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .status.pending { background: #f4a261; }
+    .status.confirmed { background: #2a9d8f; }
+    .status.completed { background: #264653; }
+    .status.cancelled { background: #e76f51; }
+
+    .rotate {
+      transform: rotate(90deg);
+      transition: transform 0.3s ease;
+    }
+
+    section.active .rotate {
+      transform: rotate(270deg);
+    }
+  </style>
 </head>
-<script>
-(async () => {
-  await clinicDB.openClinicDB();
-  const user = JSON.parse(sessionStorage.getItem("loggedUser"));
-  if (!user || !user.username && !user.email) {
-    alert("Session expired. Please log in again.");
-    window.location.href = "login.html";
-    return;
-  }
-  console.log("Logged in as:", user);
-})();
-</script>
 
 <body>
-  <h2>Welcome, <span id="patientName"></span></h2>
-  <p><strong>NHS ID:</strong> <span id="nhsId"></span></p>
-
-
   <aside>
-    <h3>Menu</h3>
+    <h2>Patient Menu</h2>
     <ul>
-      <li><a href="appointments.html">Appointments</a></li>
-      <li><a href="#">Visit History</a></li>
-      <li><a href="login.html" onclick="logout()">Logout</a></li>
+      <li><a class="active" onclick="scrollToSection('appointmentsSection')">📅 Appointments</a></li>
+      <li><a onclick="scrollToSection('recordsSection')">📜 Records</a></li>
+      <li><a onclick="scrollToSection('medicinesSection')">💊 Medicines</a></li>
+      <li><a onclick="scrollToSection('historySection')">📖 History</a></li>
     </ul>
+    <button class="logout" onclick="logout()">Logout</button>
   </aside>
 
   <main>
-    <p>This is your home dashboard. From here you can manage your appointments and view your medical records.</p>
+    <header>
+      <h1>Welcome, <span id="patientName"></span></h1>
+      <p><strong>NHS ID:</strong> <span id="nhsId"></span></p>
+    </header>
+
+    <!-- 🩺 Book Appointment -->
+    <section id="bookSection" class="container active">
+      <div class="section-header" onclick="toggleSection(this)">
+        🩺 Book Appointment <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <form id="bookAppointmentForm">
+          <label><strong>Select Doctor:</strong></label><br>
+          <select id="bookDoctorSelect" required></select><br><br>
+
+          <label><strong>Date:</strong></label><br>
+          <input type="date" id="bookDate" required><br><br>
+
+          <label><strong>Available Time:</strong></label><br>
+          <select id="bookTime" required>
+            <option value="">-- Select Time --</option>
+          </select><br><br>
+
+          <label><strong>Reason / Notes:</strong></label><br>
+          <textarea id="bookReason" rows="3" placeholder="E.g., regular check-up, consultation..." 
+            style="width: 100%; border-radius:6px; border:1px solid #ccc; padding:8px;"></textarea><br><br>
+
+          <button type="submit">Confirm Booking</button>
+        </form>
+      </div>
+    </section>
+
+
+
+
+    <!-- 📅 Appointments -->
+    <section id="appointmentsSection" class="container active">
+      <div class="section-header" onclick="toggleSection(this)">
+        📅 Appointments <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchAppointments" placeholder="Search by doctor or date...">
+        </div>
+        <button onclick="showAppointmentForm()">+ New Appointment</button>
+
+        <div id="appointmentForm" style="display:none; margin-top:1em;">
+          <form id="newAppointmentForm">
+            <label>Doctor:</label>
+            <select id="doctorSelect" required></select><br><br>
+            <label>Date:</label>
+            <input type="date" id="apptDate" required><br><br>
+            <label>Time:</label>
+            <input type="time" id="apptTime" required><br><br>
+            <button type="submit">Save</button>
+            <button type="button" onclick="hideAppointmentForm()">Cancel</button>
+          </form>
+        </div>
+
+        <table id="appointmentsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 📜 Records -->
+    <section id="recordsSection" class="container">
+      <div class="section-header" onclick="toggleSection(this)">
+        📜 Medical Records <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchRecords" placeholder="Search diagnosis or date...">
+        </div>
+        <table id="recordsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Doctor</th>
+              <th>Diagnosis</th>
+              <th>Treatment</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 💊 Medicines -->
+    <section id="medicinesSection" class="container">
+      <div class="section-header" onclick="toggleSection(this)">
+        💊 Medicines <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchMeds" placeholder="Search medicine name...">
+        </div>
+        <table id="medTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Dosage</th>
+              <th>Instructions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 📖 History -->
+    <section id="historySection" class="container">
+      <div class="section-header" onclick="toggleSection(this)">
+        📖 Visit History <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchHistory" placeholder="Search by doctor or status...">
+        </div>
+        <table id="visitHistoryTable">
+          <thead>
+            <tr>
+              <th>Appointment</th>
+              <th>Date</th>
+              <th>Doctor</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
   <script>
-    async function initPatientHome() {
+    let currentPatient = null;
+    let allDoctors = [];
+
+    async function initDashboard() {
       await clinicDB.openClinicDB();
       const user = JSON.parse(sessionStorage.getItem("loggedUser"));
-      if (!user || user.role !== "paitent") {
+      if (!user || user.role !== "patient") {
+        alert("Unauthorized access. Please log in.");
         window.location.href = "login.html";
         return;
       }
-      document.getElementById("patientEmail").textContent = user.email;
-      document.getElementById("nhsId").textContent = user.linkedId;
+
+      currentPatient = user.linkedId;
+      const patient = await clinicDB.getItem("patients", currentPatient);
+      document.getElementById("patientName").textContent = `${patient.First} ${patient.Last}`;
+      document.getElementById("nhsId").textContent = patient.NHS;
+
+      allDoctors = await clinicDB.getAllItems("doctors");
+      loadAppointments();
+      loadRecords();
+      loadMedicines();
+      loadHistory();
+      initBookAppointmentForm();
+
+
+      document.getElementById("searchAppointments").addEventListener("input", loadAppointments);
+      document.getElementById("searchRecords").addEventListener("input", loadRecords);
+      document.getElementById("searchMeds").addEventListener("input", loadMedicines);
+      document.getElementById("searchHistory").addEventListener("input", loadHistory);
     }
+
+    function toggleSection(header) {
+      const section = header.parentElement;
+      section.classList.toggle("active");
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+    }
+
+    async function loadAppointments() {
+      const appts = await clinicDB.getAppointmentsByPatientId(currentPatient);
+      const filter = document.getElementById("searchAppointments").value.toLowerCase();
+      const tbody = document.querySelector("#appointmentsTable tbody");
+      tbody.innerHTML = "";
+
+      const filtered = appts.filter(a => {
+        const doc = allDoctors.find(d => d.id === a.doctorId);
+        const docName = doc ? (doc.first_name + " " + doc.last_name).toLowerCase() : "";
+        return docName.includes(filter) || (a.date && a.date.toLowerCase().includes(filter));
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = "<tr><td colspan='6'>No appointments found.</td></tr>";
+        return;
+      }
+
+      filtered.forEach(a => {
+        const doc = allDoctors.find(d => d.id === a.doctorId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${a.appointmentId}</td>
+          <td>${doc ? doc.first_name + " " + doc.last_name : "Unknown"}</td>
+          <td>${a.date}</td>
+          <td>${a.time}</td>
+          <td><span class="status ${a.status?.toLowerCase()}">${a.status}</span></td>
+          <td><button class="deleteBtn" onclick="cancelAppointment(${a.appointmentId})">Cancel</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function cancelAppointment(id) {
+      if (confirm("Cancel this appointment?")) {
+        const appt = await clinicDB.getItem("appointments", id);
+        if (appt) {
+          appt.status = "Cancelled";
+          await clinicDB.updateItem("appointments", appt);
+          loadAppointments();
+          loadHistory();
+        }
+      }
+    }
+
+    document.getElementById("newAppointmentForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const doctorId = parseInt(document.getElementById("doctorSelect").value);
+      const date = document.getElementById("apptDate").value;
+      const time = document.getElementById("apptTime").value;
+      const id = Date.now();
+      const appointment = {
+        appointmentId: id,
+        doctorId,
+        patientId: currentPatient,
+        date,
+        time,
+        status: "Pending",
+      };
+      await clinicDB.addItem("appointments", appointment);
+      alert("Appointment added!");
+      hideAppointmentForm();
+      loadAppointments();
+      loadHistory();
+    };
+
+    async function loadRecords() {
+      const recs = await clinicDB.getRecordsByPatientId(currentPatient);
+      const filter = document.getElementById("searchRecords").value.toLowerCase();
+      const tbody = document.querySelector("#recordsTable tbody");
+      tbody.innerHTML = "";
+      const filtered = recs.filter(r =>
+        (r.diagnosis && r.diagnosis.toLowerCase().includes(filter)) ||
+        (r.date && r.date.toLowerCase().includes(filter))
+      );
+
+      if (!filtered.length) {
+        tbody.innerHTML = "<tr><td colspan='5'>No records found.</td></tr>";
+        return;
+      }
+
+      filtered.forEach(r => {
+        const doc = allDoctors.find(d => d.id === r.doctorId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${r.recordId}</td>
+          <td>${doc ? doc.first_name + " " + doc.last_name : "Unknown"}</td>
+          <td>${r.diagnosis}</td>
+          <td>${r.treatment}</td>
+          <td>${r.date}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadMedicines() {
+      const meds = await clinicDB.getAllItems("medicines");
+      const filter = document.getElementById("searchMeds").value.toLowerCase();
+      const tbody = document.querySelector("#medTable tbody");
+      tbody.innerHTML = "";
+      const filtered = meds.filter(m =>
+        (m.drugs && m.drugs.toLowerCase().includes(filter)) ||
+        (m.name && m.name.toLowerCase().includes(filter))
+      );
+
+      if (!filtered.length) {
+        tbody.innerHTML = "<tr><td colspan='4'>No medicines found.</td></tr>";
+        return;
+      }
+
+      filtered.forEach(m => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${m.id}</td>
+          <td>${m.drugs || m.name}</td>
+          <td>${m.dosage || "-"}</td>
+          <td>${m.instructions || "-"}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadHistory() {
+      const appts = await clinicDB.getAppointmentsByPatientId(currentPatient);
+      const filter = document.getElementById("searchHistory").value.toLowerCase();
+      const tbody = document.querySelector("#visitHistoryTable tbody");
+      tbody.innerHTML = "";
+      const filtered = appts.filter(a => {
+        const doc = allDoctors.find(d => d.id === a.doctorId);
+        const docName = doc ? (doc.first_name + " " + doc.last_name).toLowerCase() : "";
+        return docName.includes(filter) || (a.status && a.status.toLowerCase().includes(filter));
+      });
+
+      if (!filtered.length) {
+        tbody.innerHTML = "<tr><td colspan='4'>No visits found.</td></tr>";
+        return;
+      }
+
+      filtered.forEach(a => {
+        const doc = allDoctors.find(d => d.id === a.doctorId);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${a.appointmentId}</td>
+          <td>${a.date}</td>
+          <td>${doc ? doc.first_name + " " + doc.last_name : "Unknown"}</td>
+          <td><span class="status ${a.status?.toLowerCase()}">${a.status}</span></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+
+    function showAppointmentForm() {
+      document.getElementById("appointmentForm").style.display = "block";
+    }
+
+    function hideAppointmentForm() {
+      document.getElementById("appointmentForm").style.display = "none";
+    }
+
+    async function initBookAppointmentForm() {
+      const doctorSelect = document.getElementById("bookDoctorSelect");
+      const dateInput = document.getElementById("bookDate");
+      const timeSelect = document.getElementById("bookTime");
+
+      // Fill doctor list
+      const doctors = await clinicDB.getAllItems("doctors");
+      doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+      doctors.forEach(d => {
+        const opt = document.createElement("option");
+        opt.value = d.id;
+        opt.textContent = `${d.first_name || d.First} ${d.last_name || d.Last} (${d.specialty || "General"})`;
+        doctorSelect.appendChild(opt);
+      });
+
+      // Refresh available times when doctor/date changes
+      doctorSelect.addEventListener("change", updateAvailableTimes);
+      dateInput.addEventListener("change", updateAvailableTimes);
+
+      async function updateAvailableTimes() {
+        const doctorId = parseInt(doctorSelect.value);
+        const date = dateInput.value;
+        timeSelect.innerHTML = '<option value="">-- Select Time --</option>';
+
+        if (!doctorId || !date) return;
+
+        const appointments = await clinicDB.getAllByIndex("appointments", "doctorId", doctorId);
+        const taken = appointments
+          .filter(a => a.date === date && a.status !== "Cancelled")
+          .map(a => a.time);
+
+        // Typical time slots (9 AM – 5 PM, every 30 mins)
+        const slots = [];
+        for (let h = 9; h < 17; h++) {
+          slots.push(`${String(h).padStart(2, "0")}:00`);
+          slots.push(`${String(h).padStart(2, "0")}:30`);
+        }
+
+        slots.forEach(t => {
+          const opt = document.createElement("option");
+          opt.value = t;
+          opt.textContent = t;
+          if (taken.includes(t)) {
+            opt.disabled = true;
+            opt.textContent += " (Booked)";
+          }
+          timeSelect.appendChild(opt);
+        });
+      }
+
+      // Booking submission
+      document.getElementById("bookAppointmentForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const doctorId = parseInt(doctorSelect.value);
+        const date = dateInput.value;
+        const time = timeSelect.value;
+        const reason = document.getElementById("bookReason").value.trim();
+
+        if (!doctorId || !date || !time) {
+          alert("Please fill all required fields.");
+          return;
+        }
+
+        const appointment = {
+          appointmentId: Date.now(),
+          doctorId,
+          patientId: currentPatient,
+          date,
+          time,
+          reason,
+          status: "Pending",
+          startIso: new Date(`${date}T${time}`).toISOString(),
+        };
+
+        await clinicDB.addItem("appointments", appointment);
+        alert("✅ Appointment booked successfully!");
+        document.getElementById("bookAppointmentForm").reset();
+
+        // Refresh lists
+        loadAppointments();
+        loadHistory();
+        updateAvailableTimes();
+      };
+    }
+
+
 
     function logout() {
       sessionStorage.removeItem("loggedUser");
+      window.location.href = "login.html";
     }
 
-    initPatientHome();
+    window.onload = initDashboard;
   </script>
 </body>
 </html>
