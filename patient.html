@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Patient Home</title>
+  <script src="indexdb&JSON.js"></script>
+</head>
+<script>
+(async () => {
+  await clinicDB.openClinicDB();
+  const user = JSON.parse(sessionStorage.getItem("loggedUser"));
+  if (!user || !user.username && !user.email) {
+    alert("Session expired. Please log in again.");
+    window.location.href = "login.html";
+    return;
+  }
+  console.log("Logged in as:", user);
+})();
+</script>
+
+<body>
+  <h2>Welcome, <span id="patientName"></span></h2>
+  <p><strong>NHS ID:</strong> <span id="nhsId"></span></p>
+
+
+  <aside>
+    <h3>Menu</h3>
+    <ul>
+      <li><a href="appointments.html">Appointments</a></li>
+      <li><a href="#">Visit History</a></li>
+      <li><a href="login.html" onclick="logout()">Logout</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <p>This is your home dashboard. From here you can manage your appointments and view your medical records.</p>
+  </main>
+
+  <script>
+    async function initPatientHome() {
+      await clinicDB.openClinicDB();
+      const user = JSON.parse(sessionStorage.getItem("loggedUser"));
+      if (!user || user.role !== "paitent") {
+        window.location.href = "login.html";
+        return;
+      }
+      document.getElementById("patientEmail").textContent = user.email;
+      document.getElementById("nhsId").textContent = user.linkedId;
+    }
+
+    function logout() {
+      sessionStorage.removeItem("loggedUser");
+    }
+
+    initPatientHome();
+  </script>
+</body>
+</html>

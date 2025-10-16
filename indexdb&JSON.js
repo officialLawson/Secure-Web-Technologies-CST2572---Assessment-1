@@ -1,6 +1,6 @@
 /*clinicDB (IndexedDB)
  - No encryption 
- - Fetches JSON from GitHub raw URLs (placeholders)
+ - Fetches JSON from GitHub raw URLs 
  - Stores: admins, doctors, patients, medicines, users, appointments, medicalRecords, notifications
  - Exposes functions for import, register, admin-create-doctor, login, query, clear*/
 
@@ -13,10 +13,14 @@ const ENCRYPTION_KEY = 'myEncryptionKey';
 
 // Placeholder raw URLs 
 const JSON_URLS = {
-  admins:  'https://raw.githubusercontent.com/YourUser/YourRepo/main/admin.json',
-  doctors: 'https://raw.githubusercontent.com/YourUser/YourRepo/main/doctors.json',
-  patients:'https://raw.githubusercontent.com/YourUser/YourRepo/main/patients.json',
-  medicines:'https://raw.githubusercontent.com/YourUser/YourRepo/main/medicines.json'
+  admins:  'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/admin.json',
+  doctors: 'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/doctors.json',
+  patients:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/patients.json',
+  medicines:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/medicines.json',
+  users:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/users',
+  medicalRecord: 'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/medicalRecord',
+  appointment: 'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/appointment',
+  notification:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/notif'
 };
 
 // Local caches (populated by fetch)
@@ -24,6 +28,10 @@ let admin_data = null;
 let doctor_data = null;
 let patient_data = null;
 let medicine_data = null;
+let users_data = null;
+let medicalRecord_data = null;
+let appointment_data = null;
+let notification_data = null;
 
 //Open/Create db
 function openClinicDB() {
@@ -31,41 +39,40 @@ function openClinicDB() {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
 
     req.onupgradeneeded = (e) => {
-      const dbx = e.target.result;
+      const db = e.target.result;
 
       // users store (login validation)
-      if (!dbx.objectStoreNames.contains('users')) {
-        const users = dbx.createObjectStore('users', { keyPath: 'userId', autoIncrement: true });
+      if (!db.objectStoreNames.contains('users')) {
+        const users = db.createObjectStore('users', { keyPath: 'linkedId' });
         users.createIndex('username', 'username', { unique: true });
-        users.createIndex('email', 'email', { unique: true });
+        users.createIndex('password', 'password', { unique: false });
         users.createIndex('role', 'role', { unique: false });
-        users.createIndex('linkedId', 'linkedId', { unique: false }); // e.g., patient NHS, doctor id, admin username
       }
 
       // admins 
-      if (!dbx.objectStoreNames.contains('admins')) {
-        const admins = dbx.createObjectStore('admins', { keyPath: 'username' });
+      if (!db.objectStoreNames.contains('admins')) {
+        const admins = db.createObjectStore('admins', { keyPath: 'username' });
         admins.createIndex('username', 'username', { unique: true });
         admins.createIndex('password','password',{unique: false})
       }
 
       // doctors
-      if (!dbx.objectStoreNames.contains('doctors')) {
-        const doctors = dbx.createObjectStore('doctors', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('doctors')) {
+        const doctors = db.createObjectStore('doctors', { keyPath: 'id' });
         doctors.createIndex('first_name', 'first_name', { unique: false });
         doctors.createIndex('last_name', 'last_name', { unique: false });
         doctors.createIndex('email', 'email', { unique: false });
         doctors.createIndex('gender','gender',{unique: false});
-        doctors.createIndex('address','address',{unique: false});
-        doctors.createIndex('telephone','telephone',{unique: false});
+        doctors.createIndex('Address','Address',{unique: false});
+        doctors.createIndex('Telephone','Telephone',{unique: false});
       }
 
       // patients 
       // JSON contains numeric "id" and string "NHS" —  key =NHS for validation
-      if (!dbx.objectStoreNames.contains('patients')) {
-        const patients = dbx.createObjectStore('patients', { keyPath: 'NHS' });
+      if (!db.objectStoreNames.contains('patients')) {
+        const patients = db.createObjectStore('patients', { keyPath: 'NHS' });
         patients.createIndex('id', 'id', { unique: false });
-        patients.createIndex('Title','title',{unique: false});
+        patients.createIndex('title','title',{unique: false});
         patients.createIndex('First', 'First', { unique: false });
         patients.createIndex('Last', 'Last', { unique: false });
         patients.createIndex('DOB','DOB',{unique: false});
@@ -74,32 +81,41 @@ function openClinicDB() {
         patients.createIndex('Email', 'Email', { unique: false });
         patients.createIndex('Telephone','Telephone',{unique: false});
       }
-
+ 
       // medicines 
-      if (!dbx.objectStoreNames.contains('medicines')) {
-        const medicines = dbx.createObjectStore('medicines', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('medicines')) {
+        const medicines = db.createObjectStore('medicines', { keyPath: 'id' });
         medicines.createIndex('drugs','drugs',{unique: false});
       }
 
       // appointments
-      if (!dbx.objectStoreNames.contains('appointments')) {
-        const appts = dbx.createObjectStore('appointments', { keyPath: 'appointmentId', autoIncrement: true });
+      if (!db.objectStoreNames.contains('appointments')) {
+        const appts = db.createObjectStore('appointments', { keyPath: 'appointmentId'});
+        appts.createIndex('patientId', 'patientId', { unique: false });
         appts.createIndex('doctorId', 'doctorId', { unique: false });
-        appts.createIndex('patientNHS', 'patientNHS', { unique: false });
-        appts.createIndex("startIso", "startIso", { unique: false });
+        appts.createIndex('date','date' ,{ unique: false });
+        appts.createIndex('time','time', { unique: false });
+        appts.createIndex('reason','reason', { unique: false });
+        appts.createIndex('status','status',{unique:false})
       }
       //medical records
-      if (!dbx.objectStoreNames.contains('medicalRecords')) {
-        const records = dbx.createObjectStore('medicalRecords', { keyPath: 'recordId', autoIncrement: true });
-        records.createIndex('patientNHS', 'patientNHS', { unique: false });
+      if (!db.objectStoreNames.contains('medicalRecords')) {
+        const records = db.createObjectStore('medicalRecords', { keyPath: 'recordId' });
+        records.createIndex('patientId', 'patientId', { unique: false });
         records.createIndex('doctorId', 'doctorId', { unique: false });
+        records.createIndex("diagnosis","diagnosis",{ unique: false });
+        records.createIndex("treatment","treatment",{ unique: false });
         records.createIndex("date", "date", { unique: false })
       }
       //notif
-      if (!dbx.objectStoreNames.contains('notifications')) {
-        const notifs = dbx.createObjectStore('notifications', { keyPath: 'notifId', autoIncrement: true });
-        notifs.createIndex('userId', 'userId', { unique: false });
-        notifs.createIndex("type", "type", { unique: false });
+      if (!db.objectStoreNames.contains('notifications')) {
+        const notifs = db.createObjectStore('notifications', { keyPath: 'notifId'});
+        notifs.createIndex('recipientRole', 'recipientRole', { unique: false });
+        notifs.createIndex('recipientId', 'recipientId', { unique: false });
+        notifs.createIndex('message', 'message', { unique: false });
+        notifs.createIndex('date', 'date', { unique: false });
+        notifs.createIndex('read', 'read', { unique: false });
+        
       }
 
       console.log('[onupgradeneeded] clinicDB stores created/updated');
@@ -184,6 +200,131 @@ function deleteItem(storeName, key) {
   });
 }
 
+//read patient medical records by id
+function getRecordsByPatientId(patientId) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('medicalRecords', 'readonly');
+    const store = tx.objectStore('medicalRecords');
+    const index = store.index('patientId');
+    const request = index.getAll(patientId);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = (e) => reject(e);
+  });
+}
+//see all appointments or patients they’re handling (for doctor)
+function getAppointmentsByDoctorId(doctorId) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('appointments', 'readonly');
+    const store = tx.objectStore('appointments');
+    const index = store.index('doctorId');
+    const request = index.getAll(doctorId);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = (e) => reject(e);
+  });
+}
+
+//Read notifications by role or recipient
+function getNotifications(roleOrId) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('notifications', 'readonly');
+    const store = tx.objectStore('notifications');
+
+    // Try by role first
+    const roleIndex = store.index('recipientRole');
+    const reqRole = roleIndex.getAll(roleOrId);
+
+    reqRole.onsuccess = () => {
+      if (reqRole.result.length > 0) return resolve(reqRole.result);
+
+      // Otherwise, try by specific ID
+      const idIndex = store.index('recipientId');
+      const reqId = idIndex.getAll(roleOrId);
+
+      reqId.onsuccess = () => resolve(reqId.result);
+      reqId.onerror = reject;
+    };
+    reqRole.onerror = reject;
+  });
+}
+
+//Doctor Dashboard Loader
+async function loadDoctorDashboard(doctorId) {
+  try {
+    // Fetch all data in parallel
+    const [appointments, notifications] = await Promise.all([
+      getAppointmentsByDoctorId(doctorId),
+      getNotifications(doctorId)
+    ]);
+
+    console.log(`Appointments for Doctor ${doctorId}:`, appointments);
+    console.log(`Notifications for Doctor ${doctorId}:`, notifications);
+
+    // Optionally, return them as a single object
+    return { appointments, notifications };
+
+  } catch (err) {
+    console.error("Error loading doctor dashboard:", err);
+  }
+}
+
+//Patient Dashboard Loader
+async function loadPatientDashboard(patientId) {
+  try {
+    const [records, appointments, notifications] = await Promise.all([
+      getRecordsByPatientId(patientId),
+      getAppointmentsByPatientId(patientId),
+      getNotifications(patientId)
+    ]);
+
+    console.log(`Medical Records for Patient ${patientId}:`, records);
+    console.log(`Appointments for Patient ${patientId}:`, appointments);
+    console.log(`Notifications for Patient ${patientId}:`, notifications);
+
+    return { records, appointments, notifications };
+
+  } catch (err) {
+    console.error("Error loading patient dashboard:", err);
+  }
+}
+
+// Helper for appointments by patient (similar to doctor one)
+function getAppointmentsByPatientId(patientId) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('appointments', 'readonly');
+    const store = tx.objectStore('appointments');
+    const index = store.index('patientId');
+    const request = index.getAll(patientId);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = reject;
+  });
+}
+
+//admin Dashboard Loader
+async function loadAdminDashboard() {
+  try {
+    const [doctors, patients, appointments, records, notifications] = await Promise.all([
+      getAllItems('doctors'),
+      getAllItems('patients'),
+      getAllItems('appointments'),
+      getAllItems('medicalrecords'),
+      getNotifications("admin")
+    ]);
+
+    console.log("Doctors:", doctors);
+    console.log("Patients:", patients);
+    console.log("Appointments:", appointments);
+    console.log("Medical Records:", records);
+    console.log("Admin Notifications:", notifications);
+
+    return { doctors, patients, appointments, records, notifications };
+  } catch (err) {
+    console.error("Error loading admin dashboard:", err);
+  }
+}
+
+
 // Fetch JSONs (from GitHub raw) 
 async function fetchJson(url) {
   const resp = await fetch(url);
@@ -194,17 +335,26 @@ async function fetchJson(url) {
 /* Fetch all JSON files and cache locally (admin_data, doctor_data, patient_data, medicine_data) */
 async function fetchAllJsons(urls = JSON_URLS) {
   // parallel fetch
-  const [admins, doctors, patients, medicines] = await Promise.all([
+  const [admins, doctors, patients, medicines,users,medicalRecord,appointment,notification] = await Promise.all([
     fetchJson(urls.admins).catch(err => { console.error('admins fetch error', err); return []; }),
     fetchJson(urls.doctors).catch(err => { console.error('doctors fetch error', err); return []; }),
     fetchJson(urls.patients).catch(err => { console.error('patients fetch error', err); return []; }),
-    fetchJson(urls.medicines).catch(err => { console.error('medicines fetch error', err); return []; })
+    fetchJson(urls.medicines).catch(err => { console.error('medicines fetch error', err); return []; }),
+    fetchJson(urls.users).catch(err => {console.error('users fetch error',err); return[];}),
+    fetchJson(urls.medicalRecord).catch(err => {console.error('medicale Record fetch error',err); return[]}),
+    fetchJson(urls.appointment).catch(err => {console.error('appointment fetch erroe',err); return []}),
+    fetchJson(ur .notification).catch(err => {console.error('notif fetch error', err); return[]})
+
   ]);
 
   admin_data = admins;
   doctor_data = doctors;
   patient_data = patients;
   medicine_data = medicines;
+  users_data =users;
+  medicalRecord_data=medicalRecord;
+  appointment_data=appointment;
+  notification_data=notification;
 
   console.log('All JSONs fetched (cached locally)');
   return { admins, doctors, patients, medicines };
@@ -255,6 +405,56 @@ async function importFetchedDataToDB() {
       }
     }
   }
+  //users
+  if (Array.isArray(users_data)) {
+   for (const u of users_data){
+    try {
+      if (!u.username) continue;
+      await addItem('users', u);
+      results.users++;
+    }catch(err){
+      console.warn('skipping user (exists?):', u.username, err);
+    }
+   }
+  }
+  //medical record- mr.recordID
+  if (Array.isArray(medicalRecord_data)){
+    for (const r of medicalRecord_data){
+      try {
+        if (!r.recordId) continue;
+        await addItem('medicalRecord', r);
+        results.medicalRecord++;
+      }catch(err){
+        console.warn('skippping medical record (exists?):', r.recordId, err);
+      }
+    }
+  }
+
+  //notif
+  if (Array.isArray(notification_data)){
+    for (const n of notification_data){
+      try {
+        if (!n.notifId) continue;
+        await addItem('notifications', n);
+        results.notification++;
+      }catch(err){
+        console.warn('skipping notification (exist?):',n.notifId, err);
+      }
+    }
+  }
+  //appointment
+  if (Array.isArray(appointment_data)){
+    for (const a of appointment_data){
+      try {
+        if (!a.appointmentId) continue;
+        await addItem('appointments',a);
+        results.appointment++;
+      }catch(err){
+        console.warn('skipping appointment (exist?):', a.appointmentId)
+      }
+
+    }
+  }
 
   // medicines: expects array with id and Drug
   if (Array.isArray(medicine_data)) {
@@ -273,6 +473,7 @@ async function importFetchedDataToDB() {
   return results;
 }
 
+
 //Convenience: fetch all JSONs then import them into DB 
 async function fetchAndImportAll(urls = JSON_URLS) {
   if (!db) throw new Error('DB not opened');
@@ -280,70 +481,46 @@ async function fetchAndImportAll(urls = JSON_URLS) {
   return importFetchedDataToDB();
 }
 
+//Registration / Creation / Login --> to be updated***********************
 
 
-
-
-
-
-
-
-
-
-//Registration / Creation / Login 
-
-/*registerPatientAccount(email, password, patientNHS)
-  - validates that patientNHS exists in patients store
-  - ensures email is unique in users store
-  - creates a user with role 'patient' and linkedId = patientNHS*/
-
-async function registerPatientAccount(email, password, patientNHS) {
+async function registerPatientAccount(username, password, patientNHS) {
   if (!db) throw new Error('DB not opened');
-  if (!email || !password || !patientNHS) throw new Error('email, password and patientNHS are required');
+  if (!username || !password || !patientNHS)
+    throw new Error('username, password, and patientNHS are required');
 
   // validate patient exists
   const p = await getItem('patients', patientNHS);
   if (!p) throw new Error(`No patient record found for NHS: ${patientNHS}`);
 
-  // ensure email unique in users
-  try {
-    const tx = db.transaction('users', 'readonly');
-    const idx = tx.objectStore('users').index('email');
-    const existing = await new Promise((res, rej) => {
-      const r = idx.get(email);
-      r.onsuccess = e => res(e.target.result);
-      r.onerror = () => rej(r.error);
-    });
-    if (existing) throw new Error('Email already in use');
-  } catch (err) {
-    if (err.message === 'Email already in use') throw err;
-    // otherwise, ok to proceed
-  }
+  // ensure username unique in users
+  const tx = db.transaction('users', 'readonly');
+  const idx = tx.objectStore('users').index('username');
+  const existing = await new Promise((res, rej) => {
+    const r = idx.get(username);
+    r.onsuccess = e => res(e.target.result);
+    r.onerror = () => rej(r.error);
+  });
+  if (existing) throw new Error('Username already exists');
 
   const user = {
-    username: null, // patients authenticating by email
-    email,
-    password, // plain text for assignment demo (Option B)
+    username,
+    password,
     role: 'patient',
     linkedId: patientNHS,
     createdAt: new Date().toISOString()
   };
 
   const userId = await addItem('users', user);
-  console.log('Patient user registered with userId:', userId);
+  console.log('✅ Patient account created:', user);
   return { userId, user };
 }
 
-/**
- * createDoctorAccountByAdmin(adminUsername, doctorId, usernameForDoctor, password)
- * - adminUsername must exist in admins store
- * - doctorId must exist in doctors store
- * - usernameForDoctor must be unique in users store
- * - creates a user with role 'doctor' and linkedId = doctorId
- */
+
 async function createDoctorAccountByAdmin(adminUsername, doctorId, usernameForDoctor, password) {
   if (!db) throw new Error('DB not opened');
-  if (!adminUsername || !doctorId || !usernameForDoctor || !password) throw new Error('missing arguments');
+  if (!adminUsername || !doctorId || !usernameForDoctor || !password)
+    throw new Error('missing arguments');
 
   // verify admin exists
   const admin = await getItem('admins', adminUsername);
@@ -354,83 +531,66 @@ async function createDoctorAccountByAdmin(adminUsername, doctorId, usernameForDo
   if (!doc) throw new Error('Doctor record not found');
 
   // ensure username unique
-  try {
-    const tx = db.transaction('users', 'readonly');
-    const idx = tx.objectStore('users').index('username');
-    const existing = await new Promise((res, rej) => {
-      const r = idx.get(usernameForDoctor);
-      r.onsuccess = e => res(e.target.result);
-      r.onerror = () => rej(r.error);
-    });
-    if (existing) throw new Error('Username already exists');
-  } catch (err) {
-    if (err.message === 'Username already exists') throw err;
-  }
+  const tx = db.transaction('users', 'readonly');
+  const idx = tx.objectStore('users').index('username');
+  const existing = await new Promise((res, rej) => {
+    const r = idx.get(usernameForDoctor);
+    r.onsuccess = e => res(e.target.result);
+    r.onerror = () => rej(r.error);
+  });
+  if (existing) throw new Error('Username already exists');
 
   const user = {
     username: usernameForDoctor,
-    email: doc.email || null,
-    password, // plain text for demo
+    password,
     role: 'doctor',
     linkedId: doctorId,
     createdAt: new Date().toISOString()
   };
 
   const userId = await addItem('users', user);
-  console.log('Doctor user created by admin, userId:', userId);
+  console.log('✅ Doctor account created by admin:', user);
   return { userId, user };
 }
 
-/* login(identifier, password)
- - identifier: username (for admin/doctor) or email (for patient)
- - password: plain text
-  - returns { success, message, userRecord, redirect } (redirect is a sample path)*/
-
-async function login(identifier, password) {
+//login
+async function login(username, password) {
   if (!db) throw new Error('DB not opened');
-  if (!identifier || !password) return { success:false, message:'identifier and password required' };
-
-  // try username lookup first
-  let found = null;
-  try {
-    const tx = db.transaction('users', 'readonly');
-    const idx = tx.objectStore('users').index('username');
-    found = await new Promise((res) => {
-      const r = idx.get(identifier);
-      r.onsuccess = e => res(e.target.result);
-      r.onerror = () => res(null);
-    });
-  } catch (err) {
-    found = null;
+  if (!username || !password) {
+    alert('Please enter both username and password.');
+    return;
   }
 
-  // if not found by username, try email
-  if (!found) {
-    try {
-      const tx2 = db.transaction('users', 'readonly');
-      const idx2 = tx2.objectStore('users').index('email');
-      found = await new Promise((res) => {
-        const r = idx2.get(identifier);
-        r.onsuccess = e => res(e.target.result);
-        r.onerror = () => res(null);
-      });
-    } catch (err) {
-      found = null;
-    }
+  const tx = db.transaction('users', 'readonly');
+  const store = tx.objectStore('users');
+  const index = store.index('username');
+  
+  const user = await new Promise((resolve, reject) => {
+    const req = index.get(username);
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = () => reject(req.error);
+  });
+
+  if (!user) {
+    alert('User not found.');
+    return;
   }
 
-  if (!found) return { success:false, message:'User not found' };
+  if (user.password !== password) {
+    alert('Invalid password.');
+    return;
+  }
 
-  if (found.password !== password) return { success:false, message:'Invalid password' };
+  console.log(`✅ Login successful as ${user.role}`);
 
-  // sample redirect paths - caller should handle actual navigation
-  const redirect = found.role === 'admin' ? '/admin.html' :
-                   found.role === 'doctor' ? '/doctor.html' :
-                   found.role === 'patient' ? '/patient.html' : '/';
-
-  console.log('Login success for userId', found.userId, 'role', found.role);
-  return { success:true, message:'Login success', userRecord:found, redirect };
+  if (user.role === 'admin') window.location.href = 'admin.html';
+  else if (user.role === 'doctor') window.location.href = 'doctor.html';
+  else if (user.role === 'patient') window.location.href = 'patient.html';
 }
+
+
+
+
 
 //Clear / Query / Show Helpers 
 
@@ -504,6 +664,7 @@ window.clinicDB = {
   fetchAllJsons,
   importFetchedDataToDB,
   fetchAndImportAll,
+  generateLoginTables,
   registerPatientAccount,
   createDoctorAccountByAdmin,
   login,

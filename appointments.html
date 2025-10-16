@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Appointments</title>
+  <script src="indexdb&JSON.js"></script>
+  <script src="appointments.js"></script>
+</head>
+<body>
+  <h2>Your Appointments</h2>
+  <div>
+    <button onclick="showAppointmentForm()">Book New Appointment</button>
+  </div>
+
+  <div id="appointmentForm" style="display:none; margin-top:1em;">
+    <h3>Book Appointment</h3>
+    <form id="newAppointmentForm">
+      <label>Doctor:</label>
+      <select id="doctorSelect" required></select><br><br>
+
+      <label>Date:</label>
+      <input type="date" id="apptDate" required><br><br>
+
+      <label>Time:</label>
+      <input type="time" id="apptTime" required><br><br>
+
+      <button type="submit">Save Appointment</button>
+      <button type="button" onclick="hideAppointmentForm()">Cancel</button>
+    </form>
+  </div>
+
+  <h3>Existing Appointments</h3>
+  <table border="1" id="appointmentsTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Doctor</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</body>
+</html>

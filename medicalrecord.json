@@ -1,0 +1,1946 @@
+[
+  {
+    "recordId": "MR7428",
+    "patientId": "6538586104",
+    "doctorId": 1,
+    "diagnosis": "Bronchitis",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-04-21"
+  },
+  {
+    "recordId": "MR4788",
+    "patientId": "6538586104",
+    "doctorId": 1,
+    "diagnosis": "Hypertension",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-09-24"
+  },
+  {
+    "recordId": "MR4878",
+    "patientId": "3748194617",
+    "doctorId": 4,
+    "diagnosis": "Anemia",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-07-23"
+  },
+  {
+    "recordId": "MR1939",
+    "patientId": "3748194617",
+    "doctorId": 3,
+    "diagnosis": "Flu",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-04-25"
+  },
+  {
+    "recordId": "MR5750",
+    "patientId": "3748194617",
+    "doctorId": 4,
+    "diagnosis": "Hypertension",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-07-05"
+  },
+  {
+    "recordId": "MR9695",
+    "patientId": "1055801944",
+    "doctorId": 8,
+    "diagnosis": "Anemia",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-05-24"
+  },
+  {
+    "recordId": "MR2490",
+    "patientId": "1055801944",
+    "doctorId": 13,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-05-10"
+  },
+  {
+    "recordId": "MR6360",
+    "patientId": "1055801944",
+    "doctorId": 4,
+    "diagnosis": "Migraine",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-07-02"
+  },
+  {
+    "recordId": "MR4188",
+    "patientId": "2842736109",
+    "doctorId": 14,
+    "diagnosis": "Anemia",
+    "treatment": "Antibiotic course",
+    "date": "2025-08-01"
+  },
+  {
+    "recordId": "MR1958",
+    "patientId": "2842736109",
+    "doctorId": 9,
+    "diagnosis": "Anemia",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-08-23"
+  },
+  {
+    "recordId": "MR5185",
+    "patientId": "2842736109",
+    "doctorId": 5,
+    "diagnosis": "Diabetes",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-01-15"
+  },
+  {
+    "recordId": "MR8456",
+    "patientId": "4315792829",
+    "doctorId": 5,
+    "diagnosis": "Flu",
+    "treatment": "Pain relief medication",
+    "date": "2025-08-21"
+  },
+  {
+    "recordId": "MR6707",
+    "patientId": "4315792829",
+    "doctorId": 11,
+    "diagnosis": "Asthma",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-11-28"
+  },
+  {
+    "recordId": "MR1910",
+    "patientId": "4315792829",
+    "doctorId": 15,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antibiotic course",
+    "date": "2025-05-28"
+  },
+  {
+    "recordId": "MR4892",
+    "patientId": "6703065764",
+    "doctorId": 4,
+    "diagnosis": "Asthma",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-05-31"
+  },
+  {
+    "recordId": "MR6966",
+    "patientId": "6703065764",
+    "doctorId": 1,
+    "diagnosis": "Flu",
+    "treatment": "Inhaler prescription",
+    "date": "2024-03-20"
+  },
+  {
+    "recordId": "MR6157",
+    "patientId": "9930757538",
+    "doctorId": 4,
+    "diagnosis": "Hypertension",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-02-09"
+  },
+  {
+    "recordId": "MR7490",
+    "patientId": "9930757538",
+    "doctorId": 10,
+    "diagnosis": "Diabetes",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-08-14"
+  },
+  {
+    "recordId": "MR3763",
+    "patientId": "6412244999",
+    "doctorId": 14,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antibiotic course",
+    "date": "2025-08-29"
+  },
+  {
+    "recordId": "MR9267",
+    "patientId": "6412244999",
+    "doctorId": 9,
+    "diagnosis": "Flu",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-07-16"
+  },
+  {
+    "recordId": "MR8812",
+    "patientId": "6412244999",
+    "doctorId": 11,
+    "diagnosis": "Migraine",
+    "treatment": "Pain relief medication",
+    "date": "2024-03-31"
+  },
+  {
+    "recordId": "MR8231",
+    "patientId": "1937225747",
+    "doctorId": 8,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2024-08-09"
+  },
+  {
+    "recordId": "MR7799",
+    "patientId": "1937225747",
+    "doctorId": 8,
+    "diagnosis": "Anemia",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-11-01"
+  },
+  {
+    "recordId": "MR4722",
+    "patientId": "1937225747",
+    "doctorId": 7,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-07-07"
+  },
+  {
+    "recordId": "MR4930",
+    "patientId": "0834678659",
+    "doctorId": 2,
+    "diagnosis": "Hypertension",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-03-02"
+  },
+  {
+    "recordId": "MR9920",
+    "patientId": "0834678659",
+    "doctorId": 9,
+    "diagnosis": "Flu",
+    "treatment": "Antibiotic course",
+    "date": "2024-11-06"
+  },
+  {
+    "recordId": "MR6785",
+    "patientId": "8440179340",
+    "doctorId": 10,
+    "diagnosis": "Hypertension",
+    "treatment": "Inhaler prescription",
+    "date": "2025-09-26"
+  },
+  {
+    "recordId": "MR8904",
+    "patientId": "8440179340",
+    "doctorId": 4,
+    "diagnosis": "Diabetes",
+    "treatment": "Inhaler prescription",
+    "date": "2024-08-09"
+  },
+  {
+    "recordId": "MR3175",
+    "patientId": "8440179340",
+    "doctorId": 8,
+    "diagnosis": "Hypertension",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-03-09"
+  },
+  {
+    "recordId": "MR5800",
+    "patientId": "9427293039",
+    "doctorId": 8,
+    "diagnosis": "Hypertension",
+    "treatment": "Pain relief medication",
+    "date": "2025-02-24"
+  },
+  {
+    "recordId": "MR2244",
+    "patientId": "9427293039",
+    "doctorId": 1,
+    "diagnosis": "Migraine",
+    "treatment": "Inhaler prescription",
+    "date": "2024-08-05"
+  },
+  {
+    "recordId": "MR8806",
+    "patientId": "3795743850",
+    "doctorId": 14,
+    "diagnosis": "Flu",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-07-03"
+  },
+  {
+    "recordId": "MR2870",
+    "patientId": "3795743850",
+    "doctorId": 5,
+    "diagnosis": "Asthma",
+    "treatment": "Pain relief medication",
+    "date": "2025-05-15"
+  },
+  {
+    "recordId": "MR7314",
+    "patientId": "3795743850",
+    "doctorId": 15,
+    "diagnosis": "Flu",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-07-22"
+  },
+  {
+    "recordId": "MR9463",
+    "patientId": "0176749152",
+    "doctorId": 14,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-08-22"
+  },
+  {
+    "recordId": "MR3393",
+    "patientId": "0176749152",
+    "doctorId": 7,
+    "diagnosis": "Migraine",
+    "treatment": "Antibiotic course",
+    "date": "2024-03-15"
+  },
+  {
+    "recordId": "MR8154",
+    "patientId": "0176749152",
+    "doctorId": 3,
+    "diagnosis": "Migraine",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-04-10"
+  },
+  {
+    "recordId": "MR9800",
+    "patientId": "4647088979",
+    "doctorId": 7,
+    "diagnosis": "Diabetes",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-02-19"
+  },
+  {
+    "recordId": "MR8457",
+    "patientId": "4647088979",
+    "doctorId": 11,
+    "diagnosis": "Bronchitis",
+    "treatment": "Pain relief medication",
+    "date": "2024-12-19"
+  },
+  {
+    "recordId": "MR3828",
+    "patientId": "7256963432",
+    "doctorId": 11,
+    "diagnosis": "Migraine",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-06-06"
+  },
+  {
+    "recordId": "MR4973",
+    "patientId": "7256963432",
+    "doctorId": 1,
+    "diagnosis": "Asthma",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-02-18"
+  },
+  {
+    "recordId": "MR6939",
+    "patientId": "4054087388",
+    "doctorId": 12,
+    "diagnosis": "Flu",
+    "treatment": "Pain relief medication",
+    "date": "2024-09-28"
+  },
+  {
+    "recordId": "MR4915",
+    "patientId": "4054087388",
+    "doctorId": 14,
+    "diagnosis": "Asthma",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-03-15"
+  },
+  {
+    "recordId": "MR7505",
+    "patientId": "1487623658",
+    "doctorId": 14,
+    "diagnosis": "Flu",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-04-19"
+  },
+  {
+    "recordId": "MR3018",
+    "patientId": "1487623658",
+    "doctorId": 13,
+    "diagnosis": "Anemia",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-05-06"
+  },
+  {
+    "recordId": "MR3558",
+    "patientId": "3906914518",
+    "doctorId": 8,
+    "diagnosis": "Flu",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-10-08"
+  },
+  {
+    "recordId": "MR3247",
+    "patientId": "3906914518",
+    "doctorId": 2,
+    "diagnosis": "Asthma",
+    "treatment": "Pain relief medication",
+    "date": "2025-02-10"
+  },
+  {
+    "recordId": "MR7090",
+    "patientId": "9516004776",
+    "doctorId": 13,
+    "diagnosis": "Migraine",
+    "treatment": "Inhaler prescription",
+    "date": "2024-11-03"
+  },
+  {
+    "recordId": "MR3406",
+    "patientId": "9516004776",
+    "doctorId": 3,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2025-02-08"
+  },
+  {
+    "recordId": "MR5924",
+    "patientId": "4063756793",
+    "doctorId": 15,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2024-03-19"
+  },
+  {
+    "recordId": "MR3590",
+    "patientId": "4063756793",
+    "doctorId": 5,
+    "diagnosis": "Diabetes",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-10-15"
+  },
+  {
+    "recordId": "MR2080",
+    "patientId": "7955347048",
+    "doctorId": 8,
+    "diagnosis": "Bronchitis",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-07-26"
+  },
+  {
+    "recordId": "MR7882",
+    "patientId": "7955347048",
+    "doctorId": 5,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2025-06-01"
+  },
+  {
+    "recordId": "MR9642",
+    "patientId": "7955347048",
+    "doctorId": 15,
+    "diagnosis": "Asthma",
+    "treatment": "Antibiotic course",
+    "date": "2025-05-02"
+  },
+  {
+    "recordId": "MR2568",
+    "patientId": "5954675740",
+    "doctorId": 11,
+    "diagnosis": "Diabetes",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-10-07"
+  },
+  {
+    "recordId": "MR3947",
+    "patientId": "5954675740",
+    "doctorId": 10,
+    "diagnosis": "Flu",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-12-17"
+  },
+  {
+    "recordId": "MR7337",
+    "patientId": "5954675740",
+    "doctorId": 9,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-06-20"
+  },
+  {
+    "recordId": "MR3427",
+    "patientId": "3958557031",
+    "doctorId": 1,
+    "diagnosis": "Bronchitis",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-06-29"
+  },
+  {
+    "recordId": "MR6480",
+    "patientId": "3958557031",
+    "doctorId": 4,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-06-26"
+  },
+  {
+    "recordId": "MR6371",
+    "patientId": "5430525790",
+    "doctorId": 4,
+    "diagnosis": "Migraine",
+    "treatment": "Inhaler prescription",
+    "date": "2024-01-03"
+  },
+  {
+    "recordId": "MR8085",
+    "patientId": "5430525790",
+    "doctorId": 1,
+    "diagnosis": "Flu",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-02-25"
+  },
+  {
+    "recordId": "MR4554",
+    "patientId": "5430525790",
+    "doctorId": 1,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2024-02-27"
+  },
+  {
+    "recordId": "MR5322",
+    "patientId": "2755133783",
+    "doctorId": 12,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-09-25"
+  },
+  {
+    "recordId": "MR6220",
+    "patientId": "2755133783",
+    "doctorId": 7,
+    "diagnosis": "Asthma",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-03-30"
+  },
+  {
+    "recordId": "MR9451",
+    "patientId": "3927052396",
+    "doctorId": 4,
+    "diagnosis": "Diabetes",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-01-23"
+  },
+  {
+    "recordId": "MR6358",
+    "patientId": "3927052396",
+    "doctorId": 6,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antibiotic course",
+    "date": "2024-01-01"
+  },
+  {
+    "recordId": "MR6074",
+    "patientId": "9672170890",
+    "doctorId": 12,
+    "diagnosis": "Flu",
+    "treatment": "Inhaler prescription",
+    "date": "2025-04-02"
+  },
+  {
+    "recordId": "MR1101",
+    "patientId": "9672170890",
+    "doctorId": 4,
+    "diagnosis": "Diabetes",
+    "treatment": "Inhaler prescription",
+    "date": "2025-05-22"
+  },
+  {
+    "recordId": "MR5861",
+    "patientId": "3298389188",
+    "doctorId": 6,
+    "diagnosis": "Bronchitis",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-08-20"
+  },
+  {
+    "recordId": "MR7307",
+    "patientId": "3298389188",
+    "doctorId": 5,
+    "diagnosis": "Bronchitis",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-12-18"
+  },
+  {
+    "recordId": "MR2818",
+    "patientId": "0166036064",
+    "doctorId": 7,
+    "diagnosis": "Flu",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-05-17"
+  },
+  {
+    "recordId": "MR5439",
+    "patientId": "0166036064",
+    "doctorId": 14,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-08-24"
+  },
+  {
+    "recordId": "MR5184",
+    "patientId": "0166036064",
+    "doctorId": 7,
+    "diagnosis": "Anemia",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-07-26"
+  },
+  {
+    "recordId": "MR7198",
+    "patientId": "7495367466",
+    "doctorId": 4,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2025-01-23"
+  },
+  {
+    "recordId": "MR7516",
+    "patientId": "7495367466",
+    "doctorId": 6,
+    "diagnosis": "Migraine",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-11-09"
+  },
+  {
+    "recordId": "MR7853",
+    "patientId": "2802706446",
+    "doctorId": 2,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antibiotic course",
+    "date": "2024-12-03"
+  },
+  {
+    "recordId": "MR7177",
+    "patientId": "2802706446",
+    "doctorId": 8,
+    "diagnosis": "Hypertension",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-03-06"
+  },
+  {
+    "recordId": "MR6586",
+    "patientId": "2802706446",
+    "doctorId": 14,
+    "diagnosis": "Bronchitis",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-02-21"
+  },
+  {
+    "recordId": "MR9492",
+    "patientId": "4009273895",
+    "doctorId": 15,
+    "diagnosis": "Diabetes",
+    "treatment": "Pain relief medication",
+    "date": "2025-03-20"
+  },
+  {
+    "recordId": "MR2677",
+    "patientId": "4009273895",
+    "doctorId": 9,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2024-11-27"
+  },
+  {
+    "recordId": "MR6924",
+    "patientId": "9541088074",
+    "doctorId": 10,
+    "diagnosis": "Anemia",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-06-26"
+  },
+  {
+    "recordId": "MR4371",
+    "patientId": "9541088074",
+    "doctorId": 13,
+    "diagnosis": "Anemia",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-05-25"
+  },
+  {
+    "recordId": "MR4131",
+    "patientId": "6471828837",
+    "doctorId": 14,
+    "diagnosis": "Flu",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-04-05"
+  },
+  {
+    "recordId": "MR9359",
+    "patientId": "6471828837",
+    "doctorId": 1,
+    "diagnosis": "Asthma",
+    "treatment": "Pain relief medication",
+    "date": "2024-04-21"
+  },
+  {
+    "recordId": "MR6175",
+    "patientId": "6471828837",
+    "doctorId": 10,
+    "diagnosis": "Flu",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-02-02"
+  },
+  {
+    "recordId": "MR4043",
+    "patientId": "4176305606",
+    "doctorId": 1,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-02-10"
+  },
+  {
+    "recordId": "MR5940",
+    "patientId": "4176305606",
+    "doctorId": 3,
+    "diagnosis": "Bronchitis",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-08-17"
+  },
+  {
+    "recordId": "MR9814",
+    "patientId": "7586577323",
+    "doctorId": 7,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-11-13"
+  },
+  {
+    "recordId": "MR9397",
+    "patientId": "7586577323",
+    "doctorId": 8,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2025-06-26"
+  },
+  {
+    "recordId": "MR7080",
+    "patientId": "6203338710",
+    "doctorId": 12,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2025-08-26"
+  },
+  {
+    "recordId": "MR9583",
+    "patientId": "6203338710",
+    "doctorId": 1,
+    "diagnosis": "Hypertension",
+    "treatment": "Antibiotic course",
+    "date": "2025-09-21"
+  },
+  {
+    "recordId": "MR9843",
+    "patientId": "1455229172",
+    "doctorId": 6,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2025-09-28"
+  },
+  {
+    "recordId": "MR9506",
+    "patientId": "1455229172",
+    "doctorId": 14,
+    "diagnosis": "Diabetes",
+    "treatment": "Pain relief medication",
+    "date": "2024-02-28"
+  },
+  {
+    "recordId": "MR7457",
+    "patientId": "1455229172",
+    "doctorId": 2,
+    "diagnosis": "Migraine",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-11-12"
+  },
+  {
+    "recordId": "MR4963",
+    "patientId": "4607334987",
+    "doctorId": 4,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antibiotic course",
+    "date": "2024-07-16"
+  },
+  {
+    "recordId": "MR3886",
+    "patientId": "4607334987",
+    "doctorId": 2,
+    "diagnosis": "Hypertension",
+    "treatment": "Inhaler prescription",
+    "date": "2025-03-08"
+  },
+  {
+    "recordId": "MR4688",
+    "patientId": "4920143451",
+    "doctorId": 14,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2025-06-27"
+  },
+  {
+    "recordId": "MR3985",
+    "patientId": "4920143451",
+    "doctorId": 3,
+    "diagnosis": "Hypertension",
+    "treatment": "Pain relief medication",
+    "date": "2024-09-15"
+  },
+  {
+    "recordId": "MR3204",
+    "patientId": "5679629224",
+    "doctorId": 2,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2024-01-28"
+  },
+  {
+    "recordId": "MR1092",
+    "patientId": "5679629224",
+    "doctorId": 4,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2024-12-23"
+  },
+  {
+    "recordId": "MR8825",
+    "patientId": "5679629224",
+    "doctorId": 4,
+    "diagnosis": "Asthma",
+    "treatment": "Antibiotic course",
+    "date": "2024-11-15"
+  },
+  {
+    "recordId": "MR8591",
+    "patientId": "6664789957",
+    "doctorId": 9,
+    "diagnosis": "Migraine",
+    "treatment": "Inhaler prescription",
+    "date": "2024-06-23"
+  },
+  {
+    "recordId": "MR8286",
+    "patientId": "6664789957",
+    "doctorId": 11,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2024-11-03"
+  },
+  {
+    "recordId": "MR7279",
+    "patientId": "6664789957",
+    "doctorId": 4,
+    "diagnosis": "Asthma",
+    "treatment": "Antibiotic course",
+    "date": "2025-10-04"
+  },
+  {
+    "recordId": "MR8398",
+    "patientId": "3137478995",
+    "doctorId": 9,
+    "diagnosis": "Flu",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-03-29"
+  },
+  {
+    "recordId": "MR4142",
+    "patientId": "3137478995",
+    "doctorId": 9,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2024-02-29"
+  },
+  {
+    "recordId": "MR4345",
+    "patientId": "5456734834",
+    "doctorId": 15,
+    "diagnosis": "Migraine",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-05-27"
+  },
+  {
+    "recordId": "MR4017",
+    "patientId": "5456734834",
+    "doctorId": 2,
+    "diagnosis": "Anemia",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-10-10"
+  },
+  {
+    "recordId": "MR6652",
+    "patientId": "9046839311",
+    "doctorId": 4,
+    "diagnosis": "Anemia",
+    "treatment": "Antibiotic course",
+    "date": "2025-06-05"
+  },
+  {
+    "recordId": "MR7939",
+    "patientId": "9046839311",
+    "doctorId": 15,
+    "diagnosis": "Asthma",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-05-10"
+  },
+  {
+    "recordId": "MR8463",
+    "patientId": "2029708895",
+    "doctorId": 3,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2024-07-08"
+  },
+  {
+    "recordId": "MR3896",
+    "patientId": "2029708895",
+    "doctorId": 2,
+    "diagnosis": "Anemia",
+    "treatment": "Inhaler prescription",
+    "date": "2025-05-16"
+  },
+  {
+    "recordId": "MR7084",
+    "patientId": "9253511109",
+    "doctorId": 2,
+    "diagnosis": "Flu",
+    "treatment": "Inhaler prescription",
+    "date": "2025-07-21"
+  },
+  {
+    "recordId": "MR8217",
+    "patientId": "9253511109",
+    "doctorId": 12,
+    "diagnosis": "Migraine",
+    "treatment": "Pain relief medication",
+    "date": "2025-07-22"
+  },
+  {
+    "recordId": "MR3483",
+    "patientId": "6034202965",
+    "doctorId": 9,
+    "diagnosis": "Anemia",
+    "treatment": "Antibiotic course",
+    "date": "2025-07-27"
+  },
+  {
+    "recordId": "MR2571",
+    "patientId": "6034202965",
+    "doctorId": 1,
+    "diagnosis": "Anemia",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-03-18"
+  },
+  {
+    "recordId": "MR3924",
+    "patientId": "0667088997",
+    "doctorId": 14,
+    "diagnosis": "Diabetes",
+    "treatment": "Inhaler prescription",
+    "date": "2024-08-14"
+  },
+  {
+    "recordId": "MR2399",
+    "patientId": "0667088997",
+    "doctorId": 6,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-10-19"
+  },
+  {
+    "recordId": "MR4360",
+    "patientId": "3852507189",
+    "doctorId": 12,
+    "diagnosis": "Diabetes",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-05-04"
+  },
+  {
+    "recordId": "MR7700",
+    "patientId": "3852507189",
+    "doctorId": 14,
+    "diagnosis": "Anemia",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-01-04"
+  },
+  {
+    "recordId": "MR6878",
+    "patientId": "3852507189",
+    "doctorId": 15,
+    "diagnosis": "Hypertension",
+    "treatment": "Inhaler prescription",
+    "date": "2024-08-21"
+  },
+  {
+    "recordId": "MR2977",
+    "patientId": "7547043135",
+    "doctorId": 4,
+    "diagnosis": "Anemia",
+    "treatment": "Inhaler prescription",
+    "date": "2024-11-24"
+  },
+  {
+    "recordId": "MR9981",
+    "patientId": "7547043135",
+    "doctorId": 12,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-06-27"
+  },
+  {
+    "recordId": "MR8558",
+    "patientId": "9880383567",
+    "doctorId": 10,
+    "diagnosis": "Diabetes",
+    "treatment": "Pain relief medication",
+    "date": "2024-04-05"
+  },
+  {
+    "recordId": "MR7144",
+    "patientId": "9880383567",
+    "doctorId": 6,
+    "diagnosis": "Anemia",
+    "treatment": "Antibiotic course",
+    "date": "2025-01-08"
+  },
+  {
+    "recordId": "MR8703",
+    "patientId": "4976220591",
+    "doctorId": 8,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2024-02-10"
+  },
+  {
+    "recordId": "MR7922",
+    "patientId": "4976220591",
+    "doctorId": 4,
+    "diagnosis": "Flu",
+    "treatment": "Inhaler prescription",
+    "date": "2024-04-05"
+  },
+  {
+    "recordId": "MR6704",
+    "patientId": "0901893994",
+    "doctorId": 1,
+    "diagnosis": "Asthma",
+    "treatment": "Antibiotic course",
+    "date": "2024-03-17"
+  },
+  {
+    "recordId": "MR4643",
+    "patientId": "0901893994",
+    "doctorId": 12,
+    "diagnosis": "Migraine",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-03-06"
+  },
+  {
+    "recordId": "MR5522",
+    "patientId": "0901893994",
+    "doctorId": 7,
+    "diagnosis": "Anemia",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-04-01"
+  },
+  {
+    "recordId": "MR9733",
+    "patientId": "0689695497",
+    "doctorId": 10,
+    "diagnosis": "Migraine",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-08-31"
+  },
+  {
+    "recordId": "MR1732",
+    "patientId": "0689695497",
+    "doctorId": 11,
+    "diagnosis": "Diabetes",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-04-21"
+  },
+  {
+    "recordId": "MR7626",
+    "patientId": "0689695497",
+    "doctorId": 15,
+    "diagnosis": "Hypertension",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-10-13"
+  },
+  {
+    "recordId": "MR8453",
+    "patientId": "7516975605",
+    "doctorId": 2,
+    "diagnosis": "Bronchitis",
+    "treatment": "Pain relief medication",
+    "date": "2024-08-29"
+  },
+  {
+    "recordId": "MR1967",
+    "patientId": "7516975605",
+    "doctorId": 4,
+    "diagnosis": "Flu",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-03-09"
+  },
+  {
+    "recordId": "MR6357",
+    "patientId": "7516975605",
+    "doctorId": 15,
+    "diagnosis": "Diabetes",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-03-16"
+  },
+  {
+    "recordId": "MR7179",
+    "patientId": "5383430830",
+    "doctorId": 13,
+    "diagnosis": "Bronchitis",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-12-06"
+  },
+  {
+    "recordId": "MR7332",
+    "patientId": "5383430830",
+    "doctorId": 2,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2025-06-12"
+  },
+  {
+    "recordId": "MR1861",
+    "patientId": "7494744711",
+    "doctorId": 9,
+    "diagnosis": "Migraine",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-08-16"
+  },
+  {
+    "recordId": "MR1284",
+    "patientId": "7494744711",
+    "doctorId": 4,
+    "diagnosis": "Hypertension",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-10-15"
+  },
+  {
+    "recordId": "MR4607",
+    "patientId": "5353682432",
+    "doctorId": 11,
+    "diagnosis": "Anemia",
+    "treatment": "Inhaler prescription",
+    "date": "2024-10-16"
+  },
+  {
+    "recordId": "MR4903",
+    "patientId": "5353682432",
+    "doctorId": 15,
+    "diagnosis": "Hypertension",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-10-08"
+  },
+  {
+    "recordId": "MR9609",
+    "patientId": "0379517825",
+    "doctorId": 9,
+    "diagnosis": "Anemia",
+    "treatment": "Antibiotic course",
+    "date": "2025-02-12"
+  },
+  {
+    "recordId": "MR5015",
+    "patientId": "0379517825",
+    "doctorId": 9,
+    "diagnosis": "Asthma",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-02-14"
+  },
+  {
+    "recordId": "MR5538",
+    "patientId": "0379517825",
+    "doctorId": 9,
+    "diagnosis": "Anemia",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-10-04"
+  },
+  {
+    "recordId": "MR1851",
+    "patientId": "1230322833",
+    "doctorId": 9,
+    "diagnosis": "Asthma",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-04-30"
+  },
+  {
+    "recordId": "MR4590",
+    "patientId": "1230322833",
+    "doctorId": 2,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2024-06-02"
+  },
+  {
+    "recordId": "MR3133",
+    "patientId": "9252211462",
+    "doctorId": 10,
+    "diagnosis": "Flu",
+    "treatment": "Inhaler prescription",
+    "date": "2025-02-10"
+  },
+  {
+    "recordId": "MR5572",
+    "patientId": "9252211462",
+    "doctorId": 2,
+    "diagnosis": "Anemia",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-01-04"
+  },
+  {
+    "recordId": "MR3649",
+    "patientId": "2296156193",
+    "doctorId": 10,
+    "diagnosis": "Anemia",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-06-10"
+  },
+  {
+    "recordId": "MR3538",
+    "patientId": "2296156193",
+    "doctorId": 4,
+    "diagnosis": "Hypertension",
+    "treatment": "Pain relief medication",
+    "date": "2024-01-21"
+  },
+  {
+    "recordId": "MR8267",
+    "patientId": "2296156193",
+    "doctorId": 3,
+    "diagnosis": "Bronchitis",
+    "treatment": "Pain relief medication",
+    "date": "2024-11-14"
+  },
+  {
+    "recordId": "MR3881",
+    "patientId": "1575207966",
+    "doctorId": 9,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2025-09-16"
+  },
+  {
+    "recordId": "MR1306",
+    "patientId": "1575207966",
+    "doctorId": 14,
+    "diagnosis": "Anemia",
+    "treatment": "Inhaler prescription",
+    "date": "2025-09-22"
+  },
+  {
+    "recordId": "MR8935",
+    "patientId": "9231682180",
+    "doctorId": 11,
+    "diagnosis": "Bronchitis",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-12-31"
+  },
+  {
+    "recordId": "MR4136",
+    "patientId": "9231682180",
+    "doctorId": 6,
+    "diagnosis": "Migraine",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-02-22"
+  },
+  {
+    "recordId": "MR5159",
+    "patientId": "9231682180",
+    "doctorId": 6,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2024-12-27"
+  },
+  {
+    "recordId": "MR4491",
+    "patientId": "7059121684",
+    "doctorId": 15,
+    "diagnosis": "Migraine",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-01-24"
+  },
+  {
+    "recordId": "MR9958",
+    "patientId": "7059121684",
+    "doctorId": 2,
+    "diagnosis": "Migraine",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-06-19"
+  },
+  {
+    "recordId": "MR9653",
+    "patientId": "7059121684",
+    "doctorId": 3,
+    "diagnosis": "Migraine",
+    "treatment": "Antibiotic course",
+    "date": "2024-11-08"
+  },
+  {
+    "recordId": "MR3339",
+    "patientId": "0117253944",
+    "doctorId": 9,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2024-07-07"
+  },
+  {
+    "recordId": "MR9494",
+    "patientId": "0117253944",
+    "doctorId": 2,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2024-11-17"
+  },
+  {
+    "recordId": "MR2065",
+    "patientId": "8549714305",
+    "doctorId": 2,
+    "diagnosis": "Diabetes",
+    "treatment": "Inhaler prescription",
+    "date": "2024-02-08"
+  },
+  {
+    "recordId": "MR3021",
+    "patientId": "8549714305",
+    "doctorId": 12,
+    "diagnosis": "Flu",
+    "treatment": "Inhaler prescription",
+    "date": "2024-10-20"
+  },
+  {
+    "recordId": "MR5656",
+    "patientId": "8549714305",
+    "doctorId": 10,
+    "diagnosis": "Bronchitis",
+    "treatment": "Pain relief medication",
+    "date": "2025-09-08"
+  },
+  {
+    "recordId": "MR9925",
+    "patientId": "5663733841",
+    "doctorId": 3,
+    "diagnosis": "Anemia",
+    "treatment": "Inhaler prescription",
+    "date": "2024-01-20"
+  },
+  {
+    "recordId": "MR8297",
+    "patientId": "5663733841",
+    "doctorId": 11,
+    "diagnosis": "Flu",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-08-09"
+  },
+  {
+    "recordId": "MR1134",
+    "patientId": "5663733841",
+    "doctorId": 1,
+    "diagnosis": "Bronchitis",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-06-02"
+  },
+  {
+    "recordId": "MR2458",
+    "patientId": "8201426894",
+    "doctorId": 2,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2025-04-13"
+  },
+  {
+    "recordId": "MR6937",
+    "patientId": "8201426894",
+    "doctorId": 4,
+    "diagnosis": "Hypertension",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-10-14"
+  },
+  {
+    "recordId": "MR2511",
+    "patientId": "4334743129",
+    "doctorId": 11,
+    "diagnosis": "Diabetes",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-10-01"
+  },
+  {
+    "recordId": "MR6947",
+    "patientId": "4334743129",
+    "doctorId": 7,
+    "diagnosis": "Migraine",
+    "treatment": "Antibiotic course",
+    "date": "2025-09-03"
+  },
+  {
+    "recordId": "MR9577",
+    "patientId": "2014021686",
+    "doctorId": 1,
+    "diagnosis": "Anemia",
+    "treatment": "Inhaler prescription",
+    "date": "2024-12-18"
+  },
+  {
+    "recordId": "MR8696",
+    "patientId": "2014021686",
+    "doctorId": 6,
+    "diagnosis": "Bronchitis",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-08-26"
+  },
+  {
+    "recordId": "MR2450",
+    "patientId": "2014021686",
+    "doctorId": 15,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-05-14"
+  },
+  {
+    "recordId": "MR2548",
+    "patientId": "2525930002",
+    "doctorId": 9,
+    "diagnosis": "Asthma",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-01-22"
+  },
+  {
+    "recordId": "MR8604",
+    "patientId": "2525930002",
+    "doctorId": 15,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2024-09-28"
+  },
+  {
+    "recordId": "MR9456",
+    "patientId": "2525930002",
+    "doctorId": 11,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-07-07"
+  },
+  {
+    "recordId": "MR2590",
+    "patientId": "9385343513",
+    "doctorId": 1,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-06-17"
+  },
+  {
+    "recordId": "MR9486",
+    "patientId": "9385343513",
+    "doctorId": 9,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2025-04-18"
+  },
+  {
+    "recordId": "MR1042",
+    "patientId": "0083453962",
+    "doctorId": 8,
+    "diagnosis": "Flu",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-12-18"
+  },
+  {
+    "recordId": "MR4862",
+    "patientId": "0083453962",
+    "doctorId": 9,
+    "diagnosis": "Hypertension",
+    "treatment": "Inhaler prescription",
+    "date": "2025-08-28"
+  },
+  {
+    "recordId": "MR6074",
+    "patientId": "0083453962",
+    "doctorId": 5,
+    "diagnosis": "Bronchitis",
+    "treatment": "Pain relief medication",
+    "date": "2025-07-26"
+  },
+  {
+    "recordId": "MR4836",
+    "patientId": "5892205592",
+    "doctorId": 2,
+    "diagnosis": "Flu",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-07-24"
+  },
+  {
+    "recordId": "MR1644",
+    "patientId": "5892205592",
+    "doctorId": 8,
+    "diagnosis": "Hypertension",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-06-14"
+  },
+  {
+    "recordId": "MR4344",
+    "patientId": "5892205592",
+    "doctorId": 13,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2024-10-14"
+  },
+  {
+    "recordId": "MR2092",
+    "patientId": "6010203082",
+    "doctorId": 1,
+    "diagnosis": "Diabetes",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-05-11"
+  },
+  {
+    "recordId": "MR6806",
+    "patientId": "6010203082",
+    "doctorId": 4,
+    "diagnosis": "Bronchitis",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-01-31"
+  },
+  {
+    "recordId": "MR6424",
+    "patientId": "9369147934",
+    "doctorId": 12,
+    "diagnosis": "Diabetes",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-10-20"
+  },
+  {
+    "recordId": "MR5371",
+    "patientId": "9369147934",
+    "doctorId": 4,
+    "diagnosis": "Hypertension",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-10-05"
+  },
+  {
+    "recordId": "MR8149",
+    "patientId": "6589057079",
+    "doctorId": 5,
+    "diagnosis": "Diabetes",
+    "treatment": "Inhaler prescription",
+    "date": "2024-01-07"
+  },
+  {
+    "recordId": "MR7298",
+    "patientId": "6589057079",
+    "doctorId": 7,
+    "diagnosis": "Diabetes",
+    "treatment": "Inhaler prescription",
+    "date": "2025-01-01"
+  },
+  {
+    "recordId": "MR4432",
+    "patientId": "2936312639",
+    "doctorId": 13,
+    "diagnosis": "Flu",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-12-25"
+  },
+  {
+    "recordId": "MR6464",
+    "patientId": "2936312639",
+    "doctorId": 4,
+    "diagnosis": "Bronchitis",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-03-09"
+  },
+  {
+    "recordId": "MR5754",
+    "patientId": "2936312639",
+    "doctorId": 4,
+    "diagnosis": "Asthma",
+    "treatment": "Antibiotic course",
+    "date": "2025-04-05"
+  },
+  {
+    "recordId": "MR5976",
+    "patientId": "0700059547",
+    "doctorId": 11,
+    "diagnosis": "Anemia",
+    "treatment": "Inhaler prescription",
+    "date": "2024-09-21"
+  },
+  {
+    "recordId": "MR3460",
+    "patientId": "0700059547",
+    "doctorId": 8,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-06-27"
+  },
+  {
+    "recordId": "MR6867",
+    "patientId": "7113173489",
+    "doctorId": 6,
+    "diagnosis": "Hypertension",
+    "treatment": "Pain relief medication",
+    "date": "2025-05-25"
+  },
+  {
+    "recordId": "MR4748",
+    "patientId": "7113173489",
+    "doctorId": 10,
+    "diagnosis": "Hypertension",
+    "treatment": "Inhaler prescription",
+    "date": "2024-12-23"
+  },
+  {
+    "recordId": "MR8984",
+    "patientId": "7113173489",
+    "doctorId": 15,
+    "diagnosis": "Asthma",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2024-07-13"
+  },
+  {
+    "recordId": "MR2454",
+    "patientId": "2427976946",
+    "doctorId": 7,
+    "diagnosis": "Anemia",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-03-13"
+  },
+  {
+    "recordId": "MR5217",
+    "patientId": "2427976946",
+    "doctorId": 13,
+    "diagnosis": "Asthma",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-04-06"
+  },
+  {
+    "recordId": "MR1339",
+    "patientId": "5974533852",
+    "doctorId": 11,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2024-06-23"
+  },
+  {
+    "recordId": "MR8607",
+    "patientId": "5974533852",
+    "doctorId": 2,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2024-06-08"
+  },
+  {
+    "recordId": "MR8603",
+    "patientId": "5907940034",
+    "doctorId": 13,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-04-22"
+  },
+  {
+    "recordId": "MR8853",
+    "patientId": "5907940034",
+    "doctorId": 6,
+    "diagnosis": "Flu",
+    "treatment": "Antibiotic course",
+    "date": "2025-09-24"
+  },
+  {
+    "recordId": "MR9747",
+    "patientId": "4148515472",
+    "doctorId": 7,
+    "diagnosis": "Flu",
+    "treatment": "Pain relief medication",
+    "date": "2024-05-13"
+  },
+  {
+    "recordId": "MR2837",
+    "patientId": "4148515472",
+    "doctorId": 7,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2025-09-10"
+  },
+  {
+    "recordId": "MR7967",
+    "patientId": "4148515472",
+    "doctorId": 1,
+    "diagnosis": "Migraine",
+    "treatment": "Antibiotic course",
+    "date": "2024-05-15"
+  },
+  {
+    "recordId": "MR1940",
+    "patientId": "2222769337",
+    "doctorId": 1,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2024-01-05"
+  },
+  {
+    "recordId": "MR7974",
+    "patientId": "2222769337",
+    "doctorId": 13,
+    "diagnosis": "Hypertension",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-06-29"
+  },
+  {
+    "recordId": "MR5122",
+    "patientId": "2222769337",
+    "doctorId": 6,
+    "diagnosis": "Flu",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-03-04"
+  },
+  {
+    "recordId": "MR1684",
+    "patientId": "0163065462",
+    "doctorId": 5,
+    "diagnosis": "Hypertension",
+    "treatment": "Inhaler prescription",
+    "date": "2024-03-14"
+  },
+  {
+    "recordId": "MR8906",
+    "patientId": "0163065462",
+    "doctorId": 6,
+    "diagnosis": "Hypertension",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-06-09"
+  },
+  {
+    "recordId": "MR6179",
+    "patientId": "8070302771",
+    "doctorId": 1,
+    "diagnosis": "Migraine",
+    "treatment": "Iron supplements and rest",
+    "date": "2024-05-12"
+  },
+  {
+    "recordId": "MR6986",
+    "patientId": "8070302771",
+    "doctorId": 8,
+    "diagnosis": "Flu",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-01-22"
+  },
+  {
+    "recordId": "MR7319",
+    "patientId": "8070302771",
+    "doctorId": 14,
+    "diagnosis": "Asthma",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-01-24"
+  },
+  {
+    "recordId": "MR6520",
+    "patientId": "4590278510",
+    "doctorId": 12,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2025-04-08"
+  },
+  {
+    "recordId": "MR5841",
+    "patientId": "4590278510",
+    "doctorId": 2,
+    "diagnosis": "Asthma",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-03-06"
+  },
+  {
+    "recordId": "MR2771",
+    "patientId": "9475373012",
+    "doctorId": 9,
+    "diagnosis": "Asthma",
+    "treatment": "Pain relief medication",
+    "date": "2024-10-10"
+  },
+  {
+    "recordId": "MR7619",
+    "patientId": "9475373012",
+    "doctorId": 10,
+    "diagnosis": "Flu",
+    "treatment": "Pain relief medication",
+    "date": "2024-02-25"
+  },
+  {
+    "recordId": "MR4423",
+    "patientId": "9475373012",
+    "doctorId": 9,
+    "diagnosis": "Bronchitis",
+    "treatment": "Antibiotic course",
+    "date": "2024-11-15"
+  },
+  {
+    "recordId": "MR5849",
+    "patientId": "2733019406",
+    "doctorId": 8,
+    "diagnosis": "Bronchitis",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2024-08-02"
+  },
+  {
+    "recordId": "MR7909",
+    "patientId": "2733019406",
+    "doctorId": 12,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2024-10-21"
+  },
+  {
+    "recordId": "MR3966",
+    "patientId": "2733019406",
+    "doctorId": 3,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2024-10-17"
+  },
+  {
+    "recordId": "MR3383",
+    "patientId": "1678031216",
+    "doctorId": 15,
+    "diagnosis": "Asthma",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-04-06"
+  },
+  {
+    "recordId": "MR8274",
+    "patientId": "1678031216",
+    "doctorId": 10,
+    "diagnosis": "Migraine",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-07-04"
+  },
+  {
+    "recordId": "MR2037",
+    "patientId": "5752908701",
+    "doctorId": 10,
+    "diagnosis": "Anemia",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-01-13"
+  },
+  {
+    "recordId": "MR2991",
+    "patientId": "5752908701",
+    "doctorId": 2,
+    "diagnosis": "Hypertension",
+    "treatment": "Pain relief medication",
+    "date": "2025-06-09"
+  },
+  {
+    "recordId": "MR3751",
+    "patientId": "0742718808",
+    "doctorId": 8,
+    "diagnosis": "Diabetes",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2025-07-22"
+  },
+  {
+    "recordId": "MR8399",
+    "patientId": "0742718808",
+    "doctorId": 4,
+    "diagnosis": "Bronchitis",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-03-25"
+  },
+  {
+    "recordId": "MR8705",
+    "patientId": "0742718808",
+    "doctorId": 10,
+    "diagnosis": "Anemia",
+    "treatment": "Pain relief medication",
+    "date": "2025-01-31"
+  },
+  {
+    "recordId": "MR1308",
+    "patientId": "6416503409",
+    "doctorId": 13,
+    "diagnosis": "Migraine",
+    "treatment": "Insulin therapy and diet control",
+    "date": "2025-07-12"
+  },
+  {
+    "recordId": "MR2962",
+    "patientId": "6416503409",
+    "doctorId": 10,
+    "diagnosis": "Diabetes",
+    "treatment": "Antibiotic course",
+    "date": "2024-12-06"
+  },
+  {
+    "recordId": "MR5027",
+    "patientId": "1585276065",
+    "doctorId": 9,
+    "diagnosis": "Anemia",
+    "treatment": "Lifestyle modification and medication",
+    "date": "2025-05-03"
+  },
+  {
+    "recordId": "MR3027",
+    "patientId": "1585276065",
+    "doctorId": 1,
+    "diagnosis": "Hypertension",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-05-09"
+  },
+  {
+    "recordId": "MR7942",
+    "patientId": "1585276065",
+    "doctorId": 2,
+    "diagnosis": "Flu",
+    "treatment": "Antiviral medication and fluids",
+    "date": "2024-08-17"
+  },
+  {
+    "recordId": "MR2111",
+    "patientId": "7096153047",
+    "doctorId": 6,
+    "diagnosis": "Asthma",
+    "treatment": "Inhaler prescription",
+    "date": "2025-05-10"
+  },
+  {
+    "recordId": "MR3264",
+    "patientId": "7096153047",
+    "doctorId": 15,
+    "diagnosis": "Hypertension",
+    "treatment": "Pain relief medication",
+    "date": "2024-12-25"
+  },
+  {
+    "recordId": "MR2924",
+    "patientId": "7096153047",
+    "doctorId": 4,
+    "diagnosis": "Asthma",
+    "treatment": "Iron supplements and rest",
+    "date": "2025-06-21"
+  },
+  {
+    "recordId": "MR6430",
+    "patientId": "0916757552",
+    "doctorId": 5,
+    "diagnosis": "Migraine",
+    "treatment": "Antibiotic course",
+    "date": "2024-12-14"
+  },
+  {
+    "recordId": "MR2493",
+    "patientId": "0916757552",
+    "doctorId": 11,
+    "diagnosis": "Bronchitis",
+    "treatment": "Inhaler prescription",
+    "date": "2024-12-02"
+  },
+  {
+    "recordId": "MR1323",
+    "patientId": "0916757552",
+    "doctorId": 11,
+    "diagnosis": "Migraine",
+    "treatment": "Pain relief medication",
+    "date": "2025-03-26"
+  }
+]
