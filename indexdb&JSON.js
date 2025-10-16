@@ -1,7 +1,7 @@
 /*clinicDB (IndexedDB)
  - No encryption 
  - Fetches JSON from GitHub raw URLs 
- - Stores: admins, doctors, patients, medicines, users, appointments, medicalRecords, notifications
+ - Stores: admins, doctors, patients, medicines, users, appointments, medicalRecord, notifications
  - Exposes functions for import, register, admin-create-doctor, login, query, clear*/
 
 const DB_NAME = 'clinicDB';
@@ -99,8 +99,8 @@ function openClinicDB() {
         appts.createIndex('status','status',{unique:false})
       }
       //medical records
-      if (!db.objectStoreNames.contains('medicalRecords')) {
-        const records = db.createObjectStore('medicalRecords', { keyPath: 'recordId' });
+      if (!db.objectStoreNames.contains('medicalRecord')) {
+        const records = db.createObjectStore('medicalRecord', { keyPath: 'recordId' });
         records.createIndex('patientId', 'patientId', { unique: false });
         records.createIndex('doctorId', 'doctorId', { unique: false });
         records.createIndex("diagnosis","diagnosis",{ unique: false });
@@ -203,8 +203,8 @@ function deleteItem(storeName, key) {
 //read patient medical records by id
 function getRecordsByPatientId(patientId) {
   return new Promise((resolve, reject) => {
-    const tx = db.transaction('medicalRecords', 'readonly');
-    const store = tx.objectStore('medicalRecords');
+    const tx = db.transaction('medicalRecord', 'readonly');
+    const store = tx.objectStore('medicalRecord');
     const index = store.index('patientId');
     const request = index.getAll(patientId);
 
@@ -308,7 +308,7 @@ async function loadAdminDashboard() {
       getAllItems('doctors'),
       getAllItems('patients'),
       getAllItems('appointments'),
-      getAllItems('medicalrecords'),
+      getAllItems('medicalRecord'),
       getNotifications("admin")
     ]);
 
