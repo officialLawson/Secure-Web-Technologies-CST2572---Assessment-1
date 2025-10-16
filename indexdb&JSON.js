@@ -663,8 +663,16 @@ window.clinicDB = {
   addItem,           
   updateItem,         
   deleteItem, 
+  getRecordsByPatientId,
+  getAppointmentsByPatientId,
+  getAppointmentsByDoctorId,
+  getNotifications,
+  loadDoctorDashboard,
+  loadPatientDashboard,
+  loadAdminDashboard,
   closeDB,
   // caches for debugging
   _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
   JSON_URLS
 };
+
