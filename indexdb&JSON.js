@@ -11,16 +11,15 @@ let db = null;
 // Optional encryption placeholder (for future use)
 const ENCRYPTION_KEY = 'myEncryptionKey'; 
 
-// Placeholder raw URLs 
 const JSON_URLS = {
-  admins:  'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/admin.json',
-  doctors: 'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/doctors.json',
-  patients:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/patients.json',
-  medicines:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/medicines.json',
-  users:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/users',
-  medicalRecord: 'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/medicalRecord',
-  appointment: 'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/appointment',
-  notification:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/notif'
+  admins:  'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/admin.json',
+  doctors: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/doctors.json',
+  patients:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/patients.json',
+  medicines:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/medicines.json',
+  users:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/users.json',
+  medicalRecord: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/medicalrecord.json',
+  appointment: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/appointment.json',
+  notification:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/notif.json'
 };
 
 // Local caches (populated by fetch)
@@ -676,3 +675,4 @@ window.clinicDB = {
   _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
   JSON_URLS
 };
+
