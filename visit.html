@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visit Form</title>
+    <!-- The title shown on the browser tab -->
+  </head>
+  <body>
+    <h2>Patient Visit Form</h2>
+    <!-- Heading of the page -->
+
+    <!-- ========================== -->
+    <!-- PATIENT VISIT FORM STARTS -->
+    <!-- ========================== -->
+    <form id="visitForm">
+      <!-- The main form with an ID for JavaScript access -->
+
+      <!-- ========================== -->
+      <!-- PATIENT INFORMATION -->
+      <!-- ========================== -->
+      <fieldset>
+        <!-- Groups related fields together -->
+        <legend>Patient Information</legend>
+        <!-- Title for this group -->
+
+        <!-- Each label describes the input that follows -->
+        <label>Patient ID:</label>
+        <input type="text" id="patientId" required /><br />
+        <!-- 'required' means cannot be left blank -->
+
+        <label>Patient Name:</label>
+        <input type="text" id="patientName" required /><br />
+
+        <label>Age:</label>
+        <input type="number" id="patientAge" required /><br />
+
+        <label>Gender:</label>
+        <select id="patientGender">
+          <!-- Dropdown for gender selection -->
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </fieldset>
+
+      <!-- ========================== -->
+      <!-- VISIT DETAILS -->
+      <!-- ========================== -->
+      <fieldset>
+        <legend>Visit Details</legend>
+        <!-- Section title -->
+
+        <label>Date:</label>
+        <input type="date" id="visitDate" required /><br />
+        <!-- Date picker input -->
+
+        <label>Reason for Visit:</label>
+        <input type="text" id="visitReason" required /><br />
+
+        <label>Diagnosis:</label>
+        <input type="text" id="diagnosis" /><br />
+        <!-- Optional field for diagnosis -->
+      </fieldset>
+
+      <!-- ========================== -->
+      <!-- PRESCRIPTION DETAILS -->
+      <!-- ========================== -->
+      <fieldset>
+        <legend>Prescription</legend>
+
+        <label>Medicine:</label>
+        <select id="medicineSelect">
+          <!-- Dropdown for medicines (populated dynamically from IndexedDB) -->
+          <option value="">-- Select Medicine --</option></select
+        ><br />
+
+        <label>Dosage Instructions:</label>
+        <input type="text" id="dosageInstructions" />
+        <!-- Field for dosage details -->
+      </fieldset>
+
+      <!-- ========================== -->
+      <!-- DOCTOR INFORMATION -->
+      <!-- ========================== -->
+      <fieldset>
+        <legend>Doctor Info</legend>
+
+        <label>Doctor Name:</label>
+        <input type="text" id="doctorName" required /><br />
+
+        <label>Follow-up Date:</label>
+        <input type="date" id="followUpDate" />
+
+        <label>Doctors Remark:</label>
+        <input type="text" id="doctorRemark" required /><br />
+      </fieldset>
+
+      <!-- Submit button to send the form -->
+      <button type="submit">Submit Visit</button>
+    </form>
+
+    <!-- ========================== -->
+    <!-- JAVASCRIPT SECTION -->
+    <!-- ========================== -->
+    <script>
+      let db; // This variable will hold the reference to our IndexedDB database
+
+      // Open (or create) the IndexedDB database called "ClinicDB"
+      const request = indexedDB.open("ClinicDB", 1);
+
+      // If the database opens successfully
+      request.onsuccess = (e) => {
+        db = e.target.result; // Save the database connection to 'db'
+        loadMedicines(); // Load medicines from the database into the dropdown
+      };
+
+      // If there is an error opening the database
+      request.onerror = (e) => {
+        console.error("DB Error:", e.target.error); // Log the error in the console
+      };
+
+      // Function to load all available medicines into the dropdown
+      function loadMedicines() {
+        // Create a read-only transaction on the "medicines" store
+        const transaction = db.transaction("medicines", "readonly");
+
+        // Get the "medicines" object store
+        const store = transaction.objectStore("medicines");
+
+        // Request all data (all medicines) from that store
+        const req = store.getAll();
+
+        // When the request succeeds
+        req.onsuccess = (e) => {
+          const medicines = e.target.result; // Array of medicine objects
+          const dropdown = document.getElementById("medicineSelect"); // Get the dropdown menu
+
+          // Clear and reset dropdown options
+          dropdown.innerHTML = `<option value="">-- Select Medicine --</option>`;
+
+          // Loop through each medicine and add it to the dropdown
+          medicines.forEach((med) => {
+            const option = document.createElement("option"); // Create new option tag
+            option.value = med.name; // Set option value (for storing)
+            option.textContent = med.name; // Display name in the dropdown
+            dropdown.appendChild(option); // Add option to the dropdown menu
+          });
+        };
+      }
+
+      // Event handler for form submission
+      document.getElementById("visitForm").onsubmit = (e) => {
+        e.preventDefault(); // Stop the page from reloading after form submission
+
+        // Collect all input values into an object
+        const visitData = {
+          patientId: document.getElementById("patientId").value,
+          patientName: document.getElementById("patientName").value,
+          age: document.getElementById("patientAge").value,
+          gender: document.getElementById("patientGender").value,
+          visitDate: document.getElementById("visitDate").value,
+          reason: document.getElementById("visitReason").value,
+          diagnosis: document.getElementById("diagnosis").value,
+          medicine: document.getElementById("medicineSelect").value,
+          dosageInstructions:
+            document.getElementById("dosageInstructions").value,
+          doctorName: document.getElementById("doctorName").value,
+          followUpDate: document.getElementById("followUpDate").value,
+          doctorRemark: document.getElementById("doctorRemark").value,
+        };
+
+        // Log the collected visit data in the browser console
+        console.log("Visit Data Submitted:", visitData);
+
+        // Notify the user that the visit was recorded
+        alert("Visit recorded successfully (check console for data)");
+
+        // Reset the form fields to blank
+        e.target.reset();
+      };
+    </script>
+  </body>
+</html>
