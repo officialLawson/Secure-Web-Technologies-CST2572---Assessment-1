@@ -14,7 +14,7 @@
       min-height: 100vh;
     }
 
-    /* Sidebar */
+    //Sidebar 
     aside {
       width: 240px;
       background: #005a8e;
@@ -65,7 +65,7 @@
       cursor: pointer;
     }
 
-    /* Main layout */
+    //Main layout 
     main {
       flex: 1;
       padding: 30px;
@@ -85,7 +85,7 @@
       color: #005a8e;
     }
 
-    /* Collapsible containers */
+    //Collapsible containers 
     section.container {
       background: white;
       border-radius: 10px;
@@ -123,7 +123,7 @@
       padding: 15px 20px;
     }
 
-    /* Search bar */
+    //Search bar
     .search-bar {
       margin-bottom: 10px;
       text-align: right;
@@ -136,7 +136,7 @@
       border: 1px solid #ccc;
     }
 
-    /* Tables */
+    //Tables
     table {
       width: 100%;
       border-collapse: collapse;
@@ -175,7 +175,7 @@
       background: #e04343;
     }
 
-    /* Status labels */
+    // Status labels 
     .status {
       padding: 5px 10px;
       border-radius: 5px;
@@ -197,7 +197,7 @@
       transform: rotate(270deg);
     }
 
-    /* ===== Modal styling ===== */
+    //  Modal styling 
     .modal {
       display: none;
       position: fixed;
@@ -446,9 +446,8 @@
   let currentPatient = null;
   let allDoctors = [];
 
-  /* ===============================
-    🌟 Reusable Confirmation Modal
-  =================================*/
+  // Reusable Confirmation Modal
+ 
   function showConfirmationModal({ title = "Confirm Action", message = "", onConfirm, onCancel }) {
     const modal = document.getElementById("confirmModal");
     const titleEl = document.querySelector("#confirmModal h3");
@@ -478,9 +477,8 @@
     };
   }
 
-  /* ===============================
-    🧠 Dashboard Initialization
-  =================================*/
+  // Dashboard Initialization
+ 
   async function initDashboard() {
     await clinicDB.openClinicDB();
     const user = JSON.parse(sessionStorage.getItem("loggedUser"));
@@ -508,9 +506,8 @@
     document.getElementById("searchHistory").addEventListener("input", loadHistory);
   }
 
-  /* ===============================
-    📅 Appointments Management
-  =================================*/
+  // Appointments Management
+
   async function loadAppointments() {
     const appts = await clinicDB.getAppointmentsByPatientId(currentPatient);
     const filter = document.getElementById("searchAppointments").value.toLowerCase();
@@ -543,7 +540,7 @@
     });
   }
 
-  /* 🗑 Cancel appointment using modal */
+  // Cancel appointment using modal 
   async function cancelAppointment(id) {
     const appt = await clinicDB.getItem("appointments", id);
     if (!appt) return;
@@ -565,9 +562,8 @@
     });
   }
 
-  /* ===============================
-    📜 Records / 💊 Medicines / 📖 History
-  =================================*/
+  //📜 Records / 💊 Medicines / 📖 History
+ 
   async function loadRecords() {
     const recs = await clinicDB.getRecordsByPatientId(currentPatient);
     const filter = document.getElementById("searchRecords").value.toLowerCase();
@@ -653,9 +649,8 @@
     });
   }
 
-  /* ===============================
-    🩺 Book Appointment Section
-  =================================*/
+  // Book Appointment Section
+
   async function initBookAppointmentForm() {
     const doctorSelect = document.getElementById("bookDoctorSelect");
     const dateInput = document.getElementById("bookDate");
@@ -763,9 +758,8 @@
     };
   }
 
-  /* ===============================
-    🧩 Miscellaneous
-  =================================*/
+  // Miscellaneous
+
   function toggleSection(header) {
     header.parentElement.classList.toggle("active");
   }
@@ -783,4 +777,5 @@
 
 </body>
 </html>
+
 
