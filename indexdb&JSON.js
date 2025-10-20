@@ -9,7 +9,7 @@ const DB_VERSION = 1;
 let db = null;
 
 //  encryption 
-// ====== AES Encryption/Decryption using Web Crypto API ====== //
+// AES Encryption/Decryption using Web Crypto API 
 const ENCRYPTION_KEY = 'myEncryptionKey'; // any length string, now auto-hashed
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -45,9 +45,9 @@ async function encryptData(plainText) {
   return { iv: Array.from(iv), data: Array.from(new Uint8Array(encrypted)) };
 }
 
-/**
- * Decrypts AES-GCM encrypted payloads created by encryptData().
- * Expects an object: { iv: [...], data: [...] }
+/*
+  Decrypts AES-GCM encrypted payloads created by encryptData().
+  Expects an object: { iv: [...], data: [...] }
  */
 async function decryptData(encryptedObj) {
   if (!encryptedObj || !encryptedObj.iv || !encryptedObj.data) return null;
@@ -65,6 +65,59 @@ async function decryptData(encryptedObj) {
   }
 }
 
+//  Encryption Helpers for Patient & Doctor Info 
+
+async function encryptPatientInfo(p) {
+  const sensitive = {
+    Address: p.Address,
+    Email: p.Email,
+    Telephone: p.Telephone,
+    DOB: p.DOB
+  };
+  p.payload = await encryptData(JSON.stringify(sensitive));
+  delete p.Address;
+  delete p.Email;
+  delete p.Telephone;
+  delete p.DOB;
+  return p;
+}
+
+async function decryptPatientInfo(p) {
+  if (p.payload) {
+    try {
+      const decrypted = await decryptData(p.payload);
+      Object.assign(p, JSON.parse(decrypted));
+    } catch (err) {
+      console.warn("Failed to decrypt patient info:", err);
+    }
+  }
+  return p;
+}
+
+async function encryptDoctorInfo(d) {
+  const sensitive = {
+    Email: d.Email,
+    Address: d.Address,
+    Telephone: d.Telephone
+  };
+  d.payload = await encryptData(JSON.stringify(sensitive));
+  delete d.Email;
+  delete d.Address;
+  delete d.Telephone;
+  return d;
+}
+
+async function decryptDoctorInfo(d) {
+  if (d.payload) {
+    try {
+      const decrypted = await decryptData(d.payload);
+      Object.assign(d, JSON.parse(decrypted));
+    } catch (err) {
+      console.warn("Failed to decrypt doctor info:", err);
+    }
+  }
+  return d;
+}
 
 
 //  raw URLs 
@@ -215,15 +268,26 @@ function updateItem( storeName, item) {
   });
 }
 
-function getItem(storeName, key) {
+async function getItem(storeName, key) {
+  if (!db) throw new Error("DB not opened");
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readonly');
+    const tx = db.transaction(storeName, "readonly");
     const store = tx.objectStore(storeName);
     const req = store.get(key);
-    req.onsuccess = (ev) => resolve(ev.target.result);
+    req.onsuccess = async (e) => {
+      let result = e.target.result;
+      if (!result) return resolve(null);
+
+      // Auto-decrypt for patients and doctors
+      if (storeName === "patients") result = await decryptPatientInfo(result);
+      else if (storeName === "doctors") result = await decryptDoctorInfo(result);
+
+      resolve(result);
+    };
     req.onerror = () => reject(req.error);
   });
 }
+
 
 function getAllItems(storeName) {
   return new Promise((resolve, reject) => {
@@ -508,12 +572,14 @@ async function importFetchedDataToDB() {
   }
 
   // doctors: expects array with id, first_name, last_name, email, Address, Telephone
+
   if (Array.isArray(doctor_data)) {
     for (const d of doctor_data) {
       try {
-        if (d.id === undefined || d.id === null) continue;
-        await addItem('doctors', d);
-        results.doctors++;
+        if (!d.id) continue;
+        const encryptedDoctor = await encryptDoctorInfo(d);
+        await addItem('doctors', encryptedDoctor);
+        results.doctor++;
       } catch (err) {
         console.warn('Skipping doctor (exists?):', d.id, err);
       }
@@ -525,8 +591,9 @@ async function importFetchedDataToDB() {
     for (const p of patient_data) {
       try {
         if (!p.NHS) continue;
-        await addItem('patients', p); // key is p.NHS
-        results.patients++;
+        const encryptedPatient = await encryptPatientInfo(p);
+        await addItem('patients', encryptedPatient);
+        results.patient++;
       } catch (err) {
         console.warn('Skipping patient (exists?):', p.NHS, err);
       }
