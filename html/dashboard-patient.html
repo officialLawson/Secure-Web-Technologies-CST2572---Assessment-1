@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar" aria-label="Primary">
+        <div class="logo">
+            <img src="../images/logo.png" alt="MedTrack logo">
+        </div>
+
+        <ul class="nav">
+            <li><a href="#" class="active">
+                <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V8.99998C3.25 10.2426 4.25736 11.25 5.5 11.25H9C10.2426 11.25 11.25 10.2426 11.25 8.99998V5.5C11.25 4.25736 10.2426 3.25 9 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H9C9.41421 4.75 9.75 5.08579 9.75 5.5V8.99998C9.75 9.41419 9.41421 9.74998 9 9.74998H5.5C5.08579 9.74998 4.75 9.41419 4.75 8.99998V5.5ZM5.5 12.75C4.25736 12.75 3.25 13.7574 3.25 15V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H9C10.2426 20.75 11.25 19.7427 11.25 18.5V15C11.25 13.7574 10.2426 12.75 9 12.75H5.5ZM4.75 15C4.75 14.5858 5.08579 14.25 5.5 14.25H9C9.41421 14.25 9.75 14.5858 9.75 15V18.5C9.75 18.9142 9.41421 19.25 9 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V15ZM12.75 5.5C12.75 4.25736 13.7574 3.25 15 3.25H18.5C19.7426 3.25 20.75 4.25736 20.75 5.5V8.99998C20.75 10.2426 19.7426 11.25 18.5 11.25H15C13.7574 11.25 12.75 10.2426 12.75 8.99998V5.5ZM15 4.75C14.5858 4.75 14.25 5.08579 14.25 5.5V8.99998C14.25 9.41419 14.5858 9.74998 15 9.74998H18.5C18.9142 9.74998 19.25 9.41419 19.25 8.99998V5.5C19.25 5.08579 18.9142 4.75 18.5 4.75H15ZM15 12.75C13.7574 12.75 12.75 13.7574 12.75 15V18.5C12.75 19.7426 13.7574 20.75 15 20.75H18.5C19.7426 20.75 20.75 19.7427 20.75 18.5V15C20.75 13.7574 19.7426 12.75 18.5 12.75H15ZM14.25 15C14.25 14.5858 14.5858 14.25 15 14.25H18.5C18.9142 14.25 19.25 14.5858 19.25 15V18.5C19.25 18.9142 18.9142 19.25 18.5 19.25H15C14.5858 19.25 14.25 18.9142 14.25 18.5V15Z"></path>
+                </svg>
+                <span class="nav-text">Dashboard</span>
+            </a></li>
+
+            <li><a href="appointments-doctor.html">
+                <svg class="dashboard-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="nav-text">Appointments</span>
+            </a></li>
+
+            <li><a href="users.html">
+                <svg class="dashboard-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <span class="nav-text">Patients</span>
+            </a></li>
+
+            <li><a href="medicine.html">
+                <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"></path>
+                </svg>
+                <span class="nav-text">Medicines</span>
+            </a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="mainContent" class="main-content" role="main">
+        <header class="header">
+            <button id="mobile-toggle" class="toggle-btn" aria-label="Open menu">☰</button>
+            <div class="left-controls">
+                <button id="collapse-toggle" class="sidebar-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
+                    <svg class="sidebar-icon" width="16" height="12" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.583252 1C0.583252 0.585788 0.919038 0.25 1.33325 0.25H14.6666C15.0808 0.25 15.4166 0.585786 15.4166 1C15.4166 1.41421 15.0808 1.75 14.6666 1.75L1.33325 1.75C0.919038 1.75 0.583252 1.41422 0.583252 1ZM0.583252 11C0.583252 10.5858 0.919038 10.25 1.33325 10.25L14.6666 10.25C15.0808 10.25 15.4166 10.5858 15.4166 11C15.4166 11.4142 15.0808 11.75 14.6666 11.75L1.33325 11.75C0.919038 11.75 0.583252 11.4142 0.583252 11ZM1.33325 5.25C0.919038 5.25 0.583252 5.58579 0.583252 6C0.583252 6.41421 0.919038 6.75 1.33325 6.75L7.99992 6.75C8.41413 6.75 8.74992 6.41421 8.74992 6C8.74992 5.58579 8.41413 5.25 7.99992 5.25L1.33325 5.25Z" fill=""></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="right-icons">
+                <button class="notif-btn" aria-label="Notifications">
+                    <svg class="sidebar-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M10.75 2.29248C10.75 1.87827 10.4143 1.54248 10 1.54248C9.58583 1.54248 9.25004 1.87827 9.25004 2.29248V2.83613C6.08266 3.20733 3.62504 5.9004 3.62504 9.16748V14.4591H3.33337C2.91916 14.4591 2.58337 14.7949 2.58337 15.2091C2.58337 15.6234 2.91916 15.9591 3.33337 15.9591H4.37504H15.625H16.6667C17.0809 15.9591 17.4167 15.6234 17.4167 15.2091C17.4167 14.7949 17.0809 14.4591 16.6667 14.4591H16.375V9.16748C16.375 5.9004 13.9174 3.20733 10.75 2.83613V2.29248ZM14.875 14.4591V9.16748C14.875 6.47509 12.6924 4.29248 10 4.29248C7.30765 4.29248 5.12504 6.47509 5.12504 9.16748V14.4591H14.875ZM8.00004 17.7085C8.00004 18.1228 8.33583 18.4585 8.75004 18.4585H11.25C11.6643 18.4585 12 18.1228 12 17.7085C12 17.2943 11.6643 16.9585 11.25 16.9585H8.75004C8.33583 16.9585 8.00004 17.2943 8.00004 17.7085Z" fill=""></path>
+                    </svg>
+                </button>
+                <button class="user-btn" aria-label="User menu">
+                    <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <section class="content">
+            <h2 class="content-title">Dashboard</h2>
+
+            <div class="cards-container">
+                <!-- Total Users -->
+                <div class="card">
+                    <h3>Total Users</h3>
+                    <p class="value">24.7K</p>
+                    <div class="stats">
+                    <span class="positive">+20%</span>
+                    <span class="compare">Vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Total Patients -->
+                <div class="card">
+                    <h3>Total Patients</h3>
+                    <p class="value">55.9K</p>
+                    <div class="stats">
+                    <span class="positive">+4%</span>
+                    <span class="compare">Vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Daily Appointment Rate -->
+                <div class="card">
+                    <h3>Daily Appointment Rate</h3>
+                    <p class="value">54%</p>
+                    <div class="stats">
+                    <span class="negative">-1.59%</span>
+                    <span class="compare">Vs last month</span>
+                    </div>
+                </div>
+
+                <!-- Visit Duration -->
+                <div class="card">
+                    <h3>Visit Duration</h3>
+                    <p class="value">2m 56s</p>
+                    <div class="stats">
+                    <span class="positive">+7%</span>
+                    <span class="compare">Vs last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional content can go here -->
+            <div class="second-row-container">
+                <div class="graph-card">
+                    <h3>Graph/Table</h3>
+                    <div class="graph-placeholder">[Graph Placeholder]</div>
+                </div>
+                <div class="activity-log-card">
+                    <h3>Recent Activity</h3>
+                    <ul class="activity-log">
+                        <li>User JohnDoe signed up<span class="timestamp"> - 2 hours ago</span></li>
+                        <li>New appointment booked by JaneSmith<span class="timestamp"> - 1 day ago</span></li>
+                        <li>System maintenance completed<span class="timestamp"> - 3 days ago</span></li>
+                        <li>User MikeBrown updated profile<span class="timestamp"> - 1 week ago</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+        </section>        
+
+        <footer class="footer">
+            <p>&copy; 2024 Care n Cure. All rights reserved.</p>
+        </footer>
+    </main>
+</div>
+
+
+
+<script>
+    // Mobile sidebar slide-in/out
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    mobileToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('active'); // for small screens only (CSS handles transform)
+    });
+
+    // Collapse/expand for desktop
+    const collapseToggle = document.getElementById('collapse-toggle');
+    const mainContent = document.getElementById('mainContent');
+
+    collapseToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        sidebar.style.transition = 'width 0.5s ease';
+        mainContent.style.transition = 'margin-left 0.5s ease';
+
+        // optional: move focus back to collapse button for accessibility
+        collapseToggle.focus();
+    });
+
+    // Close mobile sidebar when clicking outside (nice UX)
+    document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768) {
+            if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target) && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        }
+    });
+
+    // ensure layout responds on resize (adjust main margin)
+    const adjustMainMargin = () => {
+        if (sidebar.classList.contains('collapsed')) {
+            mainContent.style.marginLeft = '80px';
+        } else if (window.innerWidth <= 768) {
+            mainContent.style.marginLeft = '0';
+        } else {
+            mainContent.style.marginLeft = '250px';
+        }
+    };
+
+    // Run on load and whenever class toggles
+    new MutationObserver(adjustMainMargin).observe(sidebar, { attributes: true, attributeFilter: ['class'] });
+    window.addEventListener('resize', adjustMainMargin);
+    adjustMainMargin();
+
+    /*clinicDB (IndexedDB)
+        - No encryption 
+        - Fetches JSON from GitHub raw URLs (placeholders)
+        - Stores: admins, doctors, patients, medicines, users, appointments, medicalRecords, notifications
+        - Exposes functions for import, register, admin-create-doctor, login, query, clear*/
+
+        const DB_NAME = 'clinicDB';
+        const DB_VERSION = 1;
+        let db = null;
+
+        // Optional encryption placeholder (for future use)
+        const ENCRYPTION_KEY = 'myEncryptionKey'; 
+
+        // Placeholder raw URLs 
+        const JSON_URLS = {
+        admins:  'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/admin.json',
+        doctors: 'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/doctors.json',
+        patients:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/patients.json',
+        medicines:'https://raw.githubusercontent.com/Zari-16/clinic-data/refs/heads/main/medicines.json',
+        users:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/users.json',
+        medicalRecord: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/medicalrecord.json',
+        appointment: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/appointment.json',
+        notification:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/notif.json'
+        };
+
+        // Local caches (populated by fetch)
+        let admin_data = null;
+        let doctor_data = null;
+        let patient_data = null;
+        let medicine_data = null;
+        let users_data = null;
+        let medicalRecord_data = null;
+        let appointment_data = null;
+        let notification_data = null;
+
+        //Open/Create db
+        function openClinicDB() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+            req.onupgradeneeded = (e) => {
+            const dbx = e.target.result;
+
+            // users store (login validation)
+            if (!dbx.objectStoreNames.contains('users')) {
+                const users = dbx.createObjectStore('users', { keyPath: 'linkedId' });
+                users.createIndex('username', 'username', { unique: true });
+                users.createIndex('password', 'password', { unique: true });
+                users.createIndex('role', 'role', { unique: false });
+            }
+
+            // admins 
+            if (!dbx.objectStoreNames.contains('admins')) {
+                const admins = dbx.createObjectStore('admins', { keyPath: 'username' });
+                admins.createIndex('username', 'username', { unique: true });
+                admins.createIndex('password','password',{unique: false})
+            }
+
+            // doctors
+            if (!dbx.objectStoreNames.contains('doctors')) { 
+                const doctors = dbx.createObjectStore('doctors', { keyPath: 'id' });
+                doctors.createIndex('first_name', 'first_name', { unique: false });
+                doctors.createIndex('last_name', 'last_name', { unique: false });
+                doctors.createIndex('email', 'email', { unique: false });
+                doctors.createIndex('gender','gender',{unique: false});
+                doctors.createIndex('address','address',{unique: false});
+                doctors.createIndex('telephone','telephone',{unique: false});
+            }
+
+            // patients 
+            // JSON contains numeric "id" and string "NHS" —  key =NHS for validation
+            if (!dbx.objectStoreNames.contains('patients')) {
+                const patients = dbx.createObjectStore('patients', { keyPath: 'NHS' });
+                patients.createIndex('id', 'id', { unique: false });
+                patients.createIndex('Title','title',{unique: false});
+                patients.createIndex('First', 'First', { unique: false });
+                patients.createIndex('Last', 'Last', { unique: false });
+                patients.createIndex('DOB','DOB',{unique: false});
+                patients.createIndex('Gender','Gender',{unique: false});
+                patients.createIndex('Address','Address',{unique: false});
+                patients.createIndex('Email', 'Email', { unique: false });
+                patients.createIndex('Telephone','Telephone',{unique: false});
+            }
+        
+            // medicines 
+            if (!dbx.objectStoreNames.contains('medicines')) {
+                const medicines = dbx.createObjectStore('medicines', { keyPath: 'id' });
+                medicines.createIndex('drugs','drugs',{unique: false});
+            }
+
+            // appointments
+            if (!dbx.objectStoreNames.contains('appointments')) {
+                const appts = dbx.createObjectStore('appointments', { keyPath: 'appointmentId'});
+                appts.createIndex('patientId', 'patientId', { unique: false });
+                appts.createIndex('doctorId', 'doctorId', { unique: false });
+                appts.createIndex('date','date' ,{ unique: false });
+                appts.createIndex('time','time', { unique: false });
+                appts.createIndex('reason','reason', { unique: false });
+                appts.createIndex('status','status',{unique:false})
+            }
+            //medical records
+            if (!dbx.objectStoreNames.contains('medicalRecords')) {
+                const records = dbx.createObjectStore('medicalRecords', { keyPath: 'recordId', autoIncrement: true });
+                records.createIndex('patientNHS', 'patientNHS', { unique: false });
+                records.createIndex('doctorId', 'doctorId', { unique: false });
+                records.createIndex("diagnosis","diagnosis",{ unique: false });
+                records.createIndex("treatment","treatment",{ unique: false });
+                records.createIndex("date", "date", { unique: false })
+            }
+            //notif
+            if (!dbx.objectStoreNames.contains('notifications')) {
+                const notifs = dbx.createObjectStore('notifications', { keyPath: 'notifId', autoIncrement: true });
+                notifs.createIndex('recipientRole', 'recipientRole', { unique: false });
+                notifs.createIndex('recipientId', 'recipientId', { unique: false });
+                notifs.createIndex('message', 'message', { unique: false });
+                notifs.createIndex('date', 'date', { unique: false });
+                notifs.createIndex('read', 'read', { unique: false });
+                
+            }
+
+            console.log('[onupgradeneeded] clinicDB stores created/updated');
+            };
+
+            req.onsuccess = (e) => {
+            db = e.target.result;
+            db.onversionchange = () => {
+                db.close();
+                alert('Database is outdated — reload the page.');
+            };
+            console.log('clinicDB opened successfully');
+            resolve(db);
+            };
+
+            req.onerror = (e) => {
+            console.error('Error opening clinicDB:', req.error);
+            reject(req.error);
+            };
+        });
+        }
+
+        //  CRUD helpers
+        function addItem(storeName, item) {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readwrite');
+            const store = tx.objectStore(storeName);
+            const req = store.add(item);
+            req.onsuccess = (ev) => resolve(ev.target.result);
+            req.onerror = () => reject(req.error);
+        });
+        }
+        //update item
+        function updateItem( storeName, item) {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, "readwrite");
+            const store = tx.objectStore(storeName);
+            const req = store.put(item);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+        }
+
+        function getItem(storeName, key) {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readonly');
+            const store = tx.objectStore(storeName);
+            const req = store.get(key);
+            req.onsuccess = (ev) => resolve(ev.target.result);
+            req.onerror = () => reject(req.error);
+        });
+        }
+
+        function getAllItems(storeName) {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readonly');
+            const store = tx.objectStore(storeName);
+            const req = store.getAll();
+            req.onsuccess = (ev) => resolve(ev.target.result);
+            req.onerror = () => reject(req.error);
+        });
+        }
+
+        function getAllByIndex(storeName, indexName, value) {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readonly');
+            const store = tx.objectStore(storeName);
+            const idx = store.index(indexName);
+            const req = idx.getAll(value);
+            req.onsuccess = (ev) => resolve(ev.target.result);
+            req.onerror = () => reject(req.error);
+        });
+        }
+
+        function deleteItem(storeName, key) {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readwrite');
+            const store = tx.objectStore(storeName);
+            const req = store.delete(key);
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+        });
+        }
+
+        // Fetch JSONs (from GitHub raw) 
+        async function fetchJson(url) {
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`Fetch failed for ${url}: ${resp.status}`);
+        return resp.json();
+        }
+
+        /* Fetch all JSON files and cache locally (admin_data, doctor_data, patient_data, medicine_data) */
+        async function fetchAllJsons(urls = JSON_URLS) {
+        // parallel fetch
+        const [admins, doctors, patients, medicines,users,medicalRecord,appointment,notification] = await Promise.all([
+            fetchJson(urls.admins).catch(err => { console.error('admins fetch error', err); return []; }),
+            fetchJson(urls.doctors).catch(err => { console.error('doctors fetch error', err); return []; }),
+            fetchJson(urls.patients).catch(err => { console.error('patients fetch error', err); return []; }),
+            fetchJson(urls.medicines).catch(err => { console.error('medicines fetch error', err); return []; }),
+            fetchJson(urls.users).catch(err => {console.error('users fetch error',err); return[];}),
+            fetchJson(urls.medicalRecord).catch(err => {console.error('medicale Record fetch error',err); return[]}),
+            fetchJson(urls.appointment).catch(err => {console.error('appointment fetch error',err); return []}),
+            fetchJson(urls.notification).catch(err => {console.error('notif fetch error', err); return[]})
+
+        ]);
+
+        admin_data = admins;
+        doctor_data = doctors;
+        patient_data = patients;
+        medicine_data = medicines;
+        users_data =users;
+        medicalRecord_data=medicalRecord;
+        appointment_data=appointment;
+        notification_data=notification;
+
+        console.log('All JSONs fetched (cached locally)');
+        return { admins, doctors, patients, medicines };
+        }
+
+        //Import fetched JSON into IndexedDB 
+        async function importFetchedDataToDB() {
+        if (!db) throw new Error('DB not opened. Call openClinicDB() first.');
+
+        const results = { admins:0, doctors:0, patients:0, medicines:0 };
+
+        // admins: expects array of { username, password, ... }
+        if (Array.isArray(admin_data)) {
+            for (const a of admin_data) {
+            try {
+                if (!a.username) continue;
+                // store as-is; keyPath is username in admins store
+                await addItem('admins', a);
+                results.admins++;
+            } catch (err) {
+                console.warn('Skipping admin (exists?):', a.username, err);
+            }
+            }
+        }
+
+        // doctors: expects array with id, first_name, last_name, email, Address, Telephone
+        if (Array.isArray(doctor_data)) {
+            for (const d of doctor_data) {
+            try {
+                if (d.id === undefined || d.id === null) continue;
+                await addItem('doctors', d);
+                results.doctors++;
+            } catch (err) {
+                console.warn('Skipping doctor (exists?):', d.id, err);
+            }
+            }
+        }
+
+        // patients: expects array with id and NHS (we key on NHS)
+        if (Array.isArray(patient_data)) {
+            for (const p of patient_data) {
+            try {
+                if (!p.NHS) continue;
+                await addItem('patients', p); // key is p.NHS
+                results.patients++;
+            } catch (err) {
+                console.warn('Skipping patient (exists?):', p.NHS, err);
+            }
+            }
+        }
+        //users
+        if (Array.isArray(users_data)) {
+        for (const u of users_data) {
+            try {
+            if (!u.linkedId) continue; // <-- check linkedId instead
+            await addItem('users', u);
+            results.users++;
+            } catch (err) {
+            console.warn('skipping user (exists?):', u.linkedId, err);
+            }
+        }
+        }
+        //medical record- mr.recordID
+        if (Array.isArray(medicalRecord_data)){
+            for (const r of medicalRecord_data){
+            try {
+                if (!r.recordId) continue;
+                await addItem('record', r);
+                results.medicalRecord++;
+            }catch(err){
+                console.warn('skippping medical record (exists?):', r.recordId, err);
+            }
+            }
+        }
+
+        //notif
+        if (Array.isArray(notification_data)){
+            for (const n of notification_data){
+            try {
+                if (!n.notifId) continue;
+                await addItem('notification', n);
+                results.notification++;
+            }catch(err){
+                console.warn('skipping notification (exist?):',n.notifId, err);
+            }
+            }
+        }
+        //appointment
+        if (Array.isArray(appointment_data)){
+            for (const a of appointment_data){
+            try {
+                if (!a.appointmentId) continue;
+                await addItem('appointments',a);
+                results.appointments++;
+            }catch(err){
+                console.warn('skipping appointment (exist?):', a.appointmentId)
+            }
+
+            }
+        }
+
+        // medicines: expects array with id and Drug
+        if (Array.isArray(medicine_data)) {
+            for (const m of medicine_data) {
+            try {
+                if (m.id === undefined || m.id === null) continue;
+                await addItem('medicines', m);
+                results.medicines++;
+            } catch (err) {
+                console.warn('Skipping medicine (exists?):', m.id, err);
+            }
+            }
+        }
+
+        console.log('Import completed', results);
+        return results;
+        }
+
+
+        //Convenience: fetch all JSONs then import them into DB 
+        async function fetchAndImportAll(urls = JSON_URLS) {
+        if (!db) throw new Error('DB not opened');
+        await fetchAllJsons(urls);
+        return importFetchedDataToDB();
+        }
+
+        //Registration / Creation / Login --> to be updated***********************
+
+        /*registerPatientAccount(email, password, patientNHS)
+        - validates that patientNHS exists in patients store
+        - ensures email is unique in users store
+        - creates a user with role 'patient' and linkedId = patientNHS*/
+
+        async function registerPatientAccount(email, password, patientNHS) {
+        if (!db) throw new Error('DB not opened');
+        if (!email || !password || !patientNHS) throw new Error('email, password and patientNHS are required');
+
+        // validate patient exists
+        const p = await getItem('patients', patientNHS);
+        if (!p) throw new Error(`No patient record found for NHS: ${patientNHS}`);
+
+        // ensure email unique in users
+        try {
+            const tx = db.transaction('users', 'readonly');
+            const idx = tx.objectStore('users').index('email');
+            const existing = await new Promise((res, rej) => {
+            const r = idx.get(email);
+            r.onsuccess = e => res(e.target.result);
+            r.onerror = () => rej(r.error);
+            });
+            if (existing) throw new Error('Email already in use');
+        } catch (err) {
+            if (err.message === 'Email already in use') throw err;
+            // otherwise, ok to proceed
+        }
+
+        const user = {
+            username: null, // patients authenticating by email
+            email,
+            password, // plain text for assignment demo (Option B)
+            role: 'patient',
+            linkedId: patientNHS,
+            createdAt: new Date().toISOString()
+        };
+
+        const userId = await addItem('users', user);
+        console.log('Patient user registered with userId:', userId);
+        return { userId, user };
+        }
+
+        function generateLoginTables() {
+            const container = document.getElementById("login-table-container");
+            if (!container) return;
+
+            // Example content
+            container.innerHTML = `
+                <table border="1" style="width:100%; border-collapse: collapse;">
+                    <tr><th>Username</th><th>Role</th></tr>
+                    <tr><td>admin</td><td>Administrator</td></tr>
+                </table>
+            `;
+        }
+
+
+        /**
+        * createDoctorAccountByAdmin(adminUsername, doctorId, usernameForDoctor, password)
+        * - adminUsername must exist in admins store
+        * - doctorId must exist in doctors store
+        * - usernameForDoctor must be unique in users store
+        * - creates a user with role 'doctor' and linkedId = doctorId
+        */
+        async function createDoctorAccountByAdmin(adminUsername, doctorId, usernameForDoctor, password) {
+        if (!db) throw new Error('DB not opened');
+        if (!adminUsername || !doctorId || !usernameForDoctor || !password) throw new Error('missing arguments');
+
+        // verify admin exists
+        const admin = await getItem('admins', adminUsername);
+        if (!admin) throw new Error('Admin not found or not authorized');
+
+        // verify doctor exists
+        const doc = await getItem('doctors', doctorId);
+        if (!doc) throw new Error('Doctor record not found');
+
+        // ensure username unique
+        try {
+            const tx = db.transaction('users', 'readonly');
+            const idx = tx.objectStore('users').index('username');
+            const existing = await new Promise((res, rej) => {
+            const r = idx.get(usernameForDoctor);
+            r.onsuccess = e => res(e.target.result);
+            r.onerror = () => rej(r.error);
+            });
+            if (existing) throw new Error('Username already exists');
+        } catch (err) {
+            if (err.message === 'Username already exists') throw err;
+        }
+
+        const user = {
+            username: usernameForDoctor,
+            email: doc.email || null,
+            password, // plain text for demo
+            role: 'doctor',
+            linkedId: doctorId,
+            createdAt: new Date().toISOString()
+        };
+
+        const userId = await addItem('users', user);
+        console.log('Doctor user created by admin, userId:', userId);
+        return { userId, user };
+        }
+
+        /* login(identifier, password)
+        - identifier: username (for admin/doctor) or email (for patient)
+        - password: plain text
+        - returns { success, message, userRecord, redirect } (redirect is a sample path)*/
+
+        function login(username, password) {
+        const tx = dbx.transaction('users', 'readonly');
+        const store = tx.objectStore('users');
+        const req = store.get(username);
+
+        req.onsuccess = (e) => {
+            const user = e.target.result;
+            if (user && user.password === password) {
+            if (user.role === 'admin') window.location.href = 'admin.html';
+            else if (user.role === 'doctor') window.location.href = 'doctor.html';
+            else if (user.role === 'patient') window.location.href = 'patient.html';
+            } else {
+            alert('Invalid credentials');
+            }
+        };
+        }
+
+
+
+
+        //Clear / Query / Show Helpers 
+
+        // clearData(storeNames) - clears listed stores; if omitted clears admins/doctors/patients/medicines
+        
+        async function clearData(storeNames = ['admins','doctors','patients','medicines']) {
+        if (!db) throw new Error('DB not opened');
+        const results = {};
+        for (const s of storeNames) {
+            try {
+            await new Promise((res, rej) => {
+                const tx = db.transaction(s, 'readwrite');
+                const store = tx.objectStore(s);
+                const r = store.clear();
+                r.onsuccess = () => res();
+                r.onerror = () => rej(r.error);
+            });
+            results[s] = 'cleared';
+            } catch (err) {
+            results[s] = `error: ${err.message || err}`;
+            }
+        }
+        console.log('clearData results:', results);
+        return results;
+        }
+
+        // Log everything in a store to console 
+        async function queryAllAndLog(storeName) {
+        const items = await getAllItems(storeName);
+        console.log(`All items in ${storeName}:`, items);
+        return items;
+        }
+
+        // Show first N in a store (optionally into containerId) 
+        async function showFirstN(storeName, n = 10, containerId = null) {
+        const all = await getAllItems(storeName);
+        const sample = all.slice(0, n);
+        if (containerId) {
+            const container = document.getElementById(containerId);
+            if (container) container.innerHTML = `<pre>${JSON.stringify(sample, null, 2)}</pre>`;
+            else console.warn('container not found:', containerId);
+        } else {
+            console.log(`${storeName} sample:`, sample);
+        }
+        return sample;
+        }
+
+        function closeDB() {
+        if (db) {
+            db.close();
+            db = null;
+            console.log('clinicDB closed');
+        }
+        }
+
+        /*  Example quick-run  
+
+        (async () => {
+        await openClinicDB();
+        await fetchAndImportAll(); // uses JSON_URLS placeholders
+        await showFirstN('patients', 5); // logs first 5 patients
+        // registerPatientAccount('p@example.com','pass123','6538586104').then(console.log).catch(console.error);
+        // createDoctorAccountByAdmin('sheilah', 1, 'dr_violante', 'docpass').then(console.log).catch(console.error);
+        })();
+
+        */
+
+        // Expose for global access from UI /
+        window.clinicDB = {
+        openClinicDB,
+        fetchAllJsons,
+        importFetchedDataToDB,
+        fetchAndImportAll,
+        generateLoginTables,
+        registerPatientAccount,
+        createDoctorAccountByAdmin,
+        login,
+        clearData,
+        queryAllAndLog,
+        showFirstN,
+        closeDB,
+        // caches for debugging
+        _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
+        JSON_URLS
+        };
+
+        
+
+        async function ensureDBInitialized() {
+            await openClinicDB();
+            const existingAdmins = await getAllItems('admins');
+            if (existingAdmins.length === 0) {
+                console.log("No data found — importing JSON data...");
+                await fetchAllJsons();
+                await importFetchedDataToDB();
+            } else {
+                console.log("Data already present — skipping import.");
+            }
+        }
+
+
+
+        window.addEventListener("DOMContentLoaded", ensureDBInitialized);
+
+
+</script>
+</body>
+</html>

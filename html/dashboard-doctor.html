@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="../images/logo.png">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="sidebar" aria-label="Primary">
+            <div class="logo">
+                <img src="../images/logo.png" alt="MedTrack logo">
+            </div>
+
+            <ul class="nav">
+                <li><a href="#" class="active">
+                    <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V8.99998C3.25 10.2426 4.25736 11.25 5.5 11.25H9C10.2426 11.25 11.25 10.2426 11.25 8.99998V5.5C11.25 4.25736 10.2426 3.25 9 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H9C9.41421 4.75 9.75 5.08579 9.75 5.5V8.99998C9.75 9.41419 9.41421 9.74998 9 9.74998H5.5C5.08579 9.74998 4.75 9.41419 4.75 8.99998V5.5ZM5.5 12.75C4.25736 12.75 3.25 13.7574 3.25 15V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H9C10.2426 20.75 11.25 19.7427 11.25 18.5V15C11.25 13.7574 10.2426 12.75 9 12.75H5.5ZM4.75 15C4.75 14.5858 5.08579 14.25 5.5 14.25H9C9.41421 14.25 9.75 14.5858 9.75 15V18.5C9.75 18.9142 9.41421 19.25 9 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V15ZM12.75 5.5C12.75 4.25736 13.7574 3.25 15 3.25H18.5C19.7426 3.25 20.75 4.25736 20.75 5.5V8.99998C20.75 10.2426 19.7426 11.25 18.5 11.25H15C13.7574 11.25 12.75 10.2426 12.75 8.99998V5.5ZM15 4.75C14.5858 4.75 14.25 5.08579 14.25 5.5V8.99998C14.25 9.41419 14.5858 9.74998 15 9.74998H18.5C18.9142 9.74998 19.25 9.41419 19.25 8.99998V5.5C19.25 5.08579 18.9142 4.75 18.5 4.75H15ZM15 12.75C13.7574 12.75 12.75 13.7574 12.75 15V18.5C12.75 19.7426 13.7574 20.75 15 20.75H18.5C19.7426 20.75 20.75 19.7427 20.75 18.5V15C20.75 13.7574 19.7426 12.75 18.5 12.75H15ZM14.25 15C14.25 14.5858 14.5858 14.25 15 14.25H18.5C18.9142 14.25 19.25 14.5858 19.25 15V18.5C19.25 18.9142 18.9142 19.25 18.5 19.25H15C14.5858 19.25 14.25 18.9142 14.25 18.5V15Z"></path>
+                    </svg>
+                    <span class="nav-text">Dashboard</span>
+                </a></li>
+
+                <li><a href="appointments-doctor.html">
+                    <svg class="dashboard-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span class="nav-text">Appointments</span>
+                </a></li>
+
+                <li><a href="users.html">
+                    <svg class="dashboard-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span class="nav-text">Patients</span>
+                </a></li>
+
+                <li><a href="medicine.html">
+                    <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"></path>
+                    </svg>
+                    <span class="nav-text">Medicines</span>
+                </a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main id="mainContent" class="main-content" role="main">
+            <header class="header">
+                <button id="mobile-toggle" class="toggle-btn" aria-label="Open menu">☰</button>
+                <div class="left-controls">
+                    <button id="collapse-toggle" class="sidebar-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
+                        <svg class="sidebar-icon" width="16" height="12" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.583252 1C0.583252 0.585788 0.919038 0.25 1.33325 0.25H14.6666C15.0808 0.25 15.4166 0.585786 15.4166 1C15.4166 1.41421 15.0808 1.75 14.6666 1.75L1.33325 1.75C0.919038 1.75 0.583252 1.41422 0.583252 1ZM0.583252 11C0.583252 10.5858 0.919038 10.25 1.33325 10.25L14.6666 10.25C15.0808 10.25 15.4166 10.5858 15.4166 11C15.4166 11.4142 15.0808 11.75 14.6666 11.75L1.33325 11.75C0.919038 11.75 0.583252 11.4142 0.583252 11ZM1.33325 5.25C0.919038 5.25 0.583252 5.58579 0.583252 6C0.583252 6.41421 0.919038 6.75 1.33325 6.75L7.99992 6.75C8.41413 6.75 8.74992 6.41421 8.74992 6C8.74992 5.58579 8.41413 5.25 7.99992 5.25L1.33325 5.25Z" fill=""></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="right-icons">
+                    <button class="notif-btn" aria-label="Notifications">
+                        <svg class="sidebar-icon" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M10.75 2.29248C10.75 1.87827 10.4143 1.54248 10 1.54248C9.58583 1.54248 9.25004 1.87827 9.25004 2.29248V2.83613C6.08266 3.20733 3.62504 5.9004 3.62504 9.16748V14.4591H3.33337C2.91916 14.4591 2.58337 14.7949 2.58337 15.2091C2.58337 15.6234 2.91916 15.9591 3.33337 15.9591H4.37504H15.625H16.6667C17.0809 15.9591 17.4167 15.6234 17.4167 15.2091C17.4167 14.7949 17.0809 14.4591 16.6667 14.4591H16.375V9.16748C16.375 5.9004 13.9174 3.20733 10.75 2.83613V2.29248ZM14.875 14.4591V9.16748C14.875 6.47509 12.6924 4.29248 10 4.29248C7.30765 4.29248 5.12504 6.47509 5.12504 9.16748V14.4591H14.875ZM8.00004 17.7085C8.00004 18.1228 8.33583 18.4585 8.75004 18.4585H11.25C11.6643 18.4585 12 18.1228 12 17.7085C12 17.2943 11.6643 16.9585 11.25 16.9585H8.75004C8.33583 16.9585 8.00004 17.2943 8.00004 17.7085Z" fill=""></path>
+                        </svg>
+                    </button>
+                    <button class="user-btn" aria-label="User menu">
+                        <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <section class="content">
+                <h2 class="content-title">Dashboard</h2>
+
+                <div class="cards-container">
+                    <!-- Total Users -->
+                    <div class="card">
+                        <h3>Total Users</h3>
+                        <p class="value">24.7K</p>
+                        <div class="stats">
+                        <span class="positive">+20%</span>
+                        <span class="compare">Vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Total Patients -->
+                    <div class="card">
+                        <h3>Total Patients</h3>
+                        <p class="value">55.9K</p>
+                        <div class="stats">
+                        <span class="positive">+4%</span>
+                        <span class="compare">Vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Daily Appointment Rate -->
+                    <div class="card">
+                        <h3>Daily Appointment Rate</h3>
+                        <p class="value">54%</p>
+                        <div class="stats">
+                        <span class="negative">-1.59%</span>
+                        <span class="compare">Vs last month</span>
+                        </div>
+                    </div>
+
+                    <!-- Visit Duration -->
+                    <div class="card">
+                        <h3>Visit Duration</h3>
+                        <p class="value">2m 56s</p>
+                        <div class="stats">
+                        <span class="positive">+7%</span>
+                        <span class="compare">Vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional content can go here -->
+                <div class="second-row-container">
+                    <div class="graph-card">
+                        <h3>Graph/Table</h3>
+                        <div class="graph-placeholder">[Graph Placeholder]</div>
+                    </div>
+                    <div class="activity-log-card">
+                        <h3>Recent Activity</h3>
+                        <ul class="activity-log">
+                            <li>User JohnDoe signed up<span class="timestamp"> - 2 hours ago</span></li>
+                            <li>New appointment booked by JaneSmith<span class="timestamp"> - 1 day ago</span></li>
+                            <li>System maintenance completed<span class="timestamp"> - 3 days ago</span></li>
+                            <li>User MikeBrown updated profile<span class="timestamp"> - 1 week ago</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+            </section>        
+
+            <footer class="footer">
+                <p>&copy; 2024 Care n Cure. All rights reserved.</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="../js/indexedDB.js"></script>
+    <script src="../js/importAllData.js"></script>
+    <script src="../js/dashboard.js"></script>
+</body>
+</html>
