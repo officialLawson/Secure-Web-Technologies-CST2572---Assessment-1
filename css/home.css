@@ -72,6 +72,7 @@
     cursor: pointer;
     border: 2px solid var(--border-mid);
     transition: background-color 0.3s ease, border-color 0.3s ease; 
+    z-index: 10000;
 }
 
 #theme-switch:hover {
@@ -216,7 +217,7 @@ html {
 
 /* ===== Home Section ===== */
 .home {
-  background: linear-gradient(rgba(26, 46, 68, 0.75), rgba(26, 46, 68, 0.75)), url('../IMAGES/homeBG.jpg') no-repeat center center/cover;
+  background: linear-gradient(rgba(26, 46, 68, 0.75), rgba(26, 46, 68, 0.75)), url('../images/homeBG.jpg') no-repeat center center/cover;
   padding: 200px 20px;
   color: var(--text-light);
   text-align: center;

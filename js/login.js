@@ -102,7 +102,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         localStorage.setItem("currentUser", JSON.stringify(result.user));
 
-        // 🔹 Determine redirect based on role
+        console.log("👤 Current user set in localStorage:", result.user.username);
+         // 🆕 Step 1: Open DB and filter+import data specific to this user
+        try {
+          await openClinicDB();
+          await fetchAndImportAllFiltered(result.user); // 🆕 filter + import relevant data
+          console.log("✅ Filtered data imported for:", result.user.username);
+        } catch (importErr) {
+          console.error("Error during filtered import:", importErr);
+        }
+
+        // 🆕 Step 2: Continue with redirect
+
+        // Determine redirect based on role
         let redirectUrl = "../html/dashboard.html"; // fallback
 
         switch (result.user.role?.toLowerCase()) {
@@ -118,11 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
           default:
             redirectUrl = "../html/dashboard-doctor.html";
         }
-
-        // Redirect after short delay
-        setTimeout(() => {
-          window.location.href = redirectUrl;
-        }, 1000);
+        
+        window.location.href = redirectUrl;
 
       } else {
         msg.textContent = result.message;

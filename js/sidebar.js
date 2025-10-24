@@ -1,4 +1,12 @@
-// Mobile sidebar slide-in/out
+    // Show user role from login
+    const role = localStorage.getItem("currentUser");
+    if (!role) {
+        window.location.href = "../html/login.html"; // redirect if not logged in
+    } else {
+        const user = JSON.parse(role);
+    }
+    
+    // Mobile sidebar slide-in/out
     const mobileToggle = document.getElementById('mobile-toggle');
     const sidebar = document.getElementById('sidebar');
 
@@ -43,3 +51,45 @@
     new MutationObserver(adjustMainMargin).observe(sidebar, { attributes: true, attributeFilter: ['class'] });
     window.addEventListener('resize', adjustMainMargin);
     adjustMainMargin();
+
+
+    // Sign out function
+    async function signOut() {
+    try {
+        if (!confirm("Are you sure you want to sign out?")) return;
+
+        // Ensure DB connection exists
+        if (!window.db) {
+        console.log("🔄 Opening DB before clearing...");
+        await openClinicDB();
+        }
+
+        // Now clear data except 'admins' and 'users'
+        await clearData([
+        'medicalRecord',
+        'doctors',
+        'patients',
+        'medicines',
+        'appointments',
+        'notifications'
+        ]);
+
+        // 🔄 Optional: refresh DevTools IndexedDB view
+        db.close();
+        db = null;
+        await openClinicDB();
+
+        console.log("✅ Data cleared. Signing out...");
+
+        // Clear login info
+        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
+
+        // Redirect
+        window.location.href = "login.html";
+    } catch (err) {
+        console.error("❌ Sign out failed:", err);
+    }
+    }
+    document.getElementById("signOutBtn").addEventListener("click", signOut);
+    

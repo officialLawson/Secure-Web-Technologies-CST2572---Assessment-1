@@ -542,149 +542,324 @@ async function fetchAllJsons(urls = JSON_URLS) {
   doctor_data = doctors;
   patient_data = patients;
   medicine_data = medicines;
-  users_data =users;
+  users_data = users;
   medicalRecord_data=medicalRecord;
   appointment_data=appointment;
   notification_data=notification;
 
-  console.log('All JSONs fetched (cached locally)');
-  return { admins, doctors, patients, medicines };
+  console.log('All JSONs fetched (cached locally):');
+  return {
+    admins,
+    doctors,
+    patients,
+    medicines,
+    users,
+    medicalRecord,
+    appointment,
+    notification
+  };
+
 }
 
-//Import fetched JSON into IndexedDB 
-async function importFetchedDataToDB() {
+/* =============================
+   🧠 Filter Data by User Role
+   ============================= */
+async function filterDataForUser(allData, user) {
+  // Ensure all tables exist
+  const {
+    patients = [],
+    doctors = [],
+    admins = [],
+    medicines = [],
+    users = [],
+    medicalRecord = [],
+    appointment = [],
+    notification = []
+  } = allData || {};
+
+
+  const role = user.role?.toLowerCase();
+
+
+  // Initialize filtered object
+  const filtered = {};
+
+  switch (role) {
+    case 'admin':
+      // Admins see everything
+      filtered.admins = admins;
+      filtered.doctors = doctors;
+      filtered.patients = patients;
+      filtered.medicines = medicines;
+      filtered.users = users;
+      filtered.medicalRecord = medicalRecord;
+      filtered.appointment = appointment;
+      filtered.notification = notification.filter(
+        n => n.recipientRole === 'admin' && n.recipientId === user.username
+      );
+      break;
+
+    case 'doctor':
+      filtered.doctors = doctors.filter(d => d.id === user.linkedId);
+      filtered.patients = patients; // all patients visible
+      filtered.medicalRecord = medicalRecord.filter(r => r.doctorId === user.linkedId);
+      filtered.appointment = appointment.filter(a => a.doctorId === user.linkedId);
+      filtered.medicines = medicines; // all medicines visible
+      filtered.notification = notification.filter(
+        n => n.recipientRole === 'doctor' && n.recipientId === user.linkedId
+      );
+      filtered.users = users; // optional, depending on your logic
+      filtered.admins = admins; // optional
+      break;
+
+    case 'patient':
+      filtered.patients = patients.filter(p => p.NHS === user.linkedId);
+      filtered.medicalRecord = medicalRecord.filter(
+        r => r.patientId === user.linkedId
+      );
+      filtered.appointment = appointment.filter(
+        a => a.patientId === user.linkedId
+      );
+      filtered.notification = notification.filter(
+        n => n.recipientRole === 'patient' && n.recipientId === user.linkedId
+      );
+      // Hide other tables
+      filtered.medicines = [];
+      filtered.doctors = [];
+      filtered.admins = [];
+      filtered.users = [];
+      break;
+
+    default:
+      console.warn('Unknown role, importing nothing.');
+      return {};
+  }
+
+  
+  return filtered;
+}
+
+// Import filtered data into IndexedDB
+async function importFetchedDataToDB(filteredData) {
   if (!db) throw new Error('DB not opened. Call openClinicDB() first.');
 
-  const results = { admins:0, doctors:0, patients:0, medicines:0 };
+  const results = {
+    admins: 0,
+    doctors: 0,
+    patients: 0,
+    medicines: 0,
+    users: 0,
+    medicalRecord: 0,
+    appointment: 0,
+    notification: 0
+  };
 
-  // admins: expects array of { username, password, ... }
-  if (Array.isArray(admin_data)) {
-    for (const a of admin_data) {
-      try {
-        if (!a.username) continue;
-        // store as-is; keyPath is username in admins store
-        await addItem('admins', a);
-        results.admins++;
-      } catch (err) {
-        console.warn('Skipping admin (exists?):', a.username, err);
-      }
-    }
-  }
+  const {
+    admins = [],
+    doctors = [],
+    patients = [],
+    medicines = [],
+    users = [],
+    medicalRecord = [],
+    appointment = [],
+    notification = []
+  } = filteredData || {};
 
-  // doctors: expects array with id, first_name, last_name, email, Address, Telephone
+  // Checking Data Lengths
+  console.log('Importing filtered data counts:', {
+    admins: admins.length,
+    doctors: doctors.length,
+    patients: patients.length,
+    medicines: medicines.length,
+    users: users.length,
+    medicalRecord: medicalRecord.length,
+    appointment: appointment.length,
+    notification: notification.length
+  });
 
-  if (Array.isArray(doctor_data)) {
-    for (const d of doctor_data) {
-      try {
-        if (!d.id) continue;
-        const encryptedDoctor = await encryptDoctorInfo(d);
-        await addItem('doctors', encryptedDoctor);
-        results.doctor++;
-      } catch (err) {
-        console.warn('Skipping doctor (exists?):', d.id, err);
-      }
-    }
-  }
 
-  // patients: expects array with id and NHS (we key on NHS)
-  if (Array.isArray(patient_data)) {
-    for (const p of patient_data) {
-      try {
-        if (!p.NHS) continue;
-        const encryptedPatient = await encryptPatientInfo(p);
-        await addItem('patients', encryptedPatient);
-        results.patient++;
-      } catch (err) {
-        console.warn('Skipping patient (exists?):', p.NHS, err);
-      }
-    }
-  }
-  //users
-  if (Array.isArray(users_data)) {
-   for (const u of users_data){
+  // Doctors
+  for (const d of doctors) {
     try {
-      if (!u.username) continue;
-      await addItem('users', u);
-      results.users++;
-    }catch(err){
-      console.warn('skipping user (exists?):', u.username, err);
-    }
-   }
-  }
-  //medical record- mr.recordID
-  if (Array.isArray(medicalRecord_data)){
-    for (const r of medicalRecord_data){
-      try {
-        if (!r.recordId) continue;
-        // r may include diagnosis/treatment; use addMedicalRecord to encrypt payload
-        const toAdd = {
-          recordId: r.recordId,
-          patientId: r.patientId || r.patientId || r.NHS || r.patient || null,
-          doctorId: r.doctorId || r.doctor || null,
-          date: r.date || r.Date || null,
-          diagnosis: r.diagnosis || r.Diagnosis || "",
-          treatment: r.treatment || r.Treatment || "",
-          notes: r.notes || ""
-        };
-        await addMedicalRecord(toAdd);
-        results.medicalRecord = (results.medicalRecord || 0) + 1;
-      } catch (err) {
-        console.warn('skipping medical record (exists?):', r.recordId, err);
-      }
+      if (!d.id) continue;
+      const encryptedDoctor = await encryptDoctorInfo(d);
+      await addItem('doctors', encryptedDoctor);
+      results.doctors++;
+    } catch (err) {
+      console.warn('Skipping doctor (exists?):', d.id, err);
     }
   }
 
-
-  //notif
-  if (Array.isArray(notification_data)){
-    for (const n of notification_data){
-      try {
-        if (!n.notifId) continue;
-        await addItem('notifications', n);
-        results.notification++;
-      }catch(err){
-        console.warn('skipping notification (exist?):',n.notifId, err);
-      }
-    }
-  }
-  //appointment
-  if (Array.isArray(appointment_data)){
-    for (const a of appointment_data){
-      try {
-        if (!a.appointmentId) continue;
-        await addItem('appointments',a);
-        results.appointment++;
-      }catch(err){
-        console.warn('skipping appointment (exist?):', a.appointmentId)
-      }
-
+  // Patients
+  for (const p of patients) {
+    try {
+      if (!p.NHS) continue;
+      const encryptedPatient = await encryptPatientInfo(p);
+      await addItem('patients', encryptedPatient);
+      results.patients++;
+    } catch (err) {
+      console.warn('Skipping patient (exists?):', p.NHS, err);
     }
   }
 
-  // medicines: expects array with id and Drug
-  if (Array.isArray(medicine_data)) {
-    for (const m of medicine_data) {
-      try {
-        if (m.id === undefined || m.id === null) continue;
-        await addItem('medicines', m);
-        results.medicines++;
-      } catch (err) {
-        console.warn('Skipping medicine (exists?):', m.id, err);
-      }
+  // Medical records
+  for (const r of medicalRecord) {
+    try {
+      if (!r.recordId) continue;
+      const toAdd = {
+        recordId: r.recordId,
+        patientId: r.patientId || r.NHS || null,
+        doctorId: r.doctorId || null,
+        date: r.date || r.Date || null,
+        diagnosis: r.diagnosis || r.Diagnosis || "",
+        treatment: r.treatment || r.Treatment || "",
+        notes: r.notes || ""
+      };
+      await addMedicalRecord(toAdd);
+      results.medicalRecord++;
+    } catch (err) {
+      console.warn('Skipping medical record (exists?):', r.recordId, err);
     }
   }
 
-  console.log('Import completed', results);
+  // Appointments
+  for (const a of appointment) {
+    try {
+      if (!a.appointmentId) continue;
+      await addItem('appointments', a);
+      results.appointment++;
+    } catch (err) {
+      console.warn('Skipping appointment (exists?):', a.appointmentId);
+    }
+  }
+
+  // Notifications
+  for (const n of notification) {
+    try {
+      if (!n.notifId) continue;
+      await addItem('notifications', n);
+      results.notification++;
+    } catch (err) {
+      console.warn('Skipping notification (exists?):', n.notifId, err);
+    }
+  }
+
+  // Medicines
+  for (const m of medicines) {
+    try {
+      if (m.id === undefined || m.id === null) continue;
+      await addItem('medicines', m);
+      results.medicines++;
+    } catch (err) {
+      console.warn('Skipping medicine (exists?):', m.id, err);
+    }
+  }
+
+  console.log('✅ Import completed', results);
   return results;
 }
 
 
-//Convenience: fetch all JSONs then import them into DB 
-async function fetchAndImportAll(urls = JSON_URLS) {
-  if (!db) throw new Error('DB not opened');
-  await fetchAllJsons(urls);
-  return importFetchedDataToDB();
-}
+//Import fetched JSON into IndexedDB 
+// async function importFetchedDataToDB() {
+//   if (!db) throw new Error('DB not opened. Call openClinicDB() first.');
+
+//   const results = { admins:0, doctors:0, patients:0, medicines:0 };
+
+//   // doctors: expects array with id, first_name, last_name, email, Address, Telephone
+
+//   if (Array.isArray(doctor_data)) {
+//     for (const d of doctor_data) {
+//       try {
+//         if (!d.id) continue;
+//         const encryptedDoctor = await encryptDoctorInfo(d);
+//         await addItem('doctors', encryptedDoctor);
+//         results.doctor++;
+//       } catch (err) {
+//         console.warn('Skipping doctor (exists?):', d.id, err);
+//       }
+//     }
+//   }
+
+//   // patients: expects array with id and NHS (we key on NHS)
+//   if (Array.isArray(patient_data)) {
+//     for (const p of patient_data) {
+//       try {
+//         if (!p.NHS) continue;
+//         const encryptedPatient = await encryptPatientInfo(p);
+//         await addItem('patients', encryptedPatient);
+//         results.patient++;
+//       } catch (err) {
+//         console.warn('Skipping patient (exists?):', p.NHS, err);
+//       }
+//     }
+//   }
+//   //medical record- mr.recordID
+//   if (Array.isArray(medicalRecord_data)){
+//     for (const r of medicalRecord_data){
+//       try {
+//         if (!r.recordId) continue;
+//         // r may include diagnosis/treatment; use addMedicalRecord to encrypt payload
+//         const toAdd = {
+//           recordId: r.recordId,
+//           patientId: r.patientId || r.patientId || r.NHS || r.patient || null,
+//           doctorId: r.doctorId || r.doctor || null,
+//           date: r.date || r.Date || null,
+//           diagnosis: r.diagnosis || r.Diagnosis || "",
+//           treatment: r.treatment || r.Treatment || "",
+//           notes: r.notes || ""
+//         };
+//         await addMedicalRecord(toAdd);
+//         results.medicalRecord = (results.medicalRecord || 0) + 1;
+//       } catch (err) {
+//         console.warn('skipping medical record (exists?):', r.recordId, err);
+//       }
+//     }
+//   }
+//   //notif
+//   if (Array.isArray(notification_data)){
+//     for (const n of notification_data){
+//       try {
+//         if (!n.notifId) continue;
+//         await addItem('notifications', n);
+//         results.notification++;
+//       }catch(err){
+//         console.warn('skipping notification (exist?):',n.notifId, err);
+//       }
+//     }
+//   }
+//   //appointment
+//   if (Array.isArray(appointment_data)){
+//     for (const a of appointment_data){
+//       try {
+//         if (!a.appointmentId) continue;
+//         await addItem('appointments',a);
+//         results.appointment++;
+//       }catch(err){
+//         console.warn('skipping appointment (exist?):', a.appointmentId)
+//       }
+
+//     }
+//   }
+
+//   // medicines: expects array with id and Drug
+//   if (Array.isArray(medicine_data)) {
+//     for (const m of medicine_data) {
+//       try {
+//         if (m.id === undefined || m.id === null) continue;
+//         await addItem('medicines', m);
+//         results.medicines++;
+//       } catch (err) {
+//         console.warn('Skipping medicine (exists?):', m.id, err);
+//       }
+//     }
+//   }
+
+//   console.log('Import completed', results);
+//   return results;
+// }
+
+
 
 //Registration / Creation / Login with encryption-cryptography
 
@@ -789,9 +964,9 @@ async function login(username, password) {
 
 //Clear / Query / Show Helpers 
 
-// clearData(storeNames) - clears listed stores; if omitted clears admins/doctors/patients/medicines
- 
-async function clearData(storeNames = ['admins','doctors','patients','medicines']) {
+// clearData(storeNames) - clears listed stores; if omitted clears medical/doctors/patients/medicines
+
+async function clearData(storeNames = ['medicalRecord','doctors','patients','medicines','appointments','notifications']) {
   if (!db) throw new Error('DB not opened');
   const results = {};
   for (const s of storeNames) {
@@ -845,7 +1020,6 @@ function closeDB() {
 
 (async () => {
   await openClinicDB();
-  await fetchAndImportAll(); // uses JSON_URLS placeholders
   await showFirstN('patients', 5); // logs first 5 patients
   // registerPatientAccount('p@example.com','pass123','6538586104').then(console.log).catch(console.error);
   // createDoctorAccountByAdmin('sheilah', 1, 'dr_violante', 'docpass').then(console.log).catch(console.error);
@@ -858,7 +1032,6 @@ window.clinicDB = {
   openClinicDB,
   fetchAllJsons,
   importFetchedDataToDB,
-  fetchAndImportAll,
   registerPatientAccount,
   createDoctorAccountByAdmin,
   login,

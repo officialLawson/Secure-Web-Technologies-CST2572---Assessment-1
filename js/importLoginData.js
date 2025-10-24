@@ -1,6 +1,7 @@
 // importLoginData.js
 // Load AFTER IndexedDB.js (which defines openClinicDB, db, encryptData, etc.)
 
+
 async function importLoginData(dataArray, storeName) {
   if (!Array.isArray(dataArray)) {
     console.warn(`importLoginData: expected array for ${storeName}, got`, dataArray);
@@ -70,8 +71,6 @@ async function importLoginData(dataArray, storeName) {
         req.onerror = () => reject(req.error);
       });
 
-      imported++;
-      console.log(`Imported into ${storeName}:`, record.username || record.linkedId || "(no id)");
     } catch (err) {
       skipped++;
       console.warn(`Skipped ${storeName} record due to error:`, err, raw);
