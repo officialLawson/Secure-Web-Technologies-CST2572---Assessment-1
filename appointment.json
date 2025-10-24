@@ -1224,15 +1224,6 @@
     "status": "pending"
   },
   {
-    "appointmentId": "AP3478",
-    "patientId": "0163065462",
-    "doctorId": 2,
-    "date": "2024-02-29",
-    "time": "13:00",
-    "reason": "Treatment review",
-    "status": "confirmed"
-  },
-  {
     "appointmentId": "AP9458",
     "patientId": "8070302771",
     "doctorId": 4,
