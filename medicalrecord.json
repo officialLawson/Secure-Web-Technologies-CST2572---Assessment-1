@@ -1456,14 +1456,6 @@
     "date": "2025-08-28"
   },
   {
-    "recordId": "MR6074",
-    "patientId": "0083453962",
-    "doctorId": 5,
-    "diagnosis": "Bronchitis",
-    "treatment": "Pain relief medication",
-    "date": "2025-07-26"
-  },
-  {
     "recordId": "MR4836",
     "patientId": "5892205592",
     "doctorId": 2,
