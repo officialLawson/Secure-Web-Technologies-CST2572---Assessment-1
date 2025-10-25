@@ -534,7 +534,8 @@
         <td>${a.date}</td>
         <td>${a.time}</td>
         <td><span class="status ${a.status?.toLowerCase()}">${a.status}</span></td>
-        <td><button class="deleteBtn" onclick="cancelAppointment(${a.appointmentId})">Cancel</button></td>
+        <td><button class="deleteBtn" onclick="cancelAppointment('${a.appointmentId}')">Cancel</button></td>
+
       `;
       tbody.appendChild(tr);
     });
@@ -777,5 +778,6 @@
 
 </body>
 </html>
+
 
 
