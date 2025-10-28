@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Dashboard</title>
+    <title>Medicines</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/table.css">
 </head>
 <body>
     <div class="container">
@@ -16,7 +17,7 @@
             </div>
 
             <ul class="nav">
-                <li><a href="dashboard-admin.html" class="active">
+                <li><a href="dashboard-admin.html">
                     <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
                         <path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M5.5 3.25C4.25736 3.25 3.25 4.25736 3.25 5.5V8.99998C3.25 10.2426 4.25736 11.25 5.5 11.25H9C10.2426 11.25 11.25 10.2426 11.25 8.99998V5.5C11.25 4.25736 10.2426 3.25 9 3.25H5.5ZM4.75 5.5C4.75 5.08579 5.08579 4.75 5.5 4.75H9C9.41421 4.75 9.75 5.08579 9.75 5.5V8.99998C9.75 9.41419 9.41421 9.74998 9 9.74998H5.5C5.08579 9.74998 4.75 9.41419 4.75 8.99998V5.5ZM5.5 12.75C4.25736 12.75 3.25 13.7574 3.25 15V18.5C3.25 19.7426 4.25736 20.75 5.5 20.75H9C10.2426 20.75 11.25 19.7427 11.25 18.5V15C11.25 13.7574 10.2426 12.75 9 12.75H5.5ZM4.75 15C4.75 14.5858 5.08579 14.25 5.5 14.25H9C9.41421 14.25 9.75 14.5858 9.75 15V18.5C9.75 18.9142 9.41421 19.25 9 19.25H5.5C5.08579 19.25 4.75 18.9142 4.75 18.5V15ZM12.75 5.5C12.75 4.25736 13.7574 3.25 15 3.25H18.5C19.7426 3.25 20.75 4.25736 20.75 5.5V8.99998C20.75 10.2426 19.7426 11.25 18.5 11.25H15C13.7574 11.25 12.75 10.2426 12.75 8.99998V5.5ZM15 4.75C14.5858 4.75 14.25 5.08579 14.25 5.5V8.99998C14.25 9.41419 14.5858 9.74998 15 9.74998H18.5C18.9142 9.74998 19.25 9.41419 19.25 8.99998V5.5C19.25 5.08579 18.9142 4.75 18.5 4.75H15ZM15 12.75C13.7574 12.75 12.75 13.7574 12.75 15V18.5C12.75 19.7426 13.7574 20.75 15 20.75H18.5C19.7426 20.75 20.75 19.7427 20.75 18.5V15C20.75 13.7574 19.7426 12.75 18.5 12.75H15ZM14.25 15C14.25 14.5858 14.5858 14.25 15 14.25H18.5C18.9142 14.25 19.25 14.5858 19.25 15V18.5C19.25 18.9142 18.9142 19.25 18.5 19.25H15C14.5858 19.25 14.25 18.9142 14.25 18.5V15Z"></path>
                     </svg>
@@ -31,9 +32,9 @@
                     </svg>
                     <span class="nav-text">Appointments</span>
                 </a></li>
-                <li><a href="medicines-admin.html">
+                <li><a href="medicines-admin.html"  class="active">
                     <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"></path>
+                        <path fill="currentColor" d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"></path>
                     </svg>
                     <span class="nav-text">Medicines</span>
                 </a></li>
@@ -79,64 +80,42 @@
             </header>
 
             <section class="content">
-                <h2 class="content-title">Dashboard</h2>
+                <h2 class="content-title">Medicines</h2>
+                
+                <div class="card-container">
+                    <div class="top-bar">
+                        <!-- Search -->
+                        <div class="search-container">
+                            <span class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                            </span>
+                            <input id="search" type="text" placeholder="Search medicines..." />
+                        </div>
 
-                <div class="cards-container">
-                    <!-- Total Users -->
-                    <div class="card">
-                        <h3>Total Users</h3>
-                        <p class="value">24.7K</p>
-                        <div class="stats">
-                        <span class="positive">+20%</span>
-                        <span class="compare">Vs last month</span>
+                        <!-- Actions -->
+                        <div class="actions">
+                            <a href="add-medicine-admin.html">
+                            <button class="btn-add">+ Add Medicine</button>
+                            </a>
                         </div>
                     </div>
 
-                    <!-- Total Patients -->
-                    <div class="card">
-                        <h3>Total Patients</h3>
-                        <p class="value">55.9K</p>
-                        <div class="stats">
-                        <span class="positive">+4%</span>
-                        <span class="compare">Vs last month</span>
-                        </div>
-                    </div>
-
-                    <!-- Daily Appointment Rate -->
-                    <div class="card">
-                        <h3>Daily Appointment Rate</h3>
-                        <p class="value">54%</p>
-                        <div class="stats">
-                        <span class="negative">-1.59%</span>
-                        <span class="compare">Vs last month</span>
-                        </div>
-                    </div>
-
-                    <!-- Visit Duration -->
-                    <div class="card">
-                        <h3>Visit Duration</h3>
-                        <p class="value">2m 56s</p>
-                        <div class="stats">
-                        <span class="positive">+7%</span>
-                        <span class="compare">Vs last month</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Additional content can go here -->
-                <div class="second-row-container">
-                    <div class="graph-card">
-                        <h3>Graph/Table</h3>
-                        <div class="graph-placeholder">[Graph Placeholder]</div>
-                    </div>
-                    <div class="activity-log-card">
-                        <h3>Recent Activity</h3>
-                        <ul class="activity-log">
-                            <li>User JohnDoe signed up<span class="timestamp"> - 2 hours ago</span></li>
-                            <li>New appointment booked by JaneSmith<span class="timestamp"> - 1 day ago</span></li>
-                            <li>System maintenance completed<span class="timestamp"> - 3 days ago</span></li>
-                            <li>User MikeBrown updated profile<span class="timestamp"> - 1 week ago</span></li>
-                        </ul>
+                    <div class="table-container">
+                        <table class="table"  id="medicinesTable">
+                            <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Medicine Name</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody id="medicinesBody">
+                            <!-- medicine rows will be populated here dynamically -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -150,5 +129,6 @@
 
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
+    <script src="../js/medicines.js"></script>
 </body>
 </html>

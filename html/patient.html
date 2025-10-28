@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Dashboard</title>
+  <script src="../js/indexdb&JSON.js"></script>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      background: #f4f7fa;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    //Sidebar 
+    aside {
+      width: 240px;
+      background: #005a8e;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    aside h2 {
+      font-size: 1.4em;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    aside ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    aside li {
+      margin: 10px 0;
+    }
+
+    aside a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 10px;
+      border-radius: 6px;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    aside a:hover,
+    aside a.active {
+      background: #007bbd;
+    }
+
+    .logout {
+      margin-top: auto;
+      background: #ff5555;
+      border: none;
+      padding: 10px;
+      color: white;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    //Main layout 
+    main {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    header {
+      background: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      color: #005a8e;
+    }
+
+    //Collapsible containers 
+    section.container {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-top: 15px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    section .section-header {
+      padding: 15px 20px;
+      background: #007bbd;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: bold;
+      user-select: none;
+    }
+
+    section .section-header:hover {
+      background: #005a8e;
+    }
+
+    section .section-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding: 0 20px;
+    }
+
+    section.active .section-content {
+      max-height: 1000px; /* enough to expand for content */
+      padding: 15px 20px;
+    }
+
+    //Search bar
+    .search-bar {
+      margin-bottom: 10px;
+      text-align: right;
+    }
+
+    .search-bar input {
+      padding: 8px;
+      width: 250px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    //Tables
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1em;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background: #007bbd;
+      color: white;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background: #007bbd;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #005a8e;
+    }
+
+    .deleteBtn {
+      background: #ff5555;
+    }
+
+    .deleteBtn:hover {
+      background: #e04343;
+    }
+
+    // Status labels 
+    .status {
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .status.pending { background: #f4a261; }
+    .status.confirmed { background: #2a9d8f; }
+    .status.completed { background: #264653; }
+    .status.cancelled { background: #e76f51; }
+
+    .rotate {
+      transform: rotate(90deg);
+      transition: transform 0.3s ease;
+    }
+
+    section.active .rotate {
+      transform: rotate(270deg);
+    }
+
+    //  Modal styling 
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content h3 {
+      color: #005a8e;
+      margin-bottom: 10px;
+    }
+
+    .modal-content p {
+      white-space: pre-line;
+      font-size: 0.95em;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: space-around;
+    }
+
+    .modal-buttons button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      color: white;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    button.confirm {
+      background: #007bbd;
+    }
+    button.confirm:hover {
+      background: #005a8e;
+    }
+    button.cancel {
+      background: #ff5555;
+    }
+    button.cancel:hover {
+      background: #e04343;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.9);}
+      to {opacity: 1; transform: scale(1);}
+    }
+
+  </style>
+</head>
+
+<body>
+  <aside>
+    <h2>Patient Menu</h2>
+    <ul>
+      <li><a class="active" onclick="scrollToSection('appointmentsSection')">📅 Appointments</a></li>
+      <li><a onclick="scrollToSection('recordsSection')">📜 Records</a></li>
+      <li><a onclick="scrollToSection('medicinesSection')">💊 Medicines</a></li>
+      <li><a onclick="scrollToSection('historySection')">📖 History</a></li>
+    </ul>
+    <button class="logout" onclick="logout()">Logout</button>
+  </aside>
+
+  <main>
+    <header>
+      <h1>Welcome, <span id="patientName"></span></h1>
+      <p><strong>NHS ID:</strong> <span id="nhsId"></span></p>
+    </header>
+
+    <!-- 🩺 Book Appointment -->
+    
+    <section id="bookSection" class="container active">
+      <div class="section-header" onclick="toggleSection(this)">
+        🩺 Book Appointment <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <form id="bookAppointmentForm">
+          <label><strong>Select Doctor:</strong></label><br>
+          <select id="bookDoctorSelect" required></select><br><br>
+
+          <label><strong>Date:</strong></label><br>
+          <input type="date" id="bookDate" required><br><br>
+
+          <label><strong>Available Time:</strong></label><br>
+          <select id="bookTime" required style="min-width:180px;"></select>
+
+          <!-- Legend -->
+          <div id="slotLegend" style="margin-top:10px; font-size:0.9em;">
+            <span style="display:inline-block;width:15px;height:15px;background:#4CAF50;border-radius:3px;margin-right:5px;"></span> Available
+            <span style="display:inline-block;width:15px;height:15px;background:#e76f51;border-radius:3px;margin:0 5px 0 15px;"></span> Booked
+            <span style="display:inline-block;width:15px;height:15px;background:#ccc;border-radius:3px;margin:0 5px 0 15px;"></span> Past
+          </div>
+
+          <br>
+          <label><strong>Reason / Notes:</strong></label><br>
+          <textarea id="bookReason" rows="3" placeholder="E.g., regular check-up, consultation..." 
+            style="width: 100%; border-radius:6px; border:1px solid #ccc; padding:8px;"></textarea><br><br>
+
+          <button type="submit">Confirm Booking</button>
+        </form>
+      </div>
+    </section>
+
+
+
+    <!-- 📅 Appointments -->
+    <section id="appointmentsSection" class="container active">
+      <div class="section-header" onclick="toggleSection(this)">
+        📅 Appointments <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchAppointments" placeholder="Search by doctor or date...">
+        </div>
+
+        <div id="appointmentForm" style="display:none; margin-top:1em;">
+          <form id="newAppointmentForm">
+            <label>Doctor:</label>
+            <select id="doctorSelect" required></select><br><br>
+            <label>Date:</label>
+            <input type="date" id="apptDate" required><br><br>
+            <label>Time:</label>
+            <input type="time" id="apptTime" required><br><br>
+            <button type="submit">Save</button>
+            <button type="button" onclick="hideAppointmentForm()">Cancel</button>
+          </form>
+        </div>
+
+        <table id="appointmentsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Doctor</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 📜 Records -->
+    <section id="recordsSection" class="container">
+      <div class="section-header" onclick="toggleSection(this)">
+        📜 Medical Records <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchRecords" placeholder="Search diagnosis or date...">
+        </div>
+        <table id="recordsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Doctor</th>
+              <th>Diagnosis</th>
+              <th>Treatment</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 💊 Medicines -->
+    <section id="medicinesSection" class="container">
+      <div class="section-header" onclick="toggleSection(this)">
+        💊 Medicines <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchMeds" placeholder="Search medicine name...">
+        </div>
+        <table id="medTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Dosage</th>
+              <th>Instructions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 📖 History -->
+    <section id="historySection" class="container">
+      <div class="section-header" onclick="toggleSection(this)">
+        📖 Visit History <span class="rotate">▶</span>
+      </div>
+      <div class="section-content">
+        <div class="search-bar">
+          <input type="text" id="searchHistory" placeholder="Search by doctor or status...">
+        </div>
+        <table id="visitHistoryTable">
+          <thead>
+            <tr>
+              <th>Appointment</th>
+              <th>Date</th>
+              <th>Doctor</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+    <!-- ✅ Booking Confirmation Modal -->
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <h3>Confirm Appointment</h3>
+      <p id="confirmDetails"></p>
+      <div class="modal-buttons">
+        <button id="confirmYes" class="confirm">Confirm</button>
+        <button id="confirmNo" class="cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+  let currentPatient = null;
+  let allDoctors = [];
+
+  // Reusable Confirmation Modal
+ 
+  function showConfirmationModal({ title = "Confirm Action", message = "", onConfirm, onCancel }) {
+    const modal = document.getElementById("confirmModal");
+    const titleEl = document.querySelector("#confirmModal h3");
+    const detailsEl = document.getElementById("confirmDetails");
+    const yesBtn = document.getElementById("confirmYes");
+    const noBtn = document.getElementById("confirmNo");
+
+    titleEl.textContent = title;
+    detailsEl.textContent = message;
+
+    modal.style.display = "flex";
+
+    const closeModal = () => {
+      modal.style.display = "none";
+      yesBtn.onclick = null;
+      noBtn.onclick = null;
+    };
+
+    yesBtn.onclick = () => {
+      closeModal();
+      if (onConfirm) onConfirm();
+    };
+
+    noBtn.onclick = () => {
+      closeModal();
+      if (onCancel) onCancel();
+    };
+  }
+
+  // Dashboard Initialization
+ 
+  async function initDashboard() {
+    await clinicDB.openClinicDB();
+    const user = JSON.parse(sessionStorage.getItem("loggedUser"));
+    if (!user || user.role !== "patient") {
+      alert("Unauthorized access. Please log in.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    currentPatient = user.linkedId;
+    const patient = await clinicDB.getItem("patients", currentPatient);
+    document.getElementById("patientName").textContent = `${patient.First} ${patient.Last}`;
+    document.getElementById("nhsId").textContent = patient.NHS;
+
+    allDoctors = await clinicDB.getAllItems("doctors");
+    loadAppointments();
+    loadRecords();
+    loadMedicines();
+    loadHistory();
+    initBookAppointmentForm();
+
+    document.getElementById("searchAppointments").addEventListener("input", loadAppointments);
+    document.getElementById("searchRecords").addEventListener("input", loadRecords);
+    document.getElementById("searchMeds").addEventListener("input", loadMedicines);
+    document.getElementById("searchHistory").addEventListener("input", loadHistory);
+  }
+
+  // Appointments Management
+
+  async function loadAppointments() {
+    const appts = await clinicDB.getAppointmentsByPatientId(currentPatient);
+    const filter = document.getElementById("searchAppointments").value.toLowerCase();
+    const tbody = document.querySelector("#appointmentsTable tbody");
+    tbody.innerHTML = "";
+
+    const filtered = appts.filter(a => {
+      const doc = allDoctors.find(d => d.id === a.doctorId);
+      const docName = doc ? (doc.first_name + " " + doc.last_name).toLowerCase() : "";
+      return docName.includes(filter) || (a.date && a.date.toLowerCase().includes(filter));
+    });
+
+    if (!filtered.length) {
+      tbody.innerHTML = "<tr><td colspan='6'>No appointments found.</td></tr>";
+      return;
+    }
+
+    filtered.forEach(a => {
+      const doc = allDoctors.find(d => d.id === a.doctorId);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${a.appointmentId}</td>
+        <td>${doc ? doc.first_name + " " + doc.last_name : "Unknown"}</td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td><span class="status ${a.status?.toLowerCase()}">${a.status}</span></td>
+        <td><button class="deleteBtn" onclick="cancelAppointment(${a.appointmentId})">Cancel</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Cancel appointment using modal 
+  async function cancelAppointment(id) {
+    const appt = await clinicDB.getItem("appointments", id);
+    if (!appt) return;
+
+    const doctor = allDoctors.find(d => d.id === appt.doctorId);
+    const doctorName = doctor
+      ? `${doctor.first_name || doctor.First} ${doctor.last_name || doctor.Last}`
+      : "Unknown Doctor";
+
+    showConfirmationModal({
+      title: "Cancel Appointment",
+      message: `Are you sure you want to cancel:\n👨‍⚕️ ${doctorName}\n📅 ${appt.date} at ${appt.time}?`,
+      onConfirm: async () => {
+        appt.status = "Cancelled";
+        await clinicDB.updateItem("appointments", appt);
+        loadAppointments();
+        loadHistory();
+      }
+    });
+  }
+
+  //📜 Records / 💊 Medicines / 📖 History
+ 
+  async function loadRecords() {
+    const recs = await clinicDB.getRecordsByPatientId(currentPatient);
+    const filter = document.getElementById("searchRecords").value.toLowerCase();
+    const tbody = document.querySelector("#recordsTable tbody");
+    tbody.innerHTML = "";
+
+    const filtered = recs.filter(r =>
+      (r.diagnosis && r.diagnosis.toLowerCase().includes(filter)) ||
+      (r.date && r.date.toLowerCase().includes(filter))
+    );
+
+    if (!filtered.length) {
+      tbody.innerHTML = "<tr><td colspan='5'>No records found.</td></tr>";
+      return;
+    }
+
+    filtered.forEach(r => {
+      const doc = allDoctors.find(d => d.id === r.doctorId);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.recordId}</td>
+        <td>${doc ? doc.first_name + " " + doc.last_name : "Unknown"}</td>
+        <td>${r.diagnosis}</td>
+        <td>${r.treatment}</td>
+        <td>${r.date}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function loadMedicines() {
+    const meds = await clinicDB.getAllItems("medicines");
+    const filter = document.getElementById("searchMeds").value.toLowerCase();
+    const tbody = document.querySelector("#medTable tbody");
+    tbody.innerHTML = "";
+
+    const filtered = meds.filter(m =>
+      (m.drugs && m.drugs.toLowerCase().includes(filter)) ||
+      (m.name && m.name.toLowerCase().includes(filter))
+    );
+
+    if (!filtered.length) {
+      tbody.innerHTML = "<tr><td colspan='4'>No medicines found.</td></tr>";
+      return;
+    }
+
+    filtered.forEach(m => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${m.id}</td>
+        <td>${m.drugs || m.name}</td>
+        <td>${m.dosage || "-"}</td>
+        <td>${m.instructions || "-"}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function loadHistory() {
+    const appts = await clinicDB.getAppointmentsByPatientId(currentPatient);
+    const filter = document.getElementById("searchHistory").value.toLowerCase();
+    const tbody = document.querySelector("#visitHistoryTable tbody");
+    tbody.innerHTML = "";
+
+    const filtered = appts.filter(a => {
+      const doc = allDoctors.find(d => d.id === a.doctorId);
+      const docName = doc ? (doc.first_name + " " + doc.last_name).toLowerCase() : "";
+      return docName.includes(filter) || (a.status && a.status.toLowerCase().includes(filter));
+    });
+
+    if (!filtered.length) {
+      tbody.innerHTML = "<tr><td colspan='4'>No visits found.</td></tr>";
+      return;
+    }
+
+    filtered.forEach(a => {
+      const doc = allDoctors.find(d => d.id === a.doctorId);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${a.appointmentId}</td>
+        <td>${a.date}</td>
+        <td>${doc ? doc.first_name + " " + doc.last_name : "Unknown"}</td>
+        <td><span class="status ${a.status?.toLowerCase()}">${a.status}</span></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Book Appointment Section
+
+  async function initBookAppointmentForm() {
+    const doctorSelect = document.getElementById("bookDoctorSelect");
+    const dateInput = document.getElementById("bookDate");
+    const timeSelect = document.getElementById("bookTime");
+
+    const doctors = await clinicDB.getAllItems("doctors");
+    doctorSelect.innerHTML = '<option value="">-- Select Doctor --</option>';
+    doctors.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.id;
+      opt.textContent = `${d.first_name || d.First} ${d.last_name || d.Last} (${d.specialty || "General"})`;
+      doctorSelect.appendChild(opt);
+    });
+
+    doctorSelect.addEventListener("change", updateAvailableTimes);
+    dateInput.addEventListener("change", updateAvailableTimes);
+
+    async function updateAvailableTimes() {
+      const doctorId = parseInt(doctorSelect.value);
+      const date = dateInput.value;
+      timeSelect.innerHTML = '<option value="">-- Select Time --</option>';
+      if (!doctorId || !date) return;
+
+      const allAppointments = await clinicDB.getAllItems("appointments");
+      const appointments = allAppointments.filter(a => a.doctorId === doctorId);
+      const taken = appointments
+        .filter(a => a.date === date && a.status !== "Cancelled")
+        .map(a => a.time);
+
+      const slots = [];
+      for (let h = 9; h < 17; h++) {
+        slots.push(`${String(h).padStart(2, "0")}:00`);
+        slots.push(`${String(h).padStart(2, "0")}:30`);
+      }
+
+      const today = new Date();
+      const selectedDate = new Date(date);
+
+      slots.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+
+        const [hour, minute] = t.split(":").map(Number);
+        const slotTime = new Date(selectedDate);
+        slotTime.setHours(hour, minute, 0, 0);
+
+        if (taken.includes(t)) {
+          opt.disabled = true;
+          opt.textContent += " (Booked)";
+          opt.style.background = "#e76f51";
+          opt.style.color = "white";
+        } else if (selectedDate.toDateString() === today.toDateString() && slotTime <= today) {
+          opt.disabled = true;
+          opt.textContent += " (Past)";
+          opt.style.background = "#ccc";
+        } else {
+          opt.style.background = "#4CAF50";
+          opt.style.color = "white";
+        }
+        timeSelect.appendChild(opt);
+      });
+    }
+
+    // ✅ Use modal for appointment confirmation
+    document.getElementById("bookAppointmentForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const doctorId = parseInt(doctorSelect.value);
+      const date = dateInput.value;
+      const time = timeSelect.value;
+      const reason = document.getElementById("bookReason").value.trim();
+
+      if (!doctorId || !date || !time) {
+        alert("⚠️ Please fill out all required fields.");
+        return;
+      }
+
+      const doctor = doctors.find(d => d.id === doctorId);
+      const doctorName = doctor
+        ? `${doctor.first_name || doctor.First} ${doctor.last_name || doctor.Last}`
+        : "Unknown Doctor";
+
+      showConfirmationModal({
+        title: "Confirm Appointment",
+        message: `👨‍⚕️ Doctor: ${doctorName}\n📅 Date: ${date}\n🕒 Time: ${time}\n📝 Reason: ${reason || "N/A"}`,
+        onConfirm: async () => {
+          const appointment = {
+            appointmentId: Date.now(),
+            doctorId,
+            patientId: currentPatient,
+            date,
+            time,
+            reason,
+            status: "Pending",
+            startIso: new Date(`${date}T${time}`).toISOString(),
+          };
+          await clinicDB.addItem("appointments", appointment);
+          alert("✅ Appointment confirmed and saved successfully!");
+          document.getElementById("bookAppointmentForm").reset();
+          loadAppointments();
+          loadHistory();
+          updateAvailableTimes();
+        }
+      });
+    };
+  }
+
+  // Miscellaneous
+
+  function toggleSection(header) {
+    header.parentElement.classList.toggle("active");
+  }
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+  }
+  function logout() {
+    sessionStorage.removeItem("loggedUser");
+    window.location.href = "login.html";
+  }
+
+  window.onload = initDashboard;
+
+</script>
+
+</body>
+</html>
+
+

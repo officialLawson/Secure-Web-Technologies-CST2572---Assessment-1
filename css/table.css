@@ -1,0 +1,199 @@
+/* ========== Top Bar (Search + Button) ========== */
+/* Container that holds search + button */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Search container */
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Search icon inside input */
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-icon .icon {
+  width: 16px;
+  height: 16px;
+  color: #666;
+}
+
+/* Input field */
+.search-container input {
+  width: 100%;
+  padding: 8px 12px 8px 32px; /* space for icon */
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-container input:focus {
+  border-color: #4f46e5; /* Indigo */
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* Actions (buttons area) */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Add button */
+.btn-add {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #4f46e5; /* Indigo */
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-add:hover {
+  background-color: #4338ca;
+}
+
+.btn-add:active {
+  transform: scale(0.98);
+}
+
+
+
+/* ========== Table Container ========== */
+.table-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  width: 100%;
+}
+
+/* ========== Table ========== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+}
+
+/* ========== Header ========== */
+.table thead {
+  background-color: #f9fafb;
+}
+
+.table th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.75rem; /* Equivalent to 12px */
+  line-height: 1rem;  /* Equivalent to 16px */
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #555;
+  border-bottom: 1px solid #ddd;
+}
+
+/* ========== Rows ========== */
+.table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* ========== Actions Column ========== */
+.actions {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+}
+
+/* ========== Buttons ========== */
+.btn {
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-blue {
+  background-color: #e0ecff;
+  color: #1e40af;
+}
+
+.btn-blue:hover {
+  background-color: #c7dbff;
+}
+
+.btn-red {
+  background-color: #ffe0e0;
+  color: #b91c1c;
+}
+
+.btn-red:hover {
+  background-color: #ffcccc;
+}
+
+/* ========== Icons ========== */
+.action-icon {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+/* ========== Empty State ========== */
+.no-data {
+  text-align: center;
+  color: #888;
+  padding: 16px;
+  font-size: 14px;
+}
+
+.btn-edit {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-delete {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 4px;
+}
+.btn-edit:hover { background: #45a049; }
+.btn-delete:hover { background: #d32f2f; }
+

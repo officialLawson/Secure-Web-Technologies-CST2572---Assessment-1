@@ -381,3 +381,20 @@ body {
     color: var(--muted);
     margin-top: auto;
 }
+
+/* ========== Card Container ========== */
+.card-container {
+  border-radius: 1rem;               /* same as rounded-2xl */
+  border: 1px solid #e5e7eb;         /* same as border-gray-200 */
+  background-color: #ffffff;         /* same as bg-white */
+  padding: 1.25rem;                  /* same as p-5 */
+  transition: all 0.3s ease;         /* optional: smooth transitions */
+  margin: 2rem 0.5rem 2rem 0.5rem;                    /* spacing around the card */
+}
+
+/* Larger padding on large screens (lg:p-6) */
+@media (min-width: 1024px) {
+  .card-container {
+    padding: 1.5rem; /* same as p-6 */
+  }
+}
