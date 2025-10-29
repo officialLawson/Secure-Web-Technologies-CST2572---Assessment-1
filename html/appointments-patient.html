@@ -94,7 +94,7 @@
                         <table class="table"  id="appointmentsTable">
                             <thead>
                             <tr>
-                                <th>Patient Name</th>
+                                <th>Doctor Name</th>
                                 <th>Reason</th>
                                 <th>Date - Time</th>
                                 <th>Status</th>
@@ -118,5 +118,11 @@
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
+    <script>
+        const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+        if (userRole !== 'patient') {
+            window.location.href = `appointments-${userRole}.html`;
+        } 
+    </script>
 </body>
 </html>

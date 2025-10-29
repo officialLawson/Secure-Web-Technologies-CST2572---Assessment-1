@@ -133,5 +133,11 @@
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
+    <script>
+        const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+        if (userRole !== 'doctor') {
+            window.location.href = `appointments-${userRole}.html`;
+        } 
+    </script>
 </body>
 </html>

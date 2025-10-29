@@ -82,32 +82,32 @@
                 <h2 class="content-title">Dashboard</h2>
 
                 <div class="cards-container">
-                    <!-- Total Users -->
+                    <!-- Total Doctors -->
                     <div class="card">
-                        <h3>Total Users</h3>
-                        <p class="value">24.7K</p>
+                        <h3>Total Doctors</h3>
+                        <p class="value" id="totalDoctors"></p>
                         <div class="stats">
-                        <span class="positive">+20%</span>
-                        <span class="compare">Vs last month</span>
+                        <span class="positive" id="totalDoctorsComparison"></span>
+                        <span class="compare">Vs total users</span>
                         </div>
                     </div>
 
                     <!-- Total Patients -->
                     <div class="card">
                         <h3>Total Patients</h3>
-                        <p class="value">55.9K</p>
+                        <p class="value" id="totalPatients"></p>
                         <div class="stats">
-                        <span class="positive">+4%</span>
-                        <span class="compare">Vs last month</span>
+                        <span class="positive" id="totalPatientsComparison"></span>
+                        <span class="compare">Vs total users</span>
                         </div>
                     </div>
 
-                    <!-- Daily Appointment Rate -->
+                    <!-- Monthly Appointment Rate -->
                     <div class="card">
-                        <h3>Daily Appointment Rate</h3>
-                        <p class="value">54%</p>
+                        <h3>Appointments this month</h3>
+                        <p class="value" id="monthlyAppointments"></p>
                         <div class="stats">
-                        <span class="negative">-1.59%</span>
+                        <span class="negative" id="monthlyAppointmentComparison"></span>
                         <span class="compare">Vs last month</span>
                         </div>
                     </div>
@@ -150,5 +150,6 @@
 
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
+    <script src="../js/dashboard.js"></script>
 </body>
 </html>

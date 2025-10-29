@@ -71,7 +71,7 @@
                 <h2 class="content-title">Add Appointment</h2>
                 
                 <div class="card-container">
-                    <form>
+                    <form onsubmit="handleAddAppointment(event)" novalidate>
                         <div class="form-section">
                             <h2>Appointment Information</h2>
                             <p class="description">Basic appointment details.</p>
@@ -96,13 +96,19 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="appointmentReason">Reason:</label>
-                                    <input type="text" id="appointmentReason" name="appointmentReason" placeholder="Enter appointment reason" required>
+                                    <select id="appointmentReason" name="appointmentReason" required>
+                                        <option class="formSelectOptions" value="">Select Appointment Reason</option>
+                                        <option class="formSelectOptions" value="Consultation">Consultation</option>
+                                        <option class="formSelectOptions" value="Routine check-up">Routine check-up</option>
+                                        <option class="formSelectOptions" value="Follow-up">Follow-up</option>
+                                        <option class="formSelectOptions" value="Treatment review">Treatment review</option>
+                                    </select>
                                     <p id="appointmentReason-form-error" class="error-message"></p>
                                 </div>
                             </div> 
                         </div>
                         <div class="form-actions">
-                            <a href="medicines-admin.html" class="cancel-link">Cancel</a>
+                            <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
                             <button onclick="handleAddAppointment()" class="submit-btn">Add Appointment</button>
                         </div>
                     </form>
@@ -119,5 +125,13 @@
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
+    <script>
+        const back = document.getElementById('back');
+        back.addEventListener('click', (e) => {
+            e.preventDefault();
+            const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+            window.location.href = `appointments-${userRole}.html`;
+        });
+    </script>
 </body>
 </html>

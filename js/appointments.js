@@ -60,7 +60,7 @@ async function loadAppointments() {
                         <td>${app.status || 'Pending'}</td>
                         <td>
                         <button class="btn-edit" data-id="${app.appointmentId}">Edit</button>
-                        <button class="btn-delete" data-id="${app.appointmentId}">Delete</button>
+                        <button class="btn-delete" data-id="${app.appointmentId}">Cancel</button>
                         </td>
                     `;
 
@@ -73,13 +73,13 @@ async function loadAppointments() {
                     const doctorName = doctorMap[app.doctorId] || 'Unknown';
 
                     row.innerHTML = `
-                        <td>${doctorName}</td>
+                        <td>Dr. ${doctorName}</td>
                         <td>${app.reason || 'Unknown'}</td>
                         <td>${app.date || '-'} - ${app.time || '-'}</td>
                         <td>${app.status || 'Pending'}</td>
                         <td>
                         <button class="btn-edit" data-id="${app.appointmentId}">Edit</button>
-                        <button class="btn-delete" data-id="${app.appointmentId}">Delete</button>
+                        <button class="btn-delete" data-id="${app.appointmentId}">Cancel</button>
                         </td>
                     `;
 
@@ -93,13 +93,13 @@ async function loadAppointments() {
                     const patientName = patientMap[app.patientId] || 'Unknown';
 
                     row.innerHTML = `
-                        <td>${doctorName}</td>
+                        <td>Dr. ${doctorName}</td>
                         <td>${patientName}</td>
                         <td>${app.date || '-'} - ${app.time || '-'}</td>
                         <td>${app.status || 'Pending'}</td>
                         <td>
                         <button class="btn-edit" data-id="${app.appointmentId}">Edit</button>
-                        <button class="btn-delete" data-id="${app.appointmentId}">Delete</button>
+                        <button class="btn-delete" data-id="${app.appointmentId}">Cancel</button>
                         </td>
                     `;
 
@@ -152,6 +152,8 @@ async function loadAppointments() {
   }
 }
 
+
+
 async function populateDoctorDropdown() {
   try {
     const db = await openClinicDB(); // 👈 use your existing IndexedDB open function
@@ -190,8 +192,6 @@ async function populateDoctorDropdown() {
   }
 }
 
-
-
 // Placeholder functions for Edit/Delete
 function editAppointment(id) {
   alert(`Edit appointment with ID: ${id}`);
@@ -216,39 +216,162 @@ function deleteAppointment(id) {
   }
 }
 
-function addAppointment(doctorId, patientId, reason, date, time) {
-  openClinicDB().then(db => {
-    const tx = db.transaction('appointments', 'readwrite');
-    const store = tx.objectStore('appointments');
-    const newAppointment = {
-      doctorId,
-      patientId,
-      reason,
-      date,
-      time,
-      status: 'Pending'
-    };
-    store.add(newAppointment);
+async function addAppointment(event, doctorId, patientId, reason, date, time) {
 
-    tx.oncomplete = () => {
-      alert('Appointment added.');
-      loadAppointments(); // Refresh the table
+  // ✅ Prevent form submission reload
+  if (event) event.preventDefault();
+
+  if (!doctorId) {
+    const inputError = document.getElementById("doctorName");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("doctorName-form-error");
+    error.innerHTML = `Please select a doctor.`;
+    return;
+  } else {
+    const inputError = document.getElementById("doctorName");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("doctorName-form-error");
+    error.innerHTML = ``;
+  }
+  if (!date) {
+    const inputError = document.getElementById("appointmentDate");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("appointmentDate-form-error");
+    error.innerHTML = `Please select an appointment date.`;
+    return;
+  } else {
+    const inputError = document.getElementById("appointmentDate");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("appointmentDate-form-error");
+    error.innerHTML = ``;
+  }
+  if (!time) {
+    const inputError = document.getElementById("appointmentTime");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("appointmentTime-form-error");
+    error.innerHTML = `Please select an appointment time.`;
+    return;
+  } else {
+    const inputError = document.getElementById("appointmentTime");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("appointmentTime-form-error"); 
+    error.innerHTML = ``;
+  }
+  if (!reason) {
+    const inputError = document.getElementById("appointmentReason");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("appointmentReason-form-error");
+    error.innerHTML = `Please select an appointment reason.`;
+    return;
+  } else {
+    const inputError = document.getElementById("appointmentReason");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("appointmentReason-form-error");
+    error.innerHTML = ``;
+  }
+
+  if (new Date(`${date}T${time}`) < new Date()) {
+    const inputError = document.getElementById("appointmentTime");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("appointmentTime-form-error");
+    error.innerHTML = `Appointment date and time must be in the future.`;
+    return;
+  } else {
+    const inputError = document.getElementById("appointmentTime");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("appointmentTime-form-error");
+    error.innerHTML = ``;
+
+    console.log(doctorId, patientId, reason, date, time);
+
+    try {
+      const db = await openClinicDB();
+      const tx = db.transaction('appointments', 'readwrite');
+      const store = tx.objectStore("appointments");
+
+      // ✅ 1. Get all medicines to check for duplicates and determine next ID
+      const getAllReq = store.getAll();
+
+      getAllReq.onsuccess = function() {
+        const appointments = getAllReq.result || [];
+
+        const existSame = appointments.find(app => 
+          app.doctorId === doctorId &&
+          app.patientId === patientId &&
+          app.date === date &&
+          app.time === time
+        );
+
+        if (existSame) {
+          const error = document.getElementById("appointmentTime-form-error");
+          error.innerHTML = `Appointment with the same details already exists.`;
+          return;
+        }
+
+        const existDifferent = appointments.find(app => 
+          app.doctorId === doctorId &&
+          app.date === date &&
+          app.time === time
+        );
+
+        if (existDifferent) {
+          const error = document.getElementById("appointmentTime-form-error");
+          error.innerHTML = `Appointment at this specified time is not possible.`;
+          return;
+        }
+
+        // ✅ Generate unique appointment ID (e.g., "AP7241")
+        function generateAppointmentId() {
+          const randomNum = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
+          const timestamp = Date.now().toString().slice(-4); // last 4 digits of timestamp (adds uniqueness)
+          return `AP${randomNum}${timestamp}`;
+        }
+
+        // ✅ Create the new appointment object
+        const newAppointment = {
+          appointmentId: generateAppointmentId(),
+          doctorId,
+          patientId,
+          reason,
+          date,
+          time,
+          status: 'Confirmed',
+        };
+
+        const addReq = store.add(newAppointment);
+
+        const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+
+        addReq.onsuccess = () => {
+          console.log(`✅ Added appointment: ${reason} (id: ${newAppointment.appointmentId})`);
+          window.location.href = `appointments-${userRole}.html`; // Redirect after adding
+        };
+
+        addReq.onerror = (e) => {
+          console.error("❌ Failed to add appointment:", e.target.error);
+        };
+      };
+
+      getAllReq.onerror = (e) => {
+        console.error("❌ Error fetching appointments:", e.target.error);
+      };
+    } catch (err) {
+        console.error("⚠️ Database error:", err);
     }
-
-    tx.onerror = () => {
-      alert('Error adding appointment.');
-    };
-  });
+  }
 }
 
-function handleAddAppointment() {
-  const doctorId = document.getElementById('doctorId').value;
-  const patientId = document.getElementById('patientId').value;
-  const reason = document.getElementById('reason').value;
-  const date = document.getElementById('date').value;
-  const time = document.getElementById('time').value;
+function handleAddAppointment(event) {
+  const doctorId = document.getElementById('doctorName').value;
+  const patientId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
+  const reason = document.getElementById('appointmentReason').value;
+  const date = document.getElementById('appointmentDate').value;
+  const time = document.getElementById('appointmentTime').value;
 
-  addAppointment(doctorId, patientId, reason, date, time);
+  console.log(doctorId, patientId, reason, date, time);
+
+  addAppointment(event, doctorId, patientId, reason, date, time);
+
 }
 
 // Load on page ready

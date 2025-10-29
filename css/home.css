@@ -429,7 +429,7 @@ html {
 /* ===== Contact Section ===== */
 .contact {
   padding: 50px 20px;
-  background: linear-gradient(135deg, #2a5298, #1e40af);
+  background: var(--bg-section-mid);
   text-align: center;
 }
 

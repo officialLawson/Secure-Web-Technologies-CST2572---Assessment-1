@@ -52,7 +52,7 @@ async function fetchAllUserData() {
                 const patientName = patientMap[u.linkedId] || 'Unknown Patient';
                 row.innerHTML = `
                     <td>${patientName}</td>
-                    <td>${role}</td>
+                    <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
                     <td class="actions">
                         <a href="edit-user.html"><button class="btn-edit" data-id="${u.id}">Edit</button></a>
                         <button class="btn-delete" onclick="deleteUser(${u.id})">Delete</button>

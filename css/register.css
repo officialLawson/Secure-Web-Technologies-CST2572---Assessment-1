@@ -1,0 +1,430 @@
+:root {
+  /* Light Mode Colors */
+  --bg-body: white;
+  --bg-container: rgb(225, 225, 225);
+  --bg-input: rgba(255, 255, 255, 1);
+  --bg-input-focus: rgba(255, 255, 255, 1);
+  --bg-btn: rgb(26, 79, 153);
+  --bg-btn-hover: #4A90E2;
+  --bg-strength-bar: rgba(0, 0, 0, 0.1);
+  --bg-strength-bar-border: rgba(0, 0, 0, 0.2);
+  --bg-requirements: rgba(255, 255, 255, 0.15);
+  --bg-requirements-border: rgba(255, 255, 255, 0.3);
+
+  --text-primary: rgb(26, 79, 153);
+  --text-label: black;
+  --text-input: black;
+  --text-btn: #fff;
+  --text-link: black;
+  --text-link-hover: rgb(26, 79, 153);
+  --text-requirements: rgba(0, 0, 0, 0.7);
+  --text-strength: rgba(0, 0, 0, 0.7);
+  --text-met: #06d6a0;
+  --text-match: #06d6a0;
+  --text-no-match: #ff6b6b;
+
+  --border-input: rgba(255, 255, 255, 0.2);
+  --border-input-focus: #4A90E2;
+  --border-header: rgba(0, 0, 0, 0.1);
+  --border-strength-bar: rgba(0, 0, 0, 0.2);
+
+  --shadow-container: rgba(0, 0, 0, 0.4);
+  --shadow-input: rgba(0, 0, 0, 0.05);
+  --shadow-input-focus: rgba(0, 0, 0, 0.1);
+  --shadow-btn: rgba(0, 0, 0, 0.1);
+  --shadow-btn-hover: rgba(0, 0, 0, 0.2);
+  --shadow-text: rgba(0, 0, 0, 0.2);
+
+  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --before-bg: rgba(255, 255, 255, 0.05);
+
+  --strength-weak: #ff6b6b;
+  --strength-medium: #ffd93d;
+  --strength-strong: #06d6a0;
+}
+
+.darkmode {
+  /* Dark Mode Overrides */
+    --bg-body: #121212;
+    --bg-container: rgba(30, 30, 30, 0.9);
+    --bg-input: rgba(50, 50, 50, 1);
+    --bg-input-focus: rgba(60, 60, 60, 1);
+    --bg-btn: #4A90E2;
+    --bg-btn-hover: #357ab8;
+    --bg-strength-bar: rgba(255, 255, 255, 0.1);
+    --bg-strength-bar-border: rgba(255, 255, 255, 0.2);
+    --bg-requirements: rgba(255, 255, 255, 0.08);
+    --bg-requirements-border: rgba(255, 255, 255, 0.15);
+
+    --text-primary: #a0cfff;
+    --text-label: #e0e0e0;
+    --text-input: #ffffff;
+    --text-btn: #fff;
+    --text-link: #e0e0e0;
+    --text-link-hover: #a0cfff;
+    --text-requirements: rgba(255, 255, 255, 0.7);
+    --text-strength: rgba(255, 255, 255, 0.7);
+    --text-met: #06d6a0;
+    --text-match: #06d6a0;
+    --text-no-match: #ff6b6b;
+
+    --border-input: rgba(255, 255, 255, 0.15);
+    --border-input-focus: #4A90E2;
+    --border-header: rgba(255, 255, 255, 0.1);
+    --border-strength-bar: rgba(255, 255, 255, 0.2);
+
+    --shadow-container: rgba(0, 0, 0, 0.6);
+    --shadow-input: rgba(0, 0, 0, 0.2);
+    --shadow-input-focus: rgba(0, 0, 0, 0.3);
+    --shadow-btn: rgba(0, 0, 0, 0.3);
+    --shadow-btn-hover: rgba(0, 0, 0, 0.4);
+    --shadow-text: rgba(0, 0, 0, 0.3);
+
+    --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+    --before-bg: rgba(255, 255, 255, 0.03);
+}
+
+
+/* ---------- Theme Switch ---------- */
+#theme-switch {
+    height: 50px;
+    width: 50px;
+    padding: 0;
+    border-radius: 50%;
+    background-color: var(--bg-btn);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+    border: 2px solid var(--border-mid);
+    transition: background-color 0.3s ease, border-color 0.3s ease; 
+}
+
+#theme-switch:hover {
+    background-color: var(--bg-section-light);
+    border-color: var(--bg-body);
+}
+
+#theme-switch svg {
+    width: 80%;
+    height: 80%;
+    fill: var(--color-primary);
+    transition: fill 0.3s ease;
+}
+
+#theme-switch svg:last-child {
+    display: none;
+}
+
+.darkmode #theme-switch svg:first-child {
+    display: none;
+}
+
+.darkmode #theme-switch svg:last-child {
+    display: block;
+}
+
+
+/* ---------- Register & Password Pages ---------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-body);
+  overflow: hidden;
+}
+
+/* ---------- Container ---------- */
+.register-container {
+  position: relative;
+  margin-top: 10px;
+  width: 680px;
+  max-width: 95%;
+  max-height: 90vh;
+  padding: 30px 40px 40px 40px;
+  border-radius: 20px;
+  background: var(--bg-container);
+  border: none;
+  box-shadow: 0px 0px 45px var(--shadow-container);
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 10;
+}
+.register-container::-webkit-scrollbar {
+  width: 6px;
+}
+.register-container::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+.password-page .register-container {
+  height: 40rem;
+  margin: 70px;
+}
+
+/* ---------- Header Section ---------- */
+.header-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-header);
+}
+.hospital-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.register-container h2 {
+  color: var(--text-primary);
+  font-size: 32px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: .5px;
+  text-shadow: 0 2px 4px var(--shadow-text);
+  margin: 0;
+}
+
+/* ---------- Input Groups ---------- */
+.input-group {
+  position: relative;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+.input-group label {
+  display: block;
+  color: var(--text-label);
+  font-size: 15px;
+  margin-bottom: 10px;
+  margin-left: 8px;
+  font-weight: 500;
+  letter-spacing: .3px;
+  transition: all .3s ease;
+  pointer-events: none;
+}
+.input-group input {
+  width: 100%;
+  padding: 15px 20px;
+  background: var(--bg-input);
+  border: 2px solid var(--border-input);
+  outline: none;
+  border-radius: 35px;
+  font-size: 16px;
+  color: var(--text-input);
+  box-shadow: 0 5px 15px var(--shadow-input);
+  transition: all .3s ease;
+}
+.input-group input:focus,
+.input-group input:valid {
+  background: var(--bg-input-focus);
+  border: 2px solid var(--border-input-focus);
+  box-shadow: 0 8px 20px var(--shadow-input-focus);
+}
+.input-group input:focus + label,
+.input-group input:valid + label {
+  color: var(--border-input-focus);
+  font-size: 13px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+/* ---------- Date Input ---------- */
+.input-group input[type="date"] {
+  color-scheme: light;
+  padding-right: 30px;
+}
+.input-group input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: .7;
+  cursor: pointer;
+}
+
+/* ---------- Button ---------- */
+.register-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background: var(--bg-btn);
+  border: none;
+  border-radius: 35px;
+  color: var(--text-btn);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: all .3s ease;
+  box-shadow: 0 5px 15px var(--shadow-btn);
+  margin: 15px 0;
+}
+.register-btn:hover {
+  background: var(--bg-btn-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px var(--shadow-btn-hover);
+}
+.register-btn:active {
+  transform: translateY(-1px);
+}
+
+/* ---------- Bottom Link ---------- */
+.register-link {
+  text-align: center;
+  margin-top: 25px;
+  color: var(--text-link);
+  font-size: 14px;
+}
+.register-link a {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .3s ease;
+}
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Password Section ---------- */
+.password-section {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.password-inputs {
+  flex: 1;
+}
+.password-requirements {
+  width: 240px;
+  background: var(--bg-requirements);
+  border-radius: 15px;
+  padding: 15px;
+  border: 1px solid var(--bg-requirements-border);
+}
+.password-requirements h3 {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.password-requirements ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.password-requirements li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-requirements);
+  font-size: 12px;
+  margin-bottom: 10px;
+  transition: all .3s ease;
+}
+.password-requirements li:last-child {
+  margin-bottom: 0;
+}
+.req-icon {
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 16px;
+}
+.password-requirements li.met {
+  color: var(--text-met);
+}
+.password-requirements li.met .req-icon::before {
+  content: '✓';
+}
+
+/* Strength Bar */
+.password-strength {
+  color: #121212;
+  margin-bottom: 25px;
+}
+
+.darkmode .password-strength {
+  color: #e0e0e0;
+}
+
+
+.strength-bar {
+  height: 6px;
+  width: 100%;
+  background: var(--bg-strength-bar);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+  border: 1px solid var(--border-strength-bar);
+  backdrop-filter: blur(5px);
+}
+.strength-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  transition: all .3s ease;
+}
+.strength-fill.weak { background: var(--strength-weak); width: 33%; }
+.strength-fill.medium { background: var(--strength-medium); width: 66%; }
+.strength-fill.strong { background: var(--strength-strong); width: 100%; }
+.strength-text {
+  font-size: 13px;
+  color: var(--text-strength);
+  margin-top: 6px;
+  text-align: center;
+  font-weight: 500;
+  transition: color .3s ease;
+}
+.password-match-message {
+  font-size: 13px;
+  text-align: center;
+  margin: 15px 0;
+  min-height: 20px;
+  font-weight: 500;
+  transition: all .3s ease;
+}
+.password-match-message.match { color: var(--text-match); }
+.password-match-message.no-match { color: var(--text-no-match); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .register-container {
+    width: 90%;
+    max-width: 380px;
+    padding: 25px 30px;
+  }
+  .password-section {
+    flex-direction: column;
+  }
+  .password-requirements {
+    width: 100%;
+  }
+  .register-container h2 {
+    font-size: 26px;
+  }
+  .header-section {
+    gap: 8px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+  }
+  .hospital-logo {
+    width: 50px;
+    height: 50px;
+  }
+}
