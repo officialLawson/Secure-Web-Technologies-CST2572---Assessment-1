@@ -1,4 +1,33 @@
 /* ========== Top Bar (Search + Button) ========== */
+:root {
+  --accent-focus-shadow: rgba(79, 70, 229, 0.2);
+
+  --btn-blue-bg: #e0ecff;
+  --btn-blue-text: #1e40af;
+  --btn-blue-hover: #c7dbff;
+
+  --btn-red-bg: #ffe0e0;
+  --btn-red-text: #b91c1c;
+  --btn-red-hover: #ffcccc;
+
+  --btn-edit-hover: #45a049;
+  --btn-delete-hover: #d32f2f;
+}
+
+.darkmode {
+  --accent-focus-shadow: rgba(96, 165, 250, 0.3);
+
+  --btn-blue-bg: #1e3a8a;
+  --btn-blue-text: #93c5fd;
+  --btn-blue-hover: #1e40af;
+
+  --btn-red-bg: #7f1d1d;
+  --btn-red-text: #fca5a5;
+  --btn-red-hover: #991b1b;
+
+  --btn-edit-hover: #34d399;
+  --btn-delete-hover: #f87171;
+}
 /* Container that holds search + button */
 .top-bar {
   display: flex;
@@ -28,7 +57,7 @@
 .search-icon .icon {
   width: 16px;
   height: 16px;
-  color: #666;
+  color: var(--text-muted);
 }
 
 /* Input field */
@@ -36,17 +65,17 @@
   width: 100%;
   padding: 8px 12px 8px 32px; /* space for icon */
   font-size: 14px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background-color: #fff;
-  color: #333;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .search-container input:focus {
-  border-color: #4f46e5; /* Indigo */
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  border-color: var(--accent); /* Indigo */
+  box-shadow: 0 0 0 2px var(--accent-focus-shadow);
 }
 
 /* Actions (buttons area) */
@@ -61,16 +90,16 @@
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  background-color: #4f46e5; /* Indigo */
+  background-color: var(--accent); /* Indigo */
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px var(--shadow-btn);
   transition: background-color 0.2s, transform 0.1s;
 }
 
 .btn-add:hover {
-  background-color: #4338ca;
+  background-color: var(--accent-hover);
 }
 
 .btn-add:active {
@@ -81,9 +110,9 @@
 
 /* ========== Table Container ========== */
 .table-container {
-  background-color: #fff;
+  background-color: var(--bg-card);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px var(--shadow-card-hover);
   overflow: hidden;
   width: 100%;
 }
@@ -97,7 +126,7 @@
 
 /* ========== Header ========== */
 .table thead {
-  background-color: #f9fafb;
+  background-color: var(--bg-body);
 }
 
 .table th {
@@ -107,20 +136,20 @@
   line-height: 1rem;  /* Equivalent to 16px */
   font-weight: 600;
   text-transform: uppercase;
-  color: #555;
-  border-bottom: 1px solid #ddd;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
 }
 
 /* ========== Rows ========== */
 .table td {
   padding: 12px 16px;
   font-size: 14px;
-  color: #333;
-  border-bottom: 1px solid #eee;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .table tr:hover {
-  background-color: #f5f5f5;
+  background-color: var(--bg-graph-placeholder);
 }
 
 /* ========== Actions Column ========== */
@@ -144,21 +173,21 @@
 }
 
 .btn-blue {
-  background-color: #e0ecff;
-  color: #1e40af;
+  background-color: var(--btn-blue-bg);
+  color: var(--btn-blue-text);
 }
 
 .btn-blue:hover {
-  background-color: #c7dbff;
+  background-color: var(--btn-blue-hover);
 }
 
 .btn-red {
-  background-color: #ffe0e0;
-  color: #b91c1c;
+  background-color: var(--btn-red-bg);
+  color: var(--btn-red-text);
 }
 
 .btn-red:hover {
-  background-color: #ffcccc;
+  background-color: var(--btn-red-hover);
 }
 
 /* ========== Icons ========== */
@@ -172,13 +201,13 @@
 /* ========== Empty State ========== */
 .no-data {
   text-align: center;
-  color: #888;
+  color: var(--text-muted);
   padding: 16px;
   font-size: 14px;
 }
 
 .btn-edit {
-  background: #4CAF50;
+  background: var(--text-positive);
   color: white;
   border: none;
   padding: 4px 8px;
@@ -186,7 +215,7 @@
   cursor: pointer;
 }
 .btn-delete {
-  background: #f44336;
+  background: var(--text-negative);
   color: white;
   border: none;
   padding: 4px 8px;
@@ -194,6 +223,5 @@
   cursor: pointer;
   margin-left: 4px;
 }
-.btn-edit:hover { background: #45a049; }
-.btn-delete:hover { background: #d32f2f; }
-
+.btn-edit:hover { background: var(--btn-edit-hover); }
+.btn-delete:hover { background: var(--btn-delete-hover); }
