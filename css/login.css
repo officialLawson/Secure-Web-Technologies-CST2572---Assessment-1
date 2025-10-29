@@ -1,3 +1,95 @@
+:root {
+  --bg-body: white;
+  --bg-container: rgb(225, 225, 225);
+  --bg-input: rgba(255, 255, 255, 1);
+  --bg-input-focus: rgba(255, 255, 255, 1);
+  --bg-btn: rgb(26, 79, 153);
+  --bg-btn-hover: #4A90E2;
+  --text-primary: rgb(26, 79, 153);
+  --text-label: black;
+  --text-input: black;
+  --text-btn: #fff;
+  --text-link: black;
+  --text-link-hover: rgb(26, 79, 153);
+  --border-input: rgba(255, 255, 255, 0.2);
+  --border-input-focus: #4A90E2;
+  --shadow-container: rgba(0, 0, 0, 0.4);
+  --shadow-input: rgba(0, 0, 0, 0.05);
+  --shadow-input-focus: rgba(0, 0, 0, 0.1);
+  --shadow-btn: rgba(0, 0, 0, 0.1);
+  --shadow-btn-hover: rgba(0, 0, 0, 0.2);
+  --shadow-text: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+}
+
+/* =============== Dark Mode =============== */
+.darkmode {
+  --bg-body: #121212;
+  --bg-container: rgba(30, 30, 30, 0.9);
+  --bg-input: rgba(50, 50, 50, 1);
+  --bg-input-focus: rgba(60, 60, 60, 1);
+  --bg-btn: #4A90E2;
+  --bg-btn-hover: #357ab8;
+  --text-primary: #a0cfff;
+  --text-label: #e0e0e0;
+  --text-input: #ffffff;
+  --text-btn: #fff;
+  --text-link: #e0e0e0;
+  --text-link-hover: #a0cfff;
+  --border-input: rgba(255, 255, 255, 0.15);
+  --border-input-focus: #4A90E2;
+  --shadow-container: rgba(0, 0, 0, 0.6);
+  --shadow-input: rgba(0, 0, 0, 0.2);
+  --shadow-input-focus: rgba(0, 0, 0, 0.3);
+  --shadow-btn: rgba(0, 0, 0, 0.3);
+  --shadow-btn-hover: rgba(0, 0, 0, 0.4);
+  --shadow-text: rgba(0, 0, 0, 0.3);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+}
+
+/* =============== Theme Switch Button =============== */
+#theme-switch {
+  height: 50px;
+  width: 50px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: var(--bg-btn);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  border: 2px solid var(--border-input-focus);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+#theme-switch:hover {
+  background-color: var(--bg-btn-hover);
+  transform: scale(1.1);
+}
+
+#theme-switch svg {
+  width: 80%;
+  height: 80%;
+  fill: var(--text-btn);
+  transition: fill 0.3s ease;
+}
+
+#theme-switch svg:last-child { 
+  display: none; 
+}
+
+.darkmode #theme-switch svg:first-child { 
+  display: none; 
+}
+.darkmode #theme-switch svg:last-child { 
+  display: block; 
+}
+
+
 /* =============== Global Styles =============== */
 * {
   margin: 0;
@@ -11,9 +103,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* background: rgba(74, 144, 226, 1); */
-  background: white;
+  background: var(--bg-body);
   overflow: hidden;
+  transition: background 0.3s ease;
 }
 
 /* =============== Login Container =============== */
@@ -26,14 +118,10 @@ body {
   padding: 30px 40px 40px 40px;
   border-radius: 20px;
   backdrop-filter: blur(15px);
-  background: none;
-  background: rgb(225, 225, 225);
-  border: none;
-  /* border: 1px solid rgba(255, 255, 255, 0.5); */
-  box-shadow: 0px 0px 45px rgba(0, 0, 0, 0.4);
+  background: var(--bg-container);
+  box-shadow: 0px 0px 45px var(--shadow-container);
   z-index: 10;
-  overflow-y: hidden;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .login-container::-webkit-scrollbar {
@@ -41,17 +129,17 @@ body {
 }
 
 .login-container::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 .login-container h2 {
-  color: rgb(26, 79, 153);
+  color: var(--text-primary);
   font-size: 32px;
   font-weight: 600;
   text-align: center;
   letter-spacing: 0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px var(--shadow-text);
 }
 
 /* =============== Header Section =============== */
@@ -59,17 +147,15 @@ body {
   display: flex;
   align-items: center;
   flex-direction: column;
-  /* gap: 8px; */
   padding-bottom: 25px;
-  /* border-bottom: 10px solid rgb(0, 0, 0); */
 }
 
-/* =============== Hospital Logo =============== */
 .hospital-logo {
   width: 75px;
   height: 75px;
   object-fit: contain;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px var(--shadow-text));
 }
 
 /* =============== Input Groups =============== */
@@ -82,7 +168,7 @@ body {
 
 .input-group label {
   display: block;
-  color: black;
+  color: var(--text-label);
   font-size: 15px;
   margin-bottom: 10px;
   margin-left: 8px;
@@ -93,32 +179,20 @@ body {
 .input-group input {
   width: 100%;
   padding: 15px 20px;
-  background: rgba(255, 255, 255, 1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: var(--bg-input);
+  border: 2px solid var(--border-input);
   outline: none;
   border-radius: 35px;
   font-size: 16px;
-  color: black;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  color: var(--text-input);
+  box-shadow: 0 5px 15px var(--shadow-input);
   transition: all 0.3s ease;
 }
 
 .input-group input:focus {
-  border: 2px solid #4A90E2;
-  /* background: rgba(255, 255, 255, 0.3); */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* =============== Date Input =============== */
-.input-group input[type="date"] {
-  padding-right: 30px;
-  color-scheme: dark;
-}
-
-.input-group input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1);
-  opacity: 0.7;
-  cursor: pointer;
+  border: 2px solid var(--border-input-focus);
+  background: var(--bg-input-focus);
+  box-shadow: 0 8px 20px var(--shadow-input-focus);
 }
 
 /* =============== Forgot Password Link =============== */
@@ -135,40 +209,38 @@ body {
   position: absolute;
   top: 0;
   right: 8px;
-  color: rgb(26, 79, 153);
-  /* color: rgba(255, 255, 255, 0.95); */
+  color: var(--text-primary);
   font-size: 13px;
   text-decoration: none;
-  transition: all 0.3s ease;
   font-weight: 500;
   letter-spacing: 0.2px;
+  transition: all 0.3s ease;
 }
 
 .forgot-password-link:hover {
   text-decoration: underline;
-  /* color: #fff; */
+  color: var(--text-link-hover);
 }
 
-/* =============== Buttons =============== */
+/* =============== Login Button =============== */
 .login-btn {
   width: 100%;
   padding: 15px;
-  background: rgb(26, 79, 153);
+  background: var(--bg-btn);
   border: none;
-  outline: none;
   border-radius: 35px;
-  color: #fff;
+  color: var(--text-btn);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px var(--shadow-btn);
 }
 
 .login-btn:hover {
-  background: #4A90E2;
+  background: var(--bg-btn-hover);
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px var(--shadow-btn-hover);
 }
 
 .login-btn:active {
@@ -179,12 +251,12 @@ body {
 .register-link {
   text-align: center;
   margin-top: 8px;
-  color: black;
+  color: var(--text-link);
   font-size: 14px;
 }
 
 .register-link a {
-  color: rgb(26, 79, 153);
+  color: var(--text-primary);
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
@@ -192,116 +264,12 @@ body {
 
 .register-link a:hover {
   text-decoration: underline;
-}
-
-/* =============== Password Strength Indicator =============== */
-.password-strength {
-  margin-bottom: 25px;
-}
-
-.strength-bar {
-  height: 6px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-  margin-top: 8px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.strength-fill {
-  height: 100%;
-  width: 0%;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-}
-
-.strength-text {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  margin-top: 6px;
-  text-align: center;
-  font-weight: 500;
-  transition: color 0.3s ease;
+  color: var(--text-link-hover);
 }
 
 
-/* =============== Password Section Layout =============== */
-.password-section {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 20px;
-}
-
-.password-inputs {
-  flex: 1;
-}
-
-.password-requirements {
-  width: 240px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 15px;
-  padding: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.password-requirements h3 {
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.password-requirements ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.password-requirements li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  margin-bottom: 10px;
-  transition: all 0.3s ease;
-}
-
-.password-requirements li:last-child {
-  margin-bottom: 0;
-}
-
-.req-icon {
-  font-size: 16px;
-  font-weight: bold;
-  min-width: 16px;
-}
-
-.password-requirements li.met {
-  color: #06d6a0;
-}
-
-.password-requirements li.met .req-icon {
-  color: #06d6a0;
-}
-
-.password-requirements li.met .req-icon::before {
-  content: '✓';
-}
-
-/* =============== Responsive Design =============== */
+/* =============== Responsive =============== */
 @media (max-width: 768px) {
-  .password-section {
-    flex-direction: column;
-  }
-  
-  .password-requirements {
-    width: 100%;
-  }
-  
   .login-container {
     width: 90%;
     max-width: 380px;
@@ -310,19 +278,12 @@ body {
   
   .header-section {
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
     gap: 15px;
     margin-bottom: 30px;
     padding-bottom: 20px;
   }
   
-  .hospital-logo {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .login-container h2 {
-    font-size: 26px;
-  }
+  .hospital-logo { width: 50px; height: 50px; }
+  .login-container h2 { font-size: 26px; }
+  #theme-switch { height: 45px; width: 45px; bottom: 15px; right: 15px; }
 }
