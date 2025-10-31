@@ -5,7 +5,7 @@
     } else {
         const user = JSON.parse(role);
     }
-    
+
     // Mobile sidebar slide-in/out
     const mobileToggle = document.getElementById('mobile-toggle');
     const sidebar = document.getElementById('sidebar');
@@ -56,8 +56,6 @@
     // Sign out function
     async function signOut() {
     try {
-        if (!confirm("Are you sure you want to sign out?")) return;
-
         // Ensure DB connection exists
         if (!window.db) {
         console.log("🔄 Opening DB before clearing...");
@@ -91,5 +89,112 @@
         console.error("❌ Sign out failed:", err);
     }
     }
-    document.getElementById("signOutBtn").addEventListener("click", signOut);
+
+    // ==============================
+    // SIGN OUT MODAL LOGIC
+    // ==============================
+    const signOutModal = document.getElementById('signOutModal');
+    const modalCancel = document.getElementById('modalCancel');
+    const modalConfirm = document.getElementById('modalConfirm');
+    const signOutBtn = document.getElementById('signOutBtn');
+
+    // Open modal when sign-out button is clicked
+    if (signOutBtn) {
+        signOutBtn.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            if (signOutModal) {
+                signOutModal.classList.remove('hidden');
+            }
+        });
+    }
+
+    // Close modal on Cancel
+    if (modalCancel && signOutModal) {
+        modalCancel.addEventListener('click', () => {
+            signOutModal.classList.add('hidden');
+        });
+    }
+
+    // Confirm sign-out
+    if (modalConfirm) {
+        modalConfirm.addEventListener('click', async () => {
+            try {
+                // Ensure DB connection exists
+                if (!window.db) {
+                    console.log("🔄 Opening DB before clearing...");
+                    await openClinicDB();
+                }
+
+                // Now clear data except 'admins' and 'users'
+                await clearData([
+                    'medicalRecord',
+                    'doctors',
+                    'patients',
+                    'medicines',
+                    'appointments',
+                    'notifications'
+                ]);
+
+                // 🔄 Optional: refresh DevTools IndexedDB view
+                db.close();
+                db = null;
+                await openClinicDB();
+
+                console.log("✅ Data cleared. Signing out...");
+
+                // Clear login info
+                localStorage.removeItem('currentUser');
+                sessionStorage.removeItem('currentUser');
+
+                // Redirect
+                window.location.href = "login.html";
+            } catch (err) {
+                console.error("❌ Sign out failed:", err);
+                if (signOutModal) {
+                    signOutModal.classList.add('hidden'); // Close modal on error
+                }
+            }
+        });
+    }
+
+    // ==============================
+    // ADD USER MODAL LOGIC
+    // ==============================
+    const addUserModal = document.getElementById('addUserModal');
+    const modalCancelAddUser = document.getElementById('modalCancelAddUser');
+    const modalDoctor = document.getElementById('modalDoctor');
+    const modalPatient = document.getElementById('modalPatient');
+    const addUser = document.getElementById('addUser');
+
+    // Open modal when sign-out button is clicked
+    if (addUser) {
+        addUser.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default link behavior
+            if (addUserModal) {
+                addUserModal.classList.remove('hidden');
+            }
+        });
+    }
+
+    // Close modal on Cancel
+    if (modalCancelAddUser && addUserModal) {
+        modalCancelAddUser.addEventListener('click', () => {
+            addUserModal.classList.add('hidden');
+        });
+    }
+    if (modalDoctor) {
+        modalDoctor.addEventListener('click', async () => {
+            window.location.href = "add-doctor.html"
+        });
+    }
+
+    if (modalPatient) {
+        modalPatient.addEventListener('click', async () => {
+            window.location.href = "add-patient.html"
+        });
+    }
+
+    
+
+
     

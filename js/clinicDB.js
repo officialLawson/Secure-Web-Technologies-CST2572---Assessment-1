@@ -665,18 +665,6 @@ async function importFetchedDataToDB(filteredData) {
     notification = []
   } = filteredData || {};
 
-  // Checking Data Lengths
-  console.log('Importing filtered data counts:', {
-    admins: admins.length,
-    doctors: doctors.length,
-    patients: patients.length,
-    medicines: medicines.length,
-    users: users.length,
-    medicalRecord: medicalRecord.length,
-    appointment: appointment.length,
-    notification: notification.length
-  });
-
 
   // Doctors
   for (const d of doctors) {
@@ -696,6 +684,7 @@ async function importFetchedDataToDB(filteredData) {
       if (!p.NHS) continue;
       const encryptedPatient = await encryptPatientInfo(p);
       await addItem('patients', encryptedPatient);
+      console.log(p.Email);
       results.patients++;
     } catch (err) {
       console.warn('Skipping patient (exists?):', p.NHS, err);

@@ -41,22 +41,26 @@ async function fetchAllUserData() {
             if (role === 'doctor') {
                 const doctorName = doctorMap[u.linkedId] || 'Unknown Doctor';
                 row.innerHTML = `
+                <tr>
                     <td>${doctorName}</td>
-                    <td>${role}</td>
+                    <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
                     <td class="actions">
                         <a href="edit-user.html"><button class="btn-edit" data-id="${u.id}">Edit</button></a>
                         <button class="btn-delete" onclick="deleteUser(${u.id})">Delete</button>
                     </td>
+                </tr>
                 `;
             } else if (role === 'patient') {
                 const patientName = patientMap[u.linkedId] || 'Unknown Patient';
                 row.innerHTML = `
+                <tr>
                     <td>${patientName}</td>
                     <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
                     <td class="actions">
                         <a href="edit-user.html"><button class="btn-edit" data-id="${u.id}">Edit</button></a>
                         <button class="btn-delete" onclick="deleteUser(${u.id})">Delete</button>
                     </td>
+                </tr>
                 `;
             } else {
                 // Skip unknown roles but log
@@ -155,14 +159,12 @@ async function fetchAllPatientData() {
 
             
             row.innerHTML = `
+            <tr>
                 <td>${name}</td>
                 <td>${gender}</td>
                 <td>${dob}</td>
                 <td>${email}</td>
-                <td class="actions">
-                    <a href="edit-patient.html"><button class="btn-edit" data-id="${u.id}">Edit</button></a>
-                    <button class="btn-delete" onclick="deleteUser(${u.id})">Delete</button>
-                </td>
+            </tr>
             `;
             tbody.appendChild(row);
         });

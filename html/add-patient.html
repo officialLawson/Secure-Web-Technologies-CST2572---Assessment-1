@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Medicines</title>
+    <title>Add Patient</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../css/form.css">
 </head>
 <body>
     <div class="container">
@@ -32,15 +32,15 @@
                     </svg>
                     <span class="nav-text">Appointments</span>
                 </a></li>
-                <li><a href="medicines-admin.html"  class="active">
-                    <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path fill="currentColor" d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"></path>
+                <li><a href="medicines-admin.html">
+                    <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+                        <path d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v2H3v-2zm0 4h18v2H3v-2z"></path>
                     </svg>
                     <span class="nav-text">Medicines</span>
                 </a></li>
-                <li><a href="users-admin.html">
+                <li><a href="users-admin.html"   class="active">
                     <svg class="dashboard-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        <path fill='none' d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle fill='none' cx="9" cy="7" r="4"></circle><path fill='none' d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path fill='none' d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                     <span class="nav-text">Users</span>
                 </a></li>
@@ -73,7 +73,7 @@
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M10.75 2.29248C10.75 1.87827 10.4143 1.54248 10 1.54248C9.58583 1.54248 9.25004 1.87827 9.25004 2.29248V2.83613C6.08266 3.20733 3.62504 5.9004 3.62504 9.16748V14.4591H3.33337C2.91916 14.4591 2.58337 14.7949 2.58337 15.2091C2.58337 15.6234 2.91916 15.9591 3.33337 15.9591H4.37504H15.625H16.6667C17.0809 15.9591 17.4167 15.6234 17.4167 15.2091C17.4167 14.7949 17.0809 14.4591 16.6667 14.4591H16.375V9.16748C16.375 5.9004 13.9174 3.20733 10.75 2.83613V2.29248ZM14.875 14.4591V9.16748C14.875 6.47509 12.6924 4.29248 10 4.29248C7.30765 4.29248 5.12504 6.47509 5.12504 9.16748V14.4591H14.875ZM8.00004 17.7085C8.00004 18.1228 8.33583 18.4585 8.75004 18.4585H11.25C11.6643 18.4585 12 18.1228 12 17.7085C12 17.2943 11.6643 16.9585 11.25 16.9585H8.75004C8.33583 16.9585 8.00004 17.2943 8.00004 17.7085Z" fill=""></path>
                         </svg>
                     </button>
-                    <button id="profileButton" class="user-btn" aria-label="User menu">
+                    <button id='profileButton' class="user-btn" aria-label="User menu">
                         <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
                             <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
                         </svg>
@@ -83,7 +83,7 @@
                 <div id="profileModal" class="profile-modal">
                     <ul class="profile-modal-actions">
                         <li>
-                            <a href="#">
+                            <a href="profile-view-patient.html">
                                 <svg class="fill-gray-500 group-hover:fill-gray-700 dark:fill-gray-400 dark:group-hover:fill-gray-300" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.5C7.30558 3.5 3.5 7.30558 3.5 12C3.5 14.1526 4.3002 16.1184 5.61936 17.616C6.17279 15.3096 8.24852 13.5955 10.7246 13.5955H13.2746C15.7509 13.5955 17.8268 15.31 18.38 17.6167C19.6996 16.119 20.5 14.153 20.5 12C20.5 7.30558 16.6944 3.5 12 3.5ZM17.0246 18.8566V18.8455C17.0246 16.7744 15.3457 15.0955 13.2746 15.0955H10.7246C8.65354 15.0955 6.97461 16.7744 6.97461 18.8455V18.856C8.38223 19.8895 10.1198 20.5 12 20.5C13.8798 20.5 15.6171 19.8898 17.0246 18.8566ZM2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12ZM11.9991 7.25C10.8847 7.25 9.98126 8.15342 9.98126 9.26784C9.98126 10.3823 10.8847 11.2857 11.9991 11.2857C13.1135 11.2857 14.0169 10.3823 14.0169 9.26784C14.0169 8.15342 13.1135 7.25 11.9991 7.25ZM8.48126 9.26784C8.48126 7.32499 10.0563 5.75 11.9991 5.75C13.9419 5.75 15.5169 7.32499 15.5169 9.26784C15.5169 11.2107 13.9419 12.7857 11.9991 12.7857C10.0563 12.7857 8.48126 11.2107 8.48126 9.26784Z" fill=""></path>
                                 </svg>
@@ -112,43 +112,87 @@
             </header>
 
             <section class="content">
-                <h2 class="content-title">Medicines</h2>
+                <h2 class="content-title">Add Patient</h2>
                 
                 <div class="card-container">
-                    <div class="top-bar">
-                        <!-- Search -->
-                        <div class="search-container">
-                            <span class="search-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                            </svg>
-                            </span>
-                            <input id="search" type="text" placeholder="Search medicines..." />
-                        </div>
+                    <form onsubmit="handleAddAppointment(event)" novalidate>
+                        <div class="form-section">
+                            <h2>Personal Information</h2>
+                            <p class="description">Basic identity details.</p>
 
-                        <!-- Actions -->
-                        <div class="actions">
-                            <a href="add-medicine-admin.html">
-                            <button class="btn-add">+ Add Medicine</button>
-                            </a>
+                            <div class="form-grid">
+                                <!-- Title -->
+                                <div class="form-group">
+                                    <label for="userTitle">Title</label>
+                                    <input type="text" id="userTitle" name="userTitle" placeholder="Title" required>
+                                    <p id="userTitle-form-error" class="error-message"></p>
+                                </div>
+                                <!-- First Name -->
+                                <div class="form-group">
+                                    <label for="userFirstName">First Name</label>
+                                    <input type="text" id="userFirstName" name="userFirstName" placeholder="First Name" required>
+                                    <p id="userFirstName-form-error" class="error-message"></p>
+                                </div>
+                                <!-- Last Name -->
+                                <div class="form-group">
+                                    <label for="userLastName">Last Name</label>
+                                    <input type="text" id="userLastName" name="userLastName" placeholder="Last Name" required>
+                                    <p id="userLastName-form-error" class="error-message"></p>
+                                </div>
+                                <!-- Date of Birth -->
+                                <div class="form-group">
+                                    <label for="appointmentDate">Date of Birth</label>
+                                    <div class="custom-date" id="datePicker">
+                                        <div class="custom-date__input placeholder">Select date of birth</div>
+                                        <div class="custom-date__calendar" hidden></div>
+                                    </div>
+                                    <input type="hidden" id="appointmentDate" name="appointmentDate" required>
+                                    <p id="appointmentDate-form-error" class="error-message"></p>
+                                </div>
+                                <!-- NHS -->
+                                <div class="form-group">
+                                    <label for="userNHS">NHS</label>
+                                    <input type="text" id="userNHS" name="userNHS" placeholder="NHS" required>
+                                    <p id="userNHS-form-error" class="error-message"></p>
+                                </div>
+                                <!-- Gender -->
+                                <div class="form-group">
+                                    <label for="userGender">Gender</label>
+                                    <input type="text" id="userGender" name="userGender" placeholder="Gender" required>
+                                    <p id="userGender-form-error" class="error-message"></p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="form-section">
+                            <h2>Contact Details and Address Information</h2>
+                            <p class="description">How we can reach you and your current location.</p>
 
-                    <div class="table-container">
-                        <table class="table"  id="medicinesTable">
-                            <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Medicine Name</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody id="medicinesBody">
-                            <!-- medicine rows will be populated here dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
+                            <div class="form-grid">
+                                <!-- Email -->
+                                <div class="form-group">
+                                    <label for="userEmail">Email address</label>
+                                    <input type="email" id="userEmail" name="userEmail" placeholder="email@address.com" required>
+                                    <p id="userEmail-form-error" class="error-message"></p>
+                                </div>
+                                <!-- Telephone -->
+                                <div class="form-group">
+                                    <label for="userTelephone">Telephone</label>
+                                    <input type="text" id="userTelephone" name="userTelephone" placeholder="e.g. +230 5344 5422" required>
+                                    <p id="userTelephone-form-error" class="error-message"></p>
+                                </div>
+                                <!-- Address -->
+                                <div class="form-group">
+                                    <label for="userAddress">Address</label>
+                                    <input type="text" id="userAddress" name="userAddress" placeholder="e.g. 123 Park lane" required>
+                                    <p id="userAddress-form-error" class="error-message"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
+                            <button onclick="handleAddAppointment()" class="submit-btn">Add Patient</button>
+                        </div>
+                    </form>
                 </div>
             </section>
 
@@ -158,16 +202,18 @@
         </main>
     </div>
 
-
+    <script src="../js/D-Lmode.js"></script>
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
-    <script src="../js/medicines.js"></script>
-    <script src="../js/D-Lmode.js"></script>
+    <script src="../js/users.js"></script>
+    <script src="../js/form.js"></script>
     <script>
-        const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
-        if (userRole !== 'admin') {
-            window.location.href = `appointments-${userRole}.html`;
-        } 
+        const back = document.getElementById('back');
+        back.addEventListener('click', (e) => {
+            e.preventDefault();
+            const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+            window.location.href = `users-admin.html`;
+        });
 
         const profileButton = document.getElementById('profileButton')
         const profileModal = document.getElementById('profileModal')
@@ -183,7 +229,6 @@
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });
-
     </script>
 </body>
 </html>
