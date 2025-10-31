@@ -5,7 +5,21 @@
     "doctorId": 1,
     "diagnosis": "Bronchitis",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-04-21"
+    "date": "2025-04-21",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      },
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and pain."
+      }
+    ]
   },
   {
     "recordId": "MR4788",
@@ -13,7 +27,15 @@
     "doctorId": 1,
     "diagnosis": "Hypertension",
     "treatment": "Iron supplements and rest",
-    "date": "2024-09-24"
+    "date": "2024-09-24",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure weekly."
+      }
+    ]
   },
   {
     "recordId": "MR4878",
@@ -21,7 +43,15 @@
     "doctorId": 4,
     "diagnosis": "Anemia",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-07-23"
+    "date": "2025-07-23",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated fatigue or headache."
+      }
+    ]
   },
   {
     "recordId": "MR1939",
@@ -29,7 +59,21 @@
     "doctorId": 3,
     "diagnosis": "Flu",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-04-25"
+    "date": "2025-04-25",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      },
+      {
+        "medicineId": 20,
+        "dosage": "25mg",
+        "duration": "5 days",
+        "instructions": "May cause drowsiness. Avoid driving."
+      }
+    ]
   },
   {
     "recordId": "MR5750",
@@ -37,7 +81,15 @@
     "doctorId": 4,
     "diagnosis": "Hypertension",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-07-05"
+    "date": "2024-07-05",
+    "prescriptions": [
+      {
+        "medicineId": 33,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Take in the morning. Report swelling in ankles."
+      }
+    ]
   },
   {
     "recordId": "MR9695",
@@ -45,7 +97,15 @@
     "doctorId": 8,
     "diagnosis": "Anemia",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-05-24"
+    "date": "2025-05-24",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR2490",
@@ -53,7 +113,15 @@
     "doctorId": 13,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-05-10"
+    "date": "2025-05-10",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For associated pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR6360",
@@ -61,7 +129,21 @@
     "doctorId": 4,
     "diagnosis": "Migraine",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-07-02"
+    "date": "2024-07-02",
+    "prescriptions": [
+      {
+        "medicineId": 8,
+        "dosage": "0.5mg",
+        "duration": "7 days supply",
+        "instructions": "Do not exceed 3 tablets in 24 hours."
+      },
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR4188",
@@ -69,7 +151,15 @@
     "doctorId": 14,
     "diagnosis": "Anemia",
     "treatment": "Antibiotic course",
-    "date": "2025-08-01"
+    "date": "2025-08-01",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For fatigue-related headache."
+      }
+    ]
   },
   {
     "recordId": "MR1958",
@@ -77,7 +167,8 @@
     "doctorId": 9,
     "diagnosis": "Anemia",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-08-23"
+    "date": "2025-08-23",
+    "prescriptions": []
   },
   {
     "recordId": "MR5185",
@@ -85,7 +176,15 @@
     "doctorId": 5,
     "diagnosis": "Diabetes",
     "treatment": "Iron supplements and rest",
-    "date": "2025-01-15"
+    "date": "2025-01-15",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR8456",
@@ -93,7 +192,15 @@
     "doctorId": 5,
     "diagnosis": "Flu",
     "treatment": "Pain relief medication",
-    "date": "2025-08-21"
+    "date": "2025-08-21",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR6707",
@@ -101,7 +208,15 @@
     "doctorId": 11,
     "diagnosis": "Asthma",
     "treatment": "Iron supplements and rest",
-    "date": "2024-11-28"
+    "date": "2024-11-28",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion relief."
+      }
+    ]
   },
   {
     "recordId": "MR1910",
@@ -109,7 +224,15 @@
     "doctorId": 15,
     "diagnosis": "Bronchitis",
     "treatment": "Antibiotic course",
-    "date": "2025-05-28"
+    "date": "2025-05-28",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For cough and pain. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR4892",
@@ -117,7 +240,15 @@
     "doctorId": 4,
     "diagnosis": "Asthma",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-05-31"
+    "date": "2025-05-31",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "10 days",
+        "instructions": "Do not apply to broken skin."
+      }
+    ]
   },
   {
     "recordId": "MR6966",
@@ -125,7 +256,15 @@
     "doctorId": 1,
     "diagnosis": "Flu",
     "treatment": "Inhaler prescription",
-    "date": "2024-03-20"
+    "date": "2024-03-20",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and muscle pain."
+      }
+    ]
   },
   {
     "recordId": "MR6157",
@@ -133,7 +272,15 @@
     "doctorId": 4,
     "diagnosis": "Hypertension",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-02-09"
+    "date": "2024-02-09",
+    "prescriptions": [
+      {
+        "medicineId": 35,
+        "dosage": "100mg",
+        "duration": "30 days",
+        "instructions": "Monitor for dizziness. Do not stop abruptly."
+      }
+    ]
   },
   {
     "recordId": "MR7490",
@@ -141,7 +288,15 @@
     "doctorId": 10,
     "diagnosis": "Diabetes",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-08-14"
+    "date": "2025-08-14",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR3763",
@@ -149,7 +304,15 @@
     "doctorId": 14,
     "diagnosis": "Bronchitis",
     "treatment": "Antibiotic course",
-    "date": "2025-08-29"
+    "date": "2025-08-29",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR9267",
@@ -157,7 +320,15 @@
     "doctorId": 9,
     "diagnosis": "Flu",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-07-16"
+    "date": "2024-07-16",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR8812",
@@ -165,7 +336,15 @@
     "doctorId": 11,
     "diagnosis": "Migraine",
     "treatment": "Pain relief medication",
-    "date": "2024-03-31"
+    "date": "2024-03-31",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Do not exceed 4g per day."
+      }
+    ]
   },
   {
     "recordId": "MR8231",
@@ -173,7 +352,15 @@
     "doctorId": 8,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2024-08-09"
+    "date": "2024-08-09",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For symptomatic relief of congestion."
+      }
+    ]
   },
   {
     "recordId": "MR7799",
@@ -181,7 +368,15 @@
     "doctorId": 8,
     "diagnosis": "Anemia",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-11-01"
+    "date": "2024-11-01",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue-related pain."
+      }
+    ]
   },
   {
     "recordId": "MR4722",
@@ -189,7 +384,15 @@
     "doctorId": 7,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-07-07"
+    "date": "2024-07-07",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR4930",
@@ -197,7 +400,15 @@
     "doctorId": 2,
     "diagnosis": "Hypertension",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-03-02"
+    "date": "2025-03-02",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Take in the morning. Avoid potassium supplements."
+      }
+    ]
   },
   {
     "recordId": "MR9920",
@@ -205,7 +416,15 @@
     "doctorId": 9,
     "diagnosis": "Flu",
     "treatment": "Antibiotic course",
-    "date": "2024-11-06"
+    "date": "2024-11-06",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and pain."
+      }
+    ]
   },
   {
     "recordId": "MR6785",
@@ -213,7 +432,15 @@
     "doctorId": 10,
     "diagnosis": "Hypertension",
     "treatment": "Inhaler prescription",
-    "date": "2025-09-26"
+    "date": "2025-09-26",
+    "prescriptions": [
+      {
+        "medicineId": 33,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Report swelling or dizziness."
+      }
+    ]
   },
   {
     "recordId": "MR8904",
@@ -221,7 +448,15 @@
     "doctorId": 4,
     "diagnosis": "Diabetes",
     "treatment": "Inhaler prescription",
-    "date": "2024-08-09"
+    "date": "2024-08-09",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR3175",
@@ -229,7 +464,15 @@
     "doctorId": 8,
     "diagnosis": "Hypertension",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-03-09"
+    "date": "2024-03-09",
+    "prescriptions": [
+      {
+        "medicineId": 35,
+        "dosage": "200mg",
+        "duration": "30 days",
+        "instructions": "Do not stop suddenly. Monitor BP."
+      }
+    ]
   },
   {
     "recordId": "MR5800",
@@ -237,7 +480,15 @@
     "doctorId": 8,
     "diagnosis": "Hypertension",
     "treatment": "Pain relief medication",
-    "date": "2025-02-24"
+    "date": "2025-02-24",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Take in the morning."
+      }
+    ]
   },
   {
     "recordId": "MR2244",
@@ -245,7 +496,15 @@
     "doctorId": 1,
     "diagnosis": "Migraine",
     "treatment": "Inhaler prescription",
-    "date": "2024-08-05"
+    "date": "2024-08-05",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Maximum 4 doses per week."
+      }
+    ]
   },
   {
     "recordId": "MR8806",
@@ -253,7 +512,15 @@
     "doctorId": 14,
     "diagnosis": "Flu",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-07-03"
+    "date": "2024-07-03",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR2870",
@@ -261,7 +528,15 @@
     "doctorId": 5,
     "diagnosis": "Asthma",
     "treatment": "Pain relief medication",
-    "date": "2025-05-15"
+    "date": "2025-05-15",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "10 days",
+        "instructions": "Avoid contact with eyes."
+      }
+    ]
   },
   {
     "recordId": "MR7314",
@@ -269,7 +544,15 @@
     "doctorId": 15,
     "diagnosis": "Flu",
     "treatment": "Iron supplements and rest",
-    "date": "2024-07-22"
+    "date": "2024-07-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR9463",
@@ -277,7 +560,15 @@
     "doctorId": 14,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-08-22"
+    "date": "2025-08-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR3393",
@@ -285,7 +576,15 @@
     "doctorId": 7,
     "diagnosis": "Migraine",
     "treatment": "Antibiotic course",
-    "date": "2024-03-15"
+    "date": "2024-03-15",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR8154",
@@ -293,7 +592,15 @@
     "doctorId": 3,
     "diagnosis": "Migraine",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-04-10"
+    "date": "2024-04-10",
+    "prescriptions": [
+      {
+        "medicineId": 8,
+        "dosage": "0.25mg",
+        "duration": "7-day supply",
+        "instructions": "May cause drowsiness."
+      }
+    ]
   },
   {
     "recordId": "MR9800",
@@ -301,7 +608,15 @@
     "doctorId": 7,
     "diagnosis": "Diabetes",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-02-19"
+    "date": "2024-02-19",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated pain."
+      }
+    ]
   },
   {
     "recordId": "MR8457",
@@ -309,7 +624,15 @@
     "doctorId": 11,
     "diagnosis": "Bronchitis",
     "treatment": "Pain relief medication",
-    "date": "2024-12-19"
+    "date": "2024-12-19",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR3828",
@@ -317,7 +640,15 @@
     "doctorId": 11,
     "diagnosis": "Migraine",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-06-06"
+    "date": "2025-06-06",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Do not exceed 4g/day."
+      }
+    ]
   },
   {
     "recordId": "MR4973",
@@ -325,7 +656,15 @@
     "doctorId": 1,
     "diagnosis": "Asthma",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-02-18"
+    "date": "2025-02-18",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For congestion relief."
+      }
+    ]
   },
   {
     "recordId": "MR6939",
@@ -333,7 +672,15 @@
     "doctorId": 12,
     "diagnosis": "Flu",
     "treatment": "Pain relief medication",
-    "date": "2024-09-28"
+    "date": "2024-09-28",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR4915",
@@ -341,7 +688,15 @@
     "doctorId": 14,
     "diagnosis": "Asthma",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-03-15"
+    "date": "2025-03-15",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "10 days",
+        "instructions": "Avoid broken skin."
+      }
+    ]
   },
   {
     "recordId": "MR7505",
@@ -349,7 +704,15 @@
     "doctorId": 14,
     "diagnosis": "Flu",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-04-19"
+    "date": "2025-04-19",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR3018",
@@ -357,7 +720,15 @@
     "doctorId": 13,
     "diagnosis": "Anemia",
     "treatment": "Iron supplements and rest",
-    "date": "2024-05-06"
+    "date": "2024-05-06",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR3558",
@@ -365,7 +736,15 @@
     "doctorId": 8,
     "diagnosis": "Flu",
     "treatment": "Iron supplements and rest",
-    "date": "2024-10-08"
+    "date": "2024-10-08",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR3247",
@@ -373,7 +752,15 @@
     "doctorId": 2,
     "diagnosis": "Asthma",
     "treatment": "Pain relief medication",
-    "date": "2025-02-10"
+    "date": "2025-02-10",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion."
+      }
+    ]
   },
   {
     "recordId": "MR7090",
@@ -381,7 +768,15 @@
     "doctorId": 13,
     "diagnosis": "Migraine",
     "treatment": "Inhaler prescription",
-    "date": "2024-11-03"
+    "date": "2024-11-03",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take at onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR3406",
@@ -389,7 +784,15 @@
     "doctorId": 3,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2025-02-08"
+    "date": "2025-02-08",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For pain and cough. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR5924",
@@ -397,7 +800,15 @@
     "doctorId": 15,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2024-03-19"
+    "date": "2024-03-19",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR3590",
@@ -405,7 +816,15 @@
     "doctorId": 5,
     "diagnosis": "Diabetes",
     "treatment": "Iron supplements and rest",
-    "date": "2025-10-15"
+    "date": "2025-10-15",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For general discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR2080",
@@ -413,7 +832,15 @@
     "doctorId": 8,
     "diagnosis": "Bronchitis",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-07-26"
+    "date": "2025-07-26",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR7882",
@@ -421,7 +848,15 @@
     "doctorId": 5,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2025-06-01"
+    "date": "2025-06-01",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For pain and cough suppression."
+      }
+    ]
   },
   {
     "recordId": "MR9642",
@@ -429,7 +864,15 @@
     "doctorId": 15,
     "diagnosis": "Asthma",
     "treatment": "Antibiotic course",
-    "date": "2025-05-02"
+    "date": "2025-05-02",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "10 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR2568",
@@ -437,7 +880,15 @@
     "doctorId": 11,
     "diagnosis": "Diabetes",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-10-07"
+    "date": "2025-10-07",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR3947",
@@ -445,7 +896,15 @@
     "doctorId": 10,
     "diagnosis": "Flu",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-12-17"
+    "date": "2024-12-17",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR7337",
@@ -453,7 +912,15 @@
     "doctorId": 9,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-06-20"
+    "date": "2024-06-20",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For symptom relief."
+      }
+    ]
   },
   {
     "recordId": "MR3427",
@@ -461,7 +928,15 @@
     "doctorId": 1,
     "diagnosis": "Bronchitis",
     "treatment": "Iron supplements and rest",
-    "date": "2025-06-29"
+    "date": "2025-06-29",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR6480",
@@ -469,7 +944,15 @@
     "doctorId": 4,
     "diagnosis": "Bronchitis",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-06-26"
+    "date": "2025-06-26",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For cough and pain."
+      }
+    ]
   },
   {
     "recordId": "MR6371",
@@ -477,7 +960,15 @@
     "doctorId": 4,
     "diagnosis": "Migraine",
     "treatment": "Inhaler prescription",
-    "date": "2024-01-03"
+    "date": "2024-01-03",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR8085",
@@ -485,7 +976,15 @@
     "doctorId": 1,
     "diagnosis": "Flu",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-02-25"
+    "date": "2024-02-25",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and aches."
+      }
+    ]
   },
   {
     "recordId": "MR4554",
@@ -493,7 +992,15 @@
     "doctorId": 1,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2024-02-27"
+    "date": "2024-02-27",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR5322",
@@ -501,7 +1008,15 @@
     "doctorId": 12,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-09-25"
+    "date": "2025-09-25",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR6220",
@@ -509,7 +1024,15 @@
     "doctorId": 7,
     "diagnosis": "Asthma",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-03-30"
+    "date": "2025-03-30",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion."
+      }
+    ]
   },
   {
     "recordId": "MR9451",
@@ -517,7 +1040,15 @@
     "doctorId": 4,
     "diagnosis": "Diabetes",
     "treatment": "Iron supplements and rest",
-    "date": "2025-01-23"
+    "date": "2025-01-23",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For general symptom relief."
+      }
+    ]
   },
   {
     "recordId": "MR6358",
@@ -525,7 +1056,15 @@
     "doctorId": 6,
     "diagnosis": "Bronchitis",
     "treatment": "Antibiotic course",
-    "date": "2024-01-01"
+    "date": "2024-01-01",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR6074",
@@ -533,7 +1072,15 @@
     "doctorId": 12,
     "diagnosis": "Flu",
     "treatment": "Inhaler prescription",
-    "date": "2025-04-02"
+    "date": "2025-04-02",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR1101",
@@ -541,7 +1088,15 @@
     "doctorId": 4,
     "diagnosis": "Diabetes",
     "treatment": "Inhaler prescription",
-    "date": "2025-05-22"
+    "date": "2025-05-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR5861",
@@ -549,7 +1104,15 @@
     "doctorId": 6,
     "diagnosis": "Bronchitis",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-08-20"
+    "date": "2024-08-20",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR7307",
@@ -557,7 +1120,15 @@
     "doctorId": 5,
     "diagnosis": "Bronchitis",
     "treatment": "Iron supplements and rest",
-    "date": "2024-12-18"
+    "date": "2024-12-18",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For pain and cough."
+      }
+    ]
   },
   {
     "recordId": "MR2818",
@@ -565,7 +1136,15 @@
     "doctorId": 7,
     "diagnosis": "Flu",
     "treatment": "Iron supplements and rest",
-    "date": "2025-05-17"
+    "date": "2025-05-17",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR5439",
@@ -573,7 +1152,15 @@
     "doctorId": 14,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-08-24"
+    "date": "2024-08-24",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR5184",
@@ -581,7 +1168,15 @@
     "doctorId": 7,
     "diagnosis": "Anemia",
     "treatment": "Iron supplements and rest",
-    "date": "2025-07-26"
+    "date": "2025-07-26",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR7198",
@@ -589,7 +1184,15 @@
     "doctorId": 4,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2025-01-23"
+    "date": "2025-01-23",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest as needed."
+      }
+    ]
   },
   {
     "recordId": "MR7516",
@@ -597,7 +1200,15 @@
     "doctorId": 6,
     "diagnosis": "Migraine",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-11-09"
+    "date": "2024-11-09",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take at onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR7853",
@@ -605,7 +1216,15 @@
     "doctorId": 2,
     "diagnosis": "Bronchitis",
     "treatment": "Antibiotic course",
-    "date": "2024-12-03"
+    "date": "2024-12-03",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR7177",
@@ -613,7 +1232,15 @@
     "doctorId": 8,
     "diagnosis": "Hypertension",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-03-06"
+    "date": "2025-03-06",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure."
+      }
+    ]
   },
   {
     "recordId": "MR6586",
@@ -621,7 +1248,15 @@
     "doctorId": 14,
     "diagnosis": "Bronchitis",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-02-21"
+    "date": "2025-02-21",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For cough and pain."
+      }
+    ]
   },
   {
     "recordId": "MR9492",
@@ -629,7 +1264,15 @@
     "doctorId": 15,
     "diagnosis": "Diabetes",
     "treatment": "Pain relief medication",
-    "date": "2025-03-20"
+    "date": "2025-03-20",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated pain."
+      }
+    ]
   },
   {
     "recordId": "MR2677",
@@ -637,7 +1280,15 @@
     "doctorId": 9,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2024-11-27"
+    "date": "2024-11-27",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "10 days",
+        "instructions": "For chest congestion relief."
+      }
+    ]
   },
   {
     "recordId": "MR6924",
@@ -645,7 +1296,15 @@
     "doctorId": 10,
     "diagnosis": "Anemia",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-06-26"
+    "date": "2024-06-26",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For fatigue-related symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR4371",
@@ -653,7 +1312,15 @@
     "doctorId": 13,
     "diagnosis": "Anemia",
     "treatment": "Iron supplements and rest",
-    "date": "2025-05-25"
+    "date": "2025-05-25",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or weakness."
+      }
+    ]
   },
   {
     "recordId": "MR4131",
@@ -661,7 +1328,15 @@
     "doctorId": 14,
     "diagnosis": "Flu",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-04-05"
+    "date": "2025-04-05",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR9359",
@@ -669,7 +1344,15 @@
     "doctorId": 1,
     "diagnosis": "Asthma",
     "treatment": "Pain relief medication",
-    "date": "2024-04-21"
+    "date": "2024-04-21",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR6175",
@@ -677,7 +1360,15 @@
     "doctorId": 10,
     "diagnosis": "Flu",
     "treatment": "Iron supplements and rest",
-    "date": "2025-02-02"
+    "date": "2025-02-02",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For symptom relief."
+      }
+    ]
   },
   {
     "recordId": "MR4043",
@@ -685,7 +1376,15 @@
     "doctorId": 1,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-02-10"
+    "date": "2025-02-10",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR5940",
@@ -693,7 +1392,15 @@
     "doctorId": 3,
     "diagnosis": "Bronchitis",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-08-17"
+    "date": "2024-08-17",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR9814",
@@ -701,7 +1408,15 @@
     "doctorId": 7,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-11-13"
+    "date": "2024-11-13",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and aches."
+      }
+    ]
   },
   {
     "recordId": "MR9397",
@@ -709,7 +1424,15 @@
     "doctorId": 8,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2025-06-26"
+    "date": "2025-06-26",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR7080",
@@ -717,7 +1440,15 @@
     "doctorId": 12,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2025-08-26"
+    "date": "2025-08-26",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR9583",
@@ -725,7 +1456,15 @@
     "doctorId": 1,
     "diagnosis": "Hypertension",
     "treatment": "Antibiotic course",
-    "date": "2025-09-21"
+    "date": "2025-09-21",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Take once daily in the morning."
+      }
+    ]
   },
   {
     "recordId": "MR9843",
@@ -733,7 +1472,15 @@
     "doctorId": 6,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2025-09-28"
+    "date": "2025-09-28",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest up to 3 times daily."
+      }
+    ]
   },
   {
     "recordId": "MR9506",
@@ -741,7 +1488,15 @@
     "doctorId": 14,
     "diagnosis": "Diabetes",
     "treatment": "Pain relief medication",
-    "date": "2024-02-28"
+    "date": "2024-02-28",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated pain."
+      }
+    ]
   },
   {
     "recordId": "MR7457",
@@ -749,7 +1504,15 @@
     "doctorId": 2,
     "diagnosis": "Migraine",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-11-12"
+    "date": "2024-11-12",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR4963",
@@ -757,7 +1520,15 @@
     "doctorId": 4,
     "diagnosis": "Bronchitis",
     "treatment": "Antibiotic course",
-    "date": "2024-07-16"
+    "date": "2024-07-16",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR3886",
@@ -765,7 +1536,15 @@
     "doctorId": 2,
     "diagnosis": "Hypertension",
     "treatment": "Inhaler prescription",
-    "date": "2025-03-08"
+    "date": "2025-03-08",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure regularly."
+      }
+    ]
   },
   {
     "recordId": "MR4688",
@@ -773,7 +1552,15 @@
     "doctorId": 14,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2025-06-27"
+    "date": "2025-06-27",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR3985",
@@ -781,7 +1568,15 @@
     "doctorId": 3,
     "diagnosis": "Hypertension",
     "treatment": "Pain relief medication",
-    "date": "2024-09-15"
+    "date": "2024-09-15",
+    "prescriptions": [
+      {
+        "medicineId": 33,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Report any swelling or dizziness."
+      }
+    ]
   },
   {
     "recordId": "MR3204",
@@ -789,7 +1584,15 @@
     "doctorId": 2,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2024-01-28"
+    "date": "2024-01-28",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR1092",
@@ -797,7 +1600,15 @@
     "doctorId": 4,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2024-12-23"
+    "date": "2024-12-23",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion."
+      }
+    ]
   },
   {
     "recordId": "MR8825",
@@ -805,7 +1616,15 @@
     "doctorId": 4,
     "diagnosis": "Asthma",
     "treatment": "Antibiotic course",
-    "date": "2024-11-15"
+    "date": "2024-11-15",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "10 days",
+        "instructions": "Apply as needed for relief."
+      }
+    ]
   },
   {
     "recordId": "MR8591",
@@ -813,7 +1632,15 @@
     "doctorId": 9,
     "diagnosis": "Migraine",
     "treatment": "Inhaler prescription",
-    "date": "2024-06-23"
+    "date": "2024-06-23",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take at onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR8286",
@@ -821,7 +1648,15 @@
     "doctorId": 11,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2024-11-03"
+    "date": "2024-11-03",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR7279",
@@ -829,7 +1664,15 @@
     "doctorId": 4,
     "diagnosis": "Asthma",
     "treatment": "Antibiotic course",
-    "date": "2025-10-04"
+    "date": "2025-10-04",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For symptomatic relief."
+      }
+    ]
   },
   {
     "recordId": "MR8398",
@@ -837,7 +1680,15 @@
     "doctorId": 9,
     "diagnosis": "Flu",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-03-29"
+    "date": "2025-03-29",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR4142",
@@ -845,7 +1696,15 @@
     "doctorId": 9,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2024-02-29"
+    "date": "2024-02-29",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR4345",
@@ -853,7 +1712,15 @@
     "doctorId": 15,
     "diagnosis": "Migraine",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-05-27"
+    "date": "2024-05-27",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take at onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR4017",
@@ -861,7 +1728,15 @@
     "doctorId": 2,
     "diagnosis": "Anemia",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-10-10"
+    "date": "2024-10-10",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR6652",
@@ -869,7 +1744,15 @@
     "doctorId": 4,
     "diagnosis": "Anemia",
     "treatment": "Antibiotic course",
-    "date": "2025-06-05"
+    "date": "2025-06-05",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or weakness."
+      }
+    ]
   },
   {
     "recordId": "MR7939",
@@ -877,7 +1760,15 @@
     "doctorId": 15,
     "diagnosis": "Asthma",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-05-10"
+    "date": "2024-05-10",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR8463",
@@ -885,7 +1776,15 @@
     "doctorId": 3,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2024-07-08"
+    "date": "2024-07-08",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR3896",
@@ -893,7 +1792,15 @@
     "doctorId": 2,
     "diagnosis": "Anemia",
     "treatment": "Inhaler prescription",
-    "date": "2025-05-16"
+    "date": "2025-05-16",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For fatigue-related symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR7084",
@@ -901,7 +1808,15 @@
     "doctorId": 2,
     "diagnosis": "Flu",
     "treatment": "Inhaler prescription",
-    "date": "2025-07-21"
+    "date": "2025-07-21",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR8217",
@@ -909,7 +1824,15 @@
     "doctorId": 12,
     "diagnosis": "Migraine",
     "treatment": "Pain relief medication",
-    "date": "2025-07-22"
+    "date": "2025-07-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR3483",
@@ -917,7 +1840,15 @@
     "doctorId": 9,
     "diagnosis": "Anemia",
     "treatment": "Antibiotic course",
-    "date": "2025-07-27"
+    "date": "2025-07-27",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR2571",
@@ -925,7 +1856,15 @@
     "doctorId": 1,
     "diagnosis": "Anemia",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-03-18"
+    "date": "2024-03-18",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR3924",
@@ -933,7 +1872,15 @@
     "doctorId": 14,
     "diagnosis": "Diabetes",
     "treatment": "Inhaler prescription",
-    "date": "2024-08-14"
+    "date": "2024-08-14",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR2399",
@@ -941,7 +1888,15 @@
     "doctorId": 6,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-10-19"
+    "date": "2024-10-19",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and aches."
+      }
+    ]
   },
   {
     "recordId": "MR4360",
@@ -949,7 +1904,15 @@
     "doctorId": 12,
     "diagnosis": "Diabetes",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-05-04"
+    "date": "2025-05-04",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR7700",
@@ -957,7 +1920,15 @@
     "doctorId": 14,
     "diagnosis": "Anemia",
     "treatment": "Iron supplements and rest",
-    "date": "2024-01-04"
+    "date": "2024-01-04",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or weakness."
+      }
+    ]
   },
   {
     "recordId": "MR6878",
@@ -965,7 +1936,15 @@
     "doctorId": 15,
     "diagnosis": "Hypertension",
     "treatment": "Inhaler prescription",
-    "date": "2024-08-21"
+    "date": "2024-08-21",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure weekly."
+      }
+    ]
   },
   {
     "recordId": "MR2977",
@@ -973,7 +1952,15 @@
     "doctorId": 4,
     "diagnosis": "Anemia",
     "treatment": "Inhaler prescription",
-    "date": "2024-11-24"
+    "date": "2024-11-24",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For fatigue-related symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR9981",
@@ -981,7 +1968,15 @@
     "doctorId": 12,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-06-27"
+    "date": "2025-06-27",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR8558",
@@ -989,7 +1984,15 @@
     "doctorId": 10,
     "diagnosis": "Diabetes",
     "treatment": "Pain relief medication",
-    "date": "2024-04-05"
+    "date": "2024-04-05",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated pain."
+      }
+    ]
   },
   {
     "recordId": "MR7144",
@@ -997,7 +2000,15 @@
     "doctorId": 6,
     "diagnosis": "Anemia",
     "treatment": "Antibiotic course",
-    "date": "2025-01-08"
+    "date": "2025-01-08",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR8703",
@@ -1005,7 +2016,15 @@
     "doctorId": 8,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2024-02-10"
+    "date": "2024-02-10",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR7922",
@@ -1013,7 +2032,15 @@
     "doctorId": 4,
     "diagnosis": "Flu",
     "treatment": "Inhaler prescription",
-    "date": "2024-04-05"
+    "date": "2024-04-05",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR6704",
@@ -1021,7 +2048,15 @@
     "doctorId": 1,
     "diagnosis": "Asthma",
     "treatment": "Antibiotic course",
-    "date": "2024-03-17"
+    "date": "2024-03-17",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR4643",
@@ -1029,7 +2064,15 @@
     "doctorId": 12,
     "diagnosis": "Migraine",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-03-06"
+    "date": "2024-03-06",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take at onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR5522",
@@ -1037,7 +2080,15 @@
     "doctorId": 7,
     "diagnosis": "Anemia",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-04-01"
+    "date": "2024-04-01",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR9733",
@@ -1045,7 +2096,15 @@
     "doctorId": 10,
     "diagnosis": "Migraine",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-08-31"
+    "date": "2025-08-31",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR1732",
@@ -1053,7 +2112,15 @@
     "doctorId": 11,
     "diagnosis": "Diabetes",
     "treatment": "Iron supplements and rest",
-    "date": "2024-04-21"
+    "date": "2024-04-21",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR7626",
@@ -1061,7 +2128,15 @@
     "doctorId": 15,
     "diagnosis": "Hypertension",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-10-13"
+    "date": "2025-10-13",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Take once daily in the morning."
+      }
+    ]
   },
   {
     "recordId": "MR8453",
@@ -1069,7 +2144,15 @@
     "doctorId": 2,
     "diagnosis": "Bronchitis",
     "treatment": "Pain relief medication",
-    "date": "2024-08-29"
+    "date": "2024-08-29",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR1967",
@@ -1077,7 +2160,15 @@
     "doctorId": 4,
     "diagnosis": "Flu",
     "treatment": "Iron supplements and rest",
-    "date": "2024-03-09"
+    "date": "2024-03-09",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR6357",
@@ -1085,7 +2176,15 @@
     "doctorId": 15,
     "diagnosis": "Diabetes",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-03-16"
+    "date": "2025-03-16",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR7179",
@@ -1093,7 +2192,15 @@
     "doctorId": 13,
     "diagnosis": "Bronchitis",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-12-06"
+    "date": "2024-12-06",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR7332",
@@ -1101,7 +2208,15 @@
     "doctorId": 2,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2025-06-12"
+    "date": "2025-06-12",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR1861",
@@ -1109,7 +2224,15 @@
     "doctorId": 9,
     "diagnosis": "Migraine",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-08-16"
+    "date": "2024-08-16",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR1284",
@@ -1117,7 +2240,15 @@
     "doctorId": 4,
     "diagnosis": "Hypertension",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-10-15"
+    "date": "2025-10-15",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure regularly."
+      }
+    ]
   },
   {
     "recordId": "MR4607",
@@ -1125,7 +2256,15 @@
     "doctorId": 11,
     "diagnosis": "Anemia",
     "treatment": "Inhaler prescription",
-    "date": "2024-10-16"
+    "date": "2024-10-16",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For fatigue-related symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR4903",
@@ -1133,7 +2272,15 @@
     "doctorId": 15,
     "diagnosis": "Hypertension",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-10-08"
+    "date": "2025-10-08",
+    "prescriptions": [
+      {
+        "medicineId": 35,
+        "dosage": "100mg",
+        "duration": "30 days",
+        "instructions": "Do not stop abruptly. Monitor for dizziness."
+      }
+    ]
   },
   {
     "recordId": "MR9609",
@@ -1141,7 +2288,15 @@
     "doctorId": 9,
     "diagnosis": "Anemia",
     "treatment": "Antibiotic course",
-    "date": "2025-02-12"
+    "date": "2025-02-12",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or weakness."
+      }
+    ]
   },
   {
     "recordId": "MR5015",
@@ -1149,7 +2304,15 @@
     "doctorId": 9,
     "diagnosis": "Asthma",
     "treatment": "Iron supplements and rest",
-    "date": "2024-02-14"
+    "date": "2024-02-14",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion relief."
+      }
+    ]
   },
   {
     "recordId": "MR5538",
@@ -1157,7 +2320,15 @@
     "doctorId": 9,
     "diagnosis": "Anemia",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-10-04"
+    "date": "2025-10-04",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR1851",
@@ -1165,7 +2336,15 @@
     "doctorId": 9,
     "diagnosis": "Asthma",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-04-30"
+    "date": "2024-04-30",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest as needed."
+      }
+    ]
   },
   {
     "recordId": "MR4590",
@@ -1173,7 +2352,15 @@
     "doctorId": 2,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2024-06-02"
+    "date": "2024-06-02",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR3133",
@@ -1181,7 +2368,15 @@
     "doctorId": 10,
     "diagnosis": "Flu",
     "treatment": "Inhaler prescription",
-    "date": "2025-02-10"
+    "date": "2025-02-10",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR5572",
@@ -1189,7 +2384,15 @@
     "doctorId": 2,
     "diagnosis": "Anemia",
     "treatment": "Iron supplements and rest",
-    "date": "2024-01-04"
+    "date": "2024-01-04",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR3649",
@@ -1197,7 +2400,15 @@
     "doctorId": 10,
     "diagnosis": "Anemia",
     "treatment": "Iron supplements and rest",
-    "date": "2025-06-10"
+    "date": "2025-06-10",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR3538",
@@ -1205,7 +2416,15 @@
     "doctorId": 4,
     "diagnosis": "Hypertension",
     "treatment": "Pain relief medication",
-    "date": "2024-01-21"
+    "date": "2024-01-21",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Take in the morning."
+      }
+    ]
   },
   {
     "recordId": "MR8267",
@@ -1213,7 +2432,15 @@
     "doctorId": 3,
     "diagnosis": "Bronchitis",
     "treatment": "Pain relief medication",
-    "date": "2024-11-14"
+    "date": "2024-11-14",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR3881",
@@ -1221,7 +2448,15 @@
     "doctorId": 9,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2025-09-16"
+    "date": "2025-09-16",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For cough and pain."
+      }
+    ]
   },
   {
     "recordId": "MR1306",
@@ -1229,7 +2464,15 @@
     "doctorId": 14,
     "diagnosis": "Anemia",
     "treatment": "Inhaler prescription",
-    "date": "2025-09-22"
+    "date": "2025-09-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For fatigue-related symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR8935",
@@ -1237,7 +2480,15 @@
     "doctorId": 11,
     "diagnosis": "Bronchitis",
     "treatment": "Iron supplements and rest",
-    "date": "2024-12-31"
+    "date": "2024-12-31",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR4136",
@@ -1245,7 +2496,15 @@
     "doctorId": 6,
     "diagnosis": "Migraine",
     "treatment": "Iron supplements and rest",
-    "date": "2024-02-22"
+    "date": "2024-02-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR5159",
@@ -1253,7 +2512,15 @@
     "doctorId": 6,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2024-12-27"
+    "date": "2024-12-27",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or weakness."
+      }
+    ]
   },
   {
     "recordId": "MR4491",
@@ -1261,7 +2528,15 @@
     "doctorId": 15,
     "diagnosis": "Migraine",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-01-24"
+    "date": "2024-01-24",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "Take at onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR9958",
@@ -1269,7 +2544,15 @@
     "doctorId": 2,
     "diagnosis": "Migraine",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-06-19"
+    "date": "2024-06-19",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "For acute migraine attack."
+      }
+    ]
   },
   {
     "recordId": "MR9653",
@@ -1277,7 +2560,15 @@
     "doctorId": 3,
     "diagnosis": "Migraine",
     "treatment": "Antibiotic course",
-    "date": "2024-11-08"
+    "date": "2024-11-08",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR3339",
@@ -1285,7 +2576,15 @@
     "doctorId": 9,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2024-07-07"
+    "date": "2024-07-07",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR9494",
@@ -1293,7 +2592,15 @@
     "doctorId": 2,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2024-11-17"
+    "date": "2024-11-17",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR2065",
@@ -1301,7 +2608,15 @@
     "doctorId": 2,
     "diagnosis": "Diabetes",
     "treatment": "Inhaler prescription",
-    "date": "2024-02-08"
+    "date": "2024-02-08",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR3021",
@@ -1309,7 +2624,15 @@
     "doctorId": 12,
     "diagnosis": "Flu",
     "treatment": "Inhaler prescription",
-    "date": "2024-10-20"
+    "date": "2024-10-20",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR5656",
@@ -1317,7 +2640,15 @@
     "doctorId": 10,
     "diagnosis": "Bronchitis",
     "treatment": "Pain relief medication",
-    "date": "2025-09-08"
+    "date": "2025-09-08",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR9925",
@@ -1325,7 +2656,15 @@
     "doctorId": 3,
     "diagnosis": "Anemia",
     "treatment": "Inhaler prescription",
-    "date": "2024-01-20"
+    "date": "2024-01-20",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR8297",
@@ -1333,7 +2672,15 @@
     "doctorId": 11,
     "diagnosis": "Flu",
     "treatment": "Iron supplements and rest",
-    "date": "2024-08-09"
+    "date": "2024-08-09",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and aches."
+      }
+    ]
   },
   {
     "recordId": "MR1134",
@@ -1341,7 +2688,15 @@
     "doctorId": 1,
     "diagnosis": "Bronchitis",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-06-02"
+    "date": "2024-06-02",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR2458",
@@ -1349,7 +2704,15 @@
     "doctorId": 2,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2025-04-13"
+    "date": "2025-04-13",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For cough and pain."
+      }
+    ]
   },
   {
     "recordId": "MR6937",
@@ -1357,7 +2720,15 @@
     "doctorId": 4,
     "diagnosis": "Hypertension",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-10-14"
+    "date": "2024-10-14",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure weekly."
+      }
+    ]
   },
   {
     "recordId": "MR2511",
@@ -1365,7 +2736,15 @@
     "doctorId": 11,
     "diagnosis": "Diabetes",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-10-01"
+    "date": "2024-10-01",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR6947",
@@ -1373,7 +2752,15 @@
     "doctorId": 7,
     "diagnosis": "Migraine",
     "treatment": "Antibiotic course",
-    "date": "2025-09-03"
+    "date": "2025-09-03",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR9577",
@@ -1381,7 +2768,15 @@
     "doctorId": 1,
     "diagnosis": "Anemia",
     "treatment": "Inhaler prescription",
-    "date": "2024-12-18"
+    "date": "2024-12-18",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR8696",
@@ -1389,7 +2784,15 @@
     "doctorId": 6,
     "diagnosis": "Bronchitis",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-08-26"
+    "date": "2024-08-26",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR2450",
@@ -1397,7 +2800,15 @@
     "doctorId": 15,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-05-14"
+    "date": "2025-05-14",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR2548",
@@ -1405,7 +2816,15 @@
     "doctorId": 9,
     "diagnosis": "Asthma",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-01-22"
+    "date": "2024-01-22",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion relief."
+      }
+    ]
   },
   {
     "recordId": "MR8604",
@@ -1413,7 +2832,15 @@
     "doctorId": 15,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2024-09-28"
+    "date": "2024-09-28",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For cough and pain."
+      }
+    ]
   },
   {
     "recordId": "MR9456",
@@ -1421,7 +2848,15 @@
     "doctorId": 11,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-07-07"
+    "date": "2025-07-07",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR2590",
@@ -1429,7 +2864,15 @@
     "doctorId": 1,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-06-17"
+    "date": "2025-06-17",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR9486",
@@ -1437,7 +2880,15 @@
     "doctorId": 9,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2025-04-18"
+    "date": "2025-04-18",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR1042",
@@ -1445,7 +2896,15 @@
     "doctorId": 8,
     "diagnosis": "Flu",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-12-18"
+    "date": "2024-12-18",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and aches."
+      }
+    ]
   },
   {
     "recordId": "MR4862",
@@ -1453,7 +2912,15 @@
     "doctorId": 9,
     "diagnosis": "Hypertension",
     "treatment": "Inhaler prescription",
-    "date": "2025-08-28"
+    "date": "2025-08-28",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Take once daily in the morning."
+      }
+    ]
   },
   {
     "recordId": "MR4836",
@@ -1461,7 +2928,15 @@
     "doctorId": 2,
     "diagnosis": "Flu",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-07-24"
+    "date": "2025-07-24",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR1644",
@@ -1469,7 +2944,15 @@
     "doctorId": 8,
     "diagnosis": "Hypertension",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-06-14"
+    "date": "2025-06-14",
+    "prescriptions": [
+      {
+        "medicineId": 33,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Report swelling or dizziness."
+      }
+    ]
   },
   {
     "recordId": "MR4344",
@@ -1477,7 +2960,15 @@
     "doctorId": 13,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2024-10-14"
+    "date": "2024-10-14",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR2092",
@@ -1485,7 +2976,15 @@
     "doctorId": 1,
     "diagnosis": "Diabetes",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-05-11"
+    "date": "2025-05-11",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR6806",
@@ -1493,7 +2992,15 @@
     "doctorId": 4,
     "diagnosis": "Bronchitis",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-01-31"
+    "date": "2025-01-31",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR6424",
@@ -1501,7 +3008,15 @@
     "doctorId": 12,
     "diagnosis": "Diabetes",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-10-20"
+    "date": "2024-10-20",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR5371",
@@ -1509,7 +3024,15 @@
     "doctorId": 4,
     "diagnosis": "Hypertension",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-10-05"
+    "date": "2025-10-05",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure regularly."
+      }
+    ]
   },
   {
     "recordId": "MR8149",
@@ -1517,7 +3040,15 @@
     "doctorId": 5,
     "diagnosis": "Diabetes",
     "treatment": "Inhaler prescription",
-    "date": "2024-01-07"
+    "date": "2024-01-07",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR7298",
@@ -1525,7 +3056,15 @@
     "doctorId": 7,
     "diagnosis": "Diabetes",
     "treatment": "Inhaler prescription",
-    "date": "2025-01-01"
+    "date": "2025-01-01",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR4432",
@@ -1533,7 +3072,15 @@
     "doctorId": 13,
     "diagnosis": "Flu",
     "treatment": "Iron supplements and rest",
-    "date": "2024-12-25"
+    "date": "2024-12-25",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR6464",
@@ -1541,7 +3088,15 @@
     "doctorId": 4,
     "diagnosis": "Bronchitis",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-03-09"
+    "date": "2025-03-09",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR5754",
@@ -1549,7 +3104,15 @@
     "doctorId": 4,
     "diagnosis": "Asthma",
     "treatment": "Antibiotic course",
-    "date": "2025-04-05"
+    "date": "2025-04-05",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion relief."
+      }
+    ]
   },
   {
     "recordId": "MR5976",
@@ -1557,7 +3120,15 @@
     "doctorId": 11,
     "diagnosis": "Anemia",
     "treatment": "Inhaler prescription",
-    "date": "2024-09-21"
+    "date": "2024-09-21",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR3460",
@@ -1565,7 +3136,15 @@
     "doctorId": 8,
     "diagnosis": "Bronchitis",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-06-27"
+    "date": "2024-06-27",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR6867",
@@ -1573,7 +3152,15 @@
     "doctorId": 6,
     "diagnosis": "Hypertension",
     "treatment": "Pain relief medication",
-    "date": "2025-05-25"
+    "date": "2025-05-25",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Take once daily."
+      }
+    ]
   },
   {
     "recordId": "MR4748",
@@ -1581,7 +3168,15 @@
     "doctorId": 10,
     "diagnosis": "Hypertension",
     "treatment": "Inhaler prescription",
-    "date": "2024-12-23"
+    "date": "2024-12-23",
+    "prescriptions": [
+      {
+        "medicineId": 35,
+        "dosage": "100mg",
+        "duration": "30 days",
+        "instructions": "Do not stop abruptly."
+      }
+    ]
   },
   {
     "recordId": "MR8984",
@@ -1589,7 +3184,15 @@
     "doctorId": 15,
     "diagnosis": "Asthma",
     "treatment": "Lifestyle modification and medication",
-    "date": "2024-07-13"
+    "date": "2024-07-13",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest as needed."
+      }
+    ]
   },
   {
     "recordId": "MR2454",
@@ -1597,7 +3200,15 @@
     "doctorId": 7,
     "diagnosis": "Anemia",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-03-13"
+    "date": "2025-03-13",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR5217",
@@ -1605,7 +3216,15 @@
     "doctorId": 13,
     "diagnosis": "Asthma",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-04-06"
+    "date": "2025-04-06",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion."
+      }
+    ]
   },
   {
     "recordId": "MR1339",
@@ -1613,7 +3232,15 @@
     "doctorId": 11,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2024-06-23"
+    "date": "2024-06-23",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR8607",
@@ -1621,7 +3248,15 @@
     "doctorId": 2,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2024-06-08"
+    "date": "2024-06-08",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR8603",
@@ -1629,7 +3264,15 @@
     "doctorId": 13,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-04-22"
+    "date": "2024-04-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or discomfort."
+      }
+    ]
   },
   {
     "recordId": "MR8853",
@@ -1637,7 +3280,15 @@
     "doctorId": 6,
     "diagnosis": "Flu",
     "treatment": "Antibiotic course",
-    "date": "2025-09-24"
+    "date": "2025-09-24",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR9747",
@@ -1645,7 +3296,15 @@
     "doctorId": 7,
     "diagnosis": "Flu",
     "treatment": "Pain relief medication",
-    "date": "2024-05-13"
+    "date": "2024-05-13",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For symptom relief."
+      }
+    ]
   },
   {
     "recordId": "MR2837",
@@ -1653,7 +3312,15 @@
     "doctorId": 7,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2025-09-10"
+    "date": "2025-09-10",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR7967",
@@ -1661,7 +3328,15 @@
     "doctorId": 1,
     "diagnosis": "Migraine",
     "treatment": "Antibiotic course",
-    "date": "2024-05-15"
+    "date": "2024-05-15",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR1940",
@@ -1669,7 +3344,15 @@
     "doctorId": 1,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2024-01-05"
+    "date": "2024-01-05",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR7974",
@@ -1677,7 +3360,15 @@
     "doctorId": 13,
     "diagnosis": "Hypertension",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-06-29"
+    "date": "2025-06-29",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure weekly."
+      }
+    ]
   },
   {
     "recordId": "MR5122",
@@ -1685,7 +3376,15 @@
     "doctorId": 6,
     "diagnosis": "Flu",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-03-04"
+    "date": "2024-03-04",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and aches."
+      }
+    ]
   },
   {
     "recordId": "MR1684",
@@ -1693,7 +3392,15 @@
     "doctorId": 5,
     "diagnosis": "Hypertension",
     "treatment": "Inhaler prescription",
-    "date": "2024-03-14"
+    "date": "2024-03-14",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Take in the morning."
+      }
+    ]
   },
   {
     "recordId": "MR8906",
@@ -1701,7 +3408,15 @@
     "doctorId": 6,
     "diagnosis": "Hypertension",
     "treatment": "Iron supplements and rest",
-    "date": "2024-06-09"
+    "date": "2024-06-09",
+    "prescriptions": [
+      {
+        "medicineId": 33,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Report any side effects."
+      }
+    ]
   },
   {
     "recordId": "MR6179",
@@ -1709,7 +3424,15 @@
     "doctorId": 1,
     "diagnosis": "Migraine",
     "treatment": "Iron supplements and rest",
-    "date": "2024-05-12"
+    "date": "2024-05-12",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR6986",
@@ -1717,7 +3440,15 @@
     "doctorId": 8,
     "diagnosis": "Flu",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-01-22"
+    "date": "2025-01-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR7319",
@@ -1725,7 +3456,15 @@
     "doctorId": 14,
     "diagnosis": "Asthma",
     "treatment": "Iron supplements and rest",
-    "date": "2025-01-24"
+    "date": "2025-01-24",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion."
+      }
+    ]
   },
   {
     "recordId": "MR6520",
@@ -1733,7 +3472,15 @@
     "doctorId": 12,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2025-04-08"
+    "date": "2025-04-08",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR5841",
@@ -1741,7 +3488,15 @@
     "doctorId": 2,
     "diagnosis": "Asthma",
     "treatment": "Iron supplements and rest",
-    "date": "2025-03-06"
+    "date": "2025-03-06",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest as needed."
+      }
+    ]
   },
   {
     "recordId": "MR2771",
@@ -1749,7 +3504,15 @@
     "doctorId": 9,
     "diagnosis": "Asthma",
     "treatment": "Pain relief medication",
-    "date": "2024-10-10"
+    "date": "2024-10-10",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For symptomatic relief."
+      }
+    ]
   },
   {
     "recordId": "MR7619",
@@ -1757,7 +3520,15 @@
     "doctorId": 10,
     "diagnosis": "Flu",
     "treatment": "Pain relief medication",
-    "date": "2024-02-25"
+    "date": "2024-02-25",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR4423",
@@ -1765,7 +3536,15 @@
     "doctorId": 9,
     "diagnosis": "Bronchitis",
     "treatment": "Antibiotic course",
-    "date": "2024-11-15"
+    "date": "2024-11-15",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Take with food. Avoid alcohol."
+      }
+    ]
   },
   {
     "recordId": "MR5849",
@@ -1773,7 +3552,15 @@
     "doctorId": 8,
     "diagnosis": "Bronchitis",
     "treatment": "Insulin therapy and diet control",
-    "date": "2024-08-02"
+    "date": "2024-08-02",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "For cough and pain."
+      }
+    ]
   },
   {
     "recordId": "MR7909",
@@ -1781,7 +3568,15 @@
     "doctorId": 12,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2024-10-21"
+    "date": "2024-10-21",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR3966",
@@ -1789,7 +3584,15 @@
     "doctorId": 3,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2024-10-17"
+    "date": "2024-10-17",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR3383",
@@ -1797,7 +3600,15 @@
     "doctorId": 15,
     "diagnosis": "Asthma",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-04-06"
+    "date": "2025-04-06",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion."
+      }
+    ]
   },
   {
     "recordId": "MR8274",
@@ -1805,7 +3616,15 @@
     "doctorId": 10,
     "diagnosis": "Migraine",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-07-04"
+    "date": "2025-07-04",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR2037",
@@ -1813,7 +3632,15 @@
     "doctorId": 10,
     "diagnosis": "Anemia",
     "treatment": "Iron supplements and rest",
-    "date": "2025-01-13"
+    "date": "2025-01-13",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or fatigue."
+      }
+    ]
   },
   {
     "recordId": "MR2991",
@@ -1821,7 +3648,15 @@
     "doctorId": 2,
     "diagnosis": "Hypertension",
     "treatment": "Pain relief medication",
-    "date": "2025-06-09"
+    "date": "2025-06-09",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "10mg",
+        "duration": "30 days",
+        "instructions": "Monitor blood pressure."
+      }
+    ]
   },
   {
     "recordId": "MR3751",
@@ -1829,7 +3664,15 @@
     "doctorId": 8,
     "diagnosis": "Diabetes",
     "treatment": "Antiviral medication and fluids",
-    "date": "2025-07-22"
+    "date": "2025-07-22",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For associated symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR8399",
@@ -1837,7 +3680,15 @@
     "doctorId": 4,
     "diagnosis": "Bronchitis",
     "treatment": "Iron supplements and rest",
-    "date": "2025-03-25"
+    "date": "2025-03-25",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR8705",
@@ -1845,7 +3696,15 @@
     "doctorId": 10,
     "diagnosis": "Anemia",
     "treatment": "Pain relief medication",
-    "date": "2025-01-31"
+    "date": "2025-01-31",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For headache or weakness."
+      }
+    ]
   },
   {
     "recordId": "MR1308",
@@ -1853,7 +3712,15 @@
     "doctorId": 13,
     "diagnosis": "Migraine",
     "treatment": "Insulin therapy and diet control",
-    "date": "2025-07-12"
+    "date": "2025-07-12",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR2962",
@@ -1861,7 +3728,15 @@
     "doctorId": 10,
     "diagnosis": "Diabetes",
     "treatment": "Antibiotic course",
-    "date": "2024-12-06"
+    "date": "2024-12-06",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For pain or fever."
+      }
+    ]
   },
   {
     "recordId": "MR5027",
@@ -1869,7 +3744,15 @@
     "doctorId": 9,
     "diagnosis": "Anemia",
     "treatment": "Lifestyle modification and medication",
-    "date": "2025-05-03"
+    "date": "2025-05-03",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "7 days",
+        "instructions": "For fatigue-related symptoms."
+      }
+    ]
   },
   {
     "recordId": "MR3027",
@@ -1877,7 +3760,15 @@
     "doctorId": 1,
     "diagnosis": "Hypertension",
     "treatment": "Iron supplements and rest",
-    "date": "2025-05-09"
+    "date": "2025-05-09",
+    "prescriptions": [
+      {
+        "medicineId": 25,
+        "dosage": "5mg",
+        "duration": "30 days",
+        "instructions": "Take in the morning."
+      }
+    ]
   },
   {
     "recordId": "MR7942",
@@ -1885,7 +3776,15 @@
     "doctorId": 2,
     "diagnosis": "Flu",
     "treatment": "Antiviral medication and fluids",
-    "date": "2024-08-17"
+    "date": "2024-08-17",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "500mg",
+        "duration": "5 days",
+        "instructions": "For fever and body aches."
+      }
+    ]
   },
   {
     "recordId": "MR2111",
@@ -1893,7 +3792,15 @@
     "doctorId": 6,
     "diagnosis": "Asthma",
     "treatment": "Inhaler prescription",
-    "date": "2025-05-10"
+    "date": "2025-05-10",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "Apply to chest for relief."
+      }
+    ]
   },
   {
     "recordId": "MR3264",
@@ -1901,7 +3808,15 @@
     "doctorId": 15,
     "diagnosis": "Hypertension",
     "treatment": "Pain relief medication",
-    "date": "2024-12-25"
+    "date": "2024-12-25",
+    "prescriptions": [
+      {
+        "medicineId": 35,
+        "dosage": "100mg",
+        "duration": "30 days",
+        "instructions": "Do not stop suddenly. Monitor BP."
+      }
+    ]
   },
   {
     "recordId": "MR2924",
@@ -1909,7 +3824,15 @@
     "doctorId": 4,
     "diagnosis": "Asthma",
     "treatment": "Iron supplements and rest",
-    "date": "2025-06-21"
+    "date": "2025-06-21",
+    "prescriptions": [
+      {
+        "medicineId": 27,
+        "dosage": "Topical",
+        "duration": "14 days",
+        "instructions": "For chest congestion."
+      }
+    ]
   },
   {
     "recordId": "MR6430",
@@ -1917,7 +3840,15 @@
     "doctorId": 5,
     "diagnosis": "Migraine",
     "treatment": "Antibiotic course",
-    "date": "2024-12-14"
+    "date": "2024-12-14",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "At onset of headache."
+      }
+    ]
   },
   {
     "recordId": "MR2493",
@@ -1925,7 +3856,15 @@
     "doctorId": 11,
     "diagnosis": "Bronchitis",
     "treatment": "Inhaler prescription",
-    "date": "2024-12-02"
+    "date": "2024-12-02",
+    "prescriptions": [
+      {
+        "medicineId": 7,
+        "dosage": "5/325mg",
+        "duration": "5 days",
+        "instructions": "Avoid alcohol. Take with food."
+      }
+    ]
   },
   {
     "recordId": "MR1323",
@@ -1933,6 +3872,14 @@
     "doctorId": 11,
     "diagnosis": "Migraine",
     "treatment": "Pain relief medication",
-    "date": "2025-03-26"
+    "date": "2025-03-26",
+    "prescriptions": [
+      {
+        "medicineId": 22,
+        "dosage": "1000mg",
+        "duration": "As needed",
+        "instructions": "For acute migraine."
+      }
+    ]
   }
 ]
