@@ -28,7 +28,7 @@ async function loadMedicines() {
                     <td>${med.Drug || 'Unknown'}</td>
                     <td class="actions">
                     <a href="edit-medicine.html"><button class="btn-edit" data-id="${med.id}">Edit</button></a>
-                    <button class="btn-delete" onclick="deleteMedicine(${med.id})">Delete</button>
+                    <button class="btn-delete" data-id="${med.id}">Delete</button>
                     </td>
                 `;
 
@@ -157,24 +157,24 @@ async function editMedicine(id, newDrugName) {
   };
 }
 
-async function deleteMedicine(id) {
-  const db = await openClinicDB();
-  const transaction = db.transaction("medicines", "readwrite");
-  const store = transaction.objectStore("medicines");
+// async function deleteMedicine(id) {
+//   const db = await openClinicDB();
+//   const transaction = db.transaction("medicines", "readwrite");
+//   const store = transaction.objectStore("medicines");
 
-  const request = store.delete(id);
+//   const request = store.delete(id);
 
-  request.onsuccess = function () {
-    console.log("Medicine deleted successfully");
-    alert("Medicine deleted successfully!");
-    loadMedicines(); // Refresh the list
-  };
+//   request.onsuccess = function () {
+//     console.log("Medicine deleted successfully");
+//     alert("Medicine deleted successfully!");
+//     loadMedicines(); // Refresh the list
+//   };
 
-  request.onerror = function (event) {
-    console.error("Error deleting medicine:", event.target.error);
-    alert("Error deleting medicine.");
-  };
-}
+//   request.onerror = function (event) {
+//     console.error("Error deleting medicine:", event.target.error);
+//     alert("Error deleting medicine.");
+//   };
+// }
 
 
 
@@ -195,4 +195,57 @@ function handleEditMedicine(id) {
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadMedicines();
+});
+
+// Store the medicine ID to delete
+let medicineToDelete = null;
+
+// Attach event listeners to delete buttons (dynamic)
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-delete')) {
+    e.preventDefault();
+    medicineToDelete = e.target.dataset.id;
+    document.getElementById('deleteModal').classList.remove('hidden');
+  }
+});
+
+// Handle "Yes, Delete"
+document.getElementById('confirmDelete').addEventListener('click', async () => {
+  if (medicineToDelete !== null) {
+    try {
+      const db = await openClinicDB();
+      const tx = db.transaction('medicines', 'readwrite');
+      const store = tx.objectStore('medicines');
+      const request = store.delete(Number(medicineToDelete));
+
+      request.onsuccess = () => {
+        loadMedicines(); // Refresh the table
+        document.getElementById('deleteModal').classList.add('hidden');
+        medicineToDelete = null;
+      };
+
+      request.onerror = () => {
+        alert('Error deleting medicine.');
+        medicineToDelete = null;
+      };
+    } catch (err) {
+      console.error('Delete failed:', err);
+      alert('Error deleting medicine.');
+      medicineToDelete = null;
+    }
+  }
+});
+
+// Handle "Cancel" or close
+document.getElementById('cancelDelete').addEventListener('click', () => {
+  document.getElementById('deleteModal').classList.add('hidden');
+  medicineToDelete = null;
+});
+
+// Close modal if clicking outside
+document.getElementById('deleteModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) {
+    e.currentTarget.classList.add('hidden');
+    medicineToDelete = null;
+  }
 });

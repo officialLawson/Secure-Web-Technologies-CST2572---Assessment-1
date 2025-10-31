@@ -198,23 +198,63 @@ function editAppointment(id) {
   // TODO: open form or modal here
 }
 
+// function deleteAppointment(id) {
+//   if (confirm('Are you sure you want to delete this appointment?')) {
+//     openClinicDB().then(db => {
+//       const tx = db.transaction('appointments', 'readwrite');
+//       const store = tx.objectStore('appointments');
+//       store.delete(id);
+
+//       tx.oncomplete = () => {
+//         alert('Appointment deleted.');
+//         loadAppointments(); // Refresh the table
+//       };
+//       tx.onerror = () => {
+//         alert('Error deleting appointment.');
+//       };
+//     });
+//   }
+// }
+// Store the appointment ID to delete
+
+let appointmentToDelete = null;
+
 function deleteAppointment(id) {
-  if (confirm('Are you sure you want to delete this appointment?')) {
-    openClinicDB().then(db => {
+  appointmentToDelete = id;
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+// Handle "Yes, Delete" in modal
+document.getElementById('confirmDelete').addEventListener('click', async () => {
+  if (appointmentToDelete) {
+    try {
+      const db = await openClinicDB();
       const tx = db.transaction('appointments', 'readwrite');
       const store = tx.objectStore('appointments');
-      store.delete(id);
+      store.delete(appointmentToDelete);
 
       tx.oncomplete = () => {
-        alert('Appointment deleted.');
         loadAppointments(); // Refresh the table
+        document.getElementById('deleteModal').classList.add('hidden');
+        appointmentToDelete = null;
       };
       tx.onerror = () => {
         alert('Error deleting appointment.');
+        appointmentToDelete = null;
       };
-    });
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert('Error deleting appointment.');
+      appointmentToDelete = null;
+    }
   }
-}
+});
+
+// Handle "Cancel"
+document.getElementById('cancelDelete').addEventListener('click', () => {
+  document.getElementById('deleteModal').classList.add('hidden');
+  userToDelete = null;
+});
+
 
 async function addAppointment(event, doctorId, patientId, reason, date, time) {
 

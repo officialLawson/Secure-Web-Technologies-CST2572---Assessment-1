@@ -25,7 +25,7 @@ async function fetchAllUserData() {
         ]);
 
         const doctorMap = Object.fromEntries(doctors.map(d => [d.id, d.name || `${d.first_name || ''} ${d.last_name || ''}`.trim()]));
-        const patientMap = Object.fromEntries(patients.map(p => [p.NHS, p.name || `${p.Title || ''} ${p.First || ''} ${p.Last || ''}`.trim()]));
+        const patientMap = Object.fromEntries(patients.map(p => [p.NHS, p.name || ` ${p.Title || ''} ${p.First || ''} ${p.Last || ''}`.trim()]));
 
         tbody.innerHTML = '';
 
@@ -45,8 +45,8 @@ async function fetchAllUserData() {
                     <td>${doctorName}</td>
                     <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
                     <td class="actions">
-                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.id}">Edit</button></a>
-                        <button class="btn-delete" onclick="deleteUser(${u.id})">Delete</button>
+                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}">Edit</button></a>
+                        <button class="btn-delete" data-id="${u.username}">Delete</button>
                     </td>
                 </tr>
                 `;
@@ -57,8 +57,8 @@ async function fetchAllUserData() {
                     <td>${patientName}</td>
                     <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
                     <td class="actions">
-                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.id}">Edit</button></a>
-                        <button class="btn-delete" onclick="deleteUser(${u.id})">Delete</button>
+                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}">Edit</button></a>
+                        <button class="btn-delete" data-id="${u.username}">Delete</button>
                     </td>
                 </tr>
                 `;
@@ -187,4 +187,57 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.warn('No valid role detected or role not authorized to view tables.');
     }
+});
+
+// Store the user ID to delete
+let userToDelete = null;
+
+// Attach event listener to delete buttons (dynamic)
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-delete')) {
+    e.preventDefault();
+    userToDelete = e.target.dataset.id;
+    document.getElementById('deleteModal').classList.remove('hidden');
+  }
+});
+
+document.getElementById('confirmDelete').addEventListener('click', async () => {
+  if (userToDelete !== null) {
+
+    try {
+      const db = await openClinicDB();
+      const tx = db.transaction('users', 'readwrite');
+      const store = tx.objectStore('users');
+      const request = store.delete(userToDelete); 
+
+      request.onsuccess = () => {
+        fetchAllUserData();
+        document.getElementById('deleteModal').classList.add('hidden');
+        userToDelete = null;
+      };
+
+      request.onerror = () => {
+        alert('Error deleting user.');
+        userToDelete = null;
+      };
+    } catch (err) {
+      console.error('DB error:', err);
+      alert('Database error.');
+      userToDelete = null;
+    }
+  }
+});
+
+// Handle "Cancel"
+document.getElementById('cancelDelete').addEventListener('click', () => {
+  document.getElementById('deleteModal').classList.add('hidden');
+  userToDelete = null;
+});
+
+// Close modal if clicking outside
+document.getElementById('deleteModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) {
+    e.currentTarget.classList.add('hidden');
+    userToDelete = null;
+  }
 });

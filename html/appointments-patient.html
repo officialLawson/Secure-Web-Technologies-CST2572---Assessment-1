@@ -151,9 +151,33 @@
             </section>        
 
             <footer class="footer">
-                <p>&copy; 2024 Care n Cure. All rights reserved.</p>
+                <p>Copyright &copy; 2025 MedTrack. All rights reserved.</p>
             </footer>
         </main>
+    </div>
+
+    <!-- Sign Out Modal -->
+    <div id="signOutModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Confirm Sign Out</h3>
+            <p>Are you sure you want to sign out? You'll be redirected to the login page.</p>
+            <div class="modal-actions">
+            <button id="modalCancel" class="btn-secondary">Cancel</button>
+            <button id="modalConfirm" class="btn-primary">Yes, Sign Out</button>
+            </div>
+        </div> 
+    </div>
+
+        <!-- Delete Modal -->
+    <div id="deleteModal" class="modal-overlay hidden">
+        <div class="modal-content">
+                <h3>Cancel Appointment</h3>
+                <p>Are you sure you want to cancel this appointment? This action cannot be undone.</p>
+                <div class="modal-actions">
+                <button id="cancelDelete" class="btn-secondary">Close</button>
+                <button id="confirmDelete" class="btn-primary">Yes, Cancel</button>
+                </div>
+        </div>
     </div>
 
     <script src="../js/D-Lmode.js"></script>
