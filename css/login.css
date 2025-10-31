@@ -267,14 +267,11 @@ body {
   color: var(--text-link-hover);
 }
 
-<<<<<<< HEAD
 #msg {
   margin-bottom: 10px;
   text-align: center;
   margin-top: 0;
 }
-=======
->>>>>>> d91a23e098ff02935d1d46e8b750027c6d0450df
 
 /* =============== Responsive =============== */
 @media (max-width: 768px) {
