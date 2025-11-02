@@ -1,5 +1,3 @@
-// login.js
-// Requires: IndexedDB.js (which defines openClinicDB, db, and getCryptoKey)
 
 const enc = new TextEncoder();
 const dec = new TextDecoder();
@@ -30,7 +28,7 @@ async function decryptData(encrypted) {
 }
 
 /* ========== Login Logic ========== */
-async function loginUser(username, password) {
+async function loginUser(username, password, role) {
   if (!db) await openClinicDB();
 
   if (!username || !password)
@@ -39,21 +37,100 @@ async function loginUser(username, password) {
   // Helper to check users/admins stores
   async function checkStore(storeName) {
     const tx = db.transaction(storeName, "readonly");
-    const index = tx.objectStore(storeName).index("username");
+    let index;
 
-    return new Promise((resolve, reject) => {
-      const req = index.get(username);
-      req.onsuccess = e => resolve(e.target.result);
-      req.onerror = () => reject(req.error);
-    });
+    if (storeName === "users") {
+      // For users, we index by role + identifier
+      if (role === "patient") {
+        const userTx = db.transaction(storeName, "readonly");
+        const userIndex = userTx.objectStore(storeName);
+
+        return new Promise((resolve, reject) => {
+          const req = userIndex.getAll();
+
+          req.onsuccess = e => {
+            const patient = e.target.result;
+
+            const patientFiltered = patient.filter(u => u.linkedId === username) || [];
+
+            const patientSelected = patientFiltered[0];
+
+            if (!patientFiltered) {
+              return resolve(null); // No doctor found with that email
+            }
+
+
+            resolve(patientSelected);
+          }
+
+          req.onerror = () => reject(req.error);
+        });
+      }
+    } else if (storeName === "doctors") {
+      if (role === "doctor") {
+        const doctorIndex = tx.objectStore(storeName).index("email");
+
+        return new Promise((resolve, reject) => {
+          const doctorReq = doctorIndex.get(username);
+
+          doctorReq.onsuccess = e => {
+            const doctor = e.target.result;
+
+            if (!doctor) {
+              return resolve(null); // No doctor found with that email
+            }
+
+            const linkedId = doctor.id;
+
+            const userTx = db.transaction("users", "readonly");
+            const userIndex = userTx.objectStore("users");
+            const userReq = userIndex.getAll();
+
+            userReq.onsuccess = ev => {
+              const user = ev.target.result;
+
+              const userFiltered = user.filter(u => u.linkedId === linkedId) || [];
+
+              const userSelected = userFiltered[0];
+
+              if (!userSelected) {
+                return resolve(null); // No user found for that doctor
+              }
+
+              // Optionally attach doctor profile to user object
+              user._linkedDoctor = doctor;
+
+              resolve(userSelected);
+            };
+
+            userReq.onerror = () => reject(userReq.error);
+          };
+
+          doctorReq.onerror = () => reject(doctorReq.error);
+        });
+      }
+    } else if (storeName === "admins") {
+      index = tx.objectStore(storeName).index("username");
+      return new Promise((resolve, reject) => {
+        const req = index.get(username);
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
   }
 
-  let user = await checkStore("users");
-  let role = user?.role || "user";
+  let user = null;
+  let detectedRole = role;
 
-  if (!user) {
+  if (role === "patient") {
+    user = await checkStore("users");
+    detectedRole = "patient";
+  } else if (role === "admin") {
     user = await checkStore("admins");
-    if (user) role = "admin";
+    detectedRole = "admin";
+  } else if (role === "doctor") {
+    user = await checkStore("doctors")
+    detectedRole = "doctor";
   }
 
   if (!user) return { success: false, message: "User not found." };
@@ -65,82 +142,203 @@ async function loginUser(username, password) {
     return { success: false, message: "Error reading password. Please try again." };
   }
 
-  // Compare entered password
   if (password !== decryptedPassword) {
     return { success: false, message: "Invalid username or password." };
   }
 
-  console.log(`🔓 Login successful as ${role}`);
-  return { success: true, user: { ...user, role } };
+  console.log(`🔓 Login successful as ${detectedRole}`);
+  return { success: true, user: { ...user, role: detectedRole } };
 }
 
-/* ========== Handle Login Form ========== */
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("loginForm");
-  const msg = document.getElementById("msg");
+/* ========== UI & Form Handling ========== */
+document.addEventListener("DOMContentLoaded", async () => {
+  const container = document.querySelector(".container");
+  const registerBtn = document.querySelector(".register-btn");
+  const loginBtn = document.querySelector(".login-btn");
+  const loginRole = document.getElementById("loginRole");
+  const roleFields = document.querySelectorAll("#roleFields [data-role]");
+  const themeSwitch = document.getElementById("theme-switch");
 
-  if (!form) {
-    console.error("❌ loginForm not found in DOM.");
+  if (!container) {
+    console.error("Container element not found!");
     return;
   }
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value;
-
-    msg.textContent = "Logging in...";
-    msg.style.color = "gray";
-
+  // Ensure DB is open early
+  if (typeof openClinicDB === 'function') {
     try {
-      const result = await loginUser(username, password);
-
-      if (result.success) {
-        msg.textContent = "Login successful! Redirecting...";
-        msg.style.color = "green";
-
-        localStorage.setItem("currentUser", JSON.stringify(result.user));
-
-        console.log("👤 Current user set in localStorage:", result.user.username);
-         // 🆕 Step 1: Open DB and filter+import data specific to this user
-        try {
-          await openClinicDB();
-          await fetchAndImportAllFiltered(result.user); // 🆕 filter + import relevant data
-          console.log("✅ Filtered data imported for:", result.user.username);
-        } catch (importErr) {
-          console.error("Error during filtered import:", importErr);
-        }
-
-        // 🆕 Step 2: Continue with redirect
-
-        // Determine redirect based on role
-        let redirectUrl = "../html/dashboard.html"; // fallback
-
-        switch (result.user.role?.toLowerCase()) {
-          case "doctor":
-            redirectUrl = "../html/dashboard-doctor.html";
-            break;
-          case "admin":
-            redirectUrl = "../html/dashboard-admin.html";
-            break;
-          case "patient":
-            redirectUrl = "../html/dashboard-patient.html";
-            break;
-          default:
-            redirectUrl = "../html/dashboard-doctor.html";
-        }
-        
-        window.location.href = redirectUrl;
-
-      } else {
-        msg.textContent = result.message;
-        msg.style.color = "red";
-      }
+      await openClinicDB();
     } catch (err) {
-      console.error("Login error:", err);
-      msg.textContent = "An unexpected error occurred. Please try again.";
-      msg.style.color = "red";
+      console.warn("Could not open database on init:", err);
     }
-  });
+  }
+
+  function switchToLogin() {
+    container.classList.remove("active");
+    updateBluePanelForLogin();
+    document.querySelector(".form-box.login").style.visibility = "visible";
+    document.querySelector(".form-box.register").style.visibility = "hidden";
+    console.log("Switched to Login");
+  }
+
+  function switchToRegister() {
+    container.classList.add("active");
+    updateBluePanelForRegister();
+    document.querySelector(".form-box.login").style.visibility = "hidden";
+    document.querySelector(".form-box.register").style.visibility = "visible";
+    const registerForm = document.querySelector(".form-box.register");
+    if (registerForm) {
+      registerForm.scrollTop = 0;
+    }
+    console.log("Switched to Register");
+  }
+
+  function updateBluePanelForLogin() {
+    const bluePanel = document.querySelector(".blue-panel");
+    bluePanel.innerHTML = `
+      <img src="../images/logo.png" alt="MedTrack Logo" class="panel-logo">
+      <h1>Hello, Welcome!</h1>
+      <p>Don't have an account?</p>
+      <button class="btn register-btn">Register</button>
+    `;
+    const newRegisterBtn = document.querySelector(".register-btn");
+    if (newRegisterBtn) {
+      newRegisterBtn.removeEventListener("click", switchToRegister);
+      newRegisterBtn.addEventListener("click", switchToRegister);
+    }
+  }
+
+  function updateBluePanelForRegister() {
+    const bluePanel = document.querySelector(".blue-panel");
+    bluePanel.innerHTML = `
+      <img src="../images/logo.png" alt="MedTrack Logo" class="panel-logo">
+      <h1>Welcome Back!</h1>
+      <p>Already have an account?</p>
+      <button class="btn login-btn">Login</button>
+    `;
+    const newLoginBtn = document.querySelector(".login-btn");
+    if (newLoginBtn) {
+      newLoginBtn.removeEventListener("click", switchToLogin);
+      newLoginBtn.addEventListener("click", switchToLogin);
+    }
+  }
+
+  updateBluePanelForLogin();
+
+  if (registerBtn) {
+    registerBtn.addEventListener("click", switchToRegister);
+  }
+
+  if (loginBtn) {
+    loginBtn.addEventListener("click", switchToLogin);
+  }
+
+  if (loginRole) {
+    loginRole.addEventListener("change", (e) => {
+      const selectedRole = e.target.value;
+      roleFields.forEach(field => {
+        const input = field.querySelector('input');
+        if (field.dataset.role === selectedRole) {
+          // Show and require
+          field.hidden = false;
+          if (input) input.required = true;
+        } else {
+          // Hide and remove required
+          field.hidden = true;
+          if (input) input.required = false;
+        }
+      });
+    });
+    loginRole.dispatchEvent(new Event("change"));
+  }
+
+  // ===== REAL LOGIN HANDLER =====
+  const loginForm = document.getElementById("loginForm");
+  if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const selectedRole = document.getElementById("loginRole").value;
+
+      let username;
+      if (selectedRole === "doctor") {
+        username = document.getElementById("doctorEmail").value.trim();
+      } else if (selectedRole === "patient") {
+        username = document.getElementById("patientNHS").value.trim();
+      } else if (selectedRole === "admin") {
+        username = document.getElementById("adminUsername").value.trim();
+      }
+
+      const password = document.getElementById("loginPassword").value;
+
+      // Optional: show loading message
+      const originalBtnText = document.querySelector("#loginForm .btn").textContent;
+      const btn = document.querySelector("#loginForm .btn");
+      btn.textContent = "Logging in...";
+      btn.disabled = true;
+
+      try {
+        const result = await loginUser(username, password, selectedRole);
+
+        if (result.success) {
+          // Save user
+          localStorage.setItem("currentUser", JSON.stringify(result.user));
+
+          // Redirect
+          let redirectUrl = "../html/dashboard.html";
+          switch (result.user.role?.toLowerCase()) {
+            case "doctor":
+              redirectUrl = "../html/dashboard-doctor.html";
+              break;
+            case "admin":
+              redirectUrl = "../html/dashboard-admin.html";
+              break;
+            case "patient":
+              redirectUrl = "../html/dashboard-patient.html";
+              break;
+            default:
+              redirectUrl = "login.html";
+          }
+
+          window.location.href = redirectUrl;
+
+        } else {
+          alert(result.message); // or show in UI
+          btn.textContent = originalBtnText;
+          btn.disabled = false;
+        }
+      } catch (err) {
+        console.error("Login error:", err);
+        alert("An unexpected error occurred. Please try again.");
+        btn.textContent = originalBtnText;
+        btn.disabled = false;
+      }
+    });
+  }
+
+  // ===== REGISTER FORM (prevent for now) =====
+  const registerForm = document.getElementById("registerForm");
+  if (registerForm) {
+    registerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      alert("Registration is not yet implemented.");
+    });
+  }
+
+  // ===== THEME SWITCH =====
+  if (themeSwitch) {
+    themeSwitch.addEventListener("click", () => {
+      document.body.classList.toggle("darkmode");
+      const isDark = document.body.classList.contains("darkmode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+
+    const savedTheme = localStorage.getItem("theme");
+    if (
+      savedTheme === "dark" ||
+      (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.body.classList.add("darkmode");
+    }
+  }
 });

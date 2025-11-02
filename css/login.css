@@ -1,331 +1,425 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+/* =============== COLOR PALETTE & DARK MODE =============== */
 :root {
-  --bg-body: white;
-  --bg-container: rgb(225, 225, 225);
-  --bg-input: rgba(255, 255, 255, 1);
-  --bg-input-focus: rgba(255, 255, 255, 1);
-  --bg-btn: rgb(26, 79, 153);
+  --bg-body: #f8f9fa;
+  --bg-container: #ffffff;
+
+
+  --bg-input: #f1f3f5;
+  --bg-input-focus: #ffffff;
+  --bg-btn: #1a4f99;
   --bg-btn-hover: #4A90E2;
-  --text-primary: rgb(26, 79, 153);
-  --text-label: black;
-  --text-input: black;
-  --text-btn: #fff;
-  --text-link: black;
-  --text-link-hover: rgb(26, 79, 153);
-  --border-input: rgba(255, 255, 255, 0.2);
+  --text-primary: #1a4f99;
+  --text-label: #333333;
+  --text-input: #212529;
+  --text-btn: #ffffff;
+  --text-link: #1a4f99;
+  --text-link-hover: #4A90E2;
+  --border-input: #ced4da;
   --border-input-focus: #4A90E2;
-  --shadow-container: rgba(0, 0, 0, 0.4);
-  --shadow-input: rgba(0, 0, 0, 0.05);
-  --shadow-input-focus: rgba(0, 0, 0, 0.1);
-  --shadow-btn: rgba(0, 0, 0, 0.1);
-  --shadow-btn-hover: rgba(0, 0, 0, 0.2);
-  --shadow-text: rgba(0, 0, 0, 0.2);
-  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --shadow-container: rgba(0,0,0,0.1);
+  --shadow-input: rgba(0,0,0,0.05);
+  --shadow-btn: rgba(26,79,153,0.2);
 }
 
-/* =============== Dark Mode =============== */
 .darkmode {
   --bg-body: #121212;
-  --bg-container: rgba(30, 30, 30, 0.9);
-  --bg-input: rgba(50, 50, 50, 1);
-  --bg-input-focus: rgba(60, 60, 60, 1);
+  --bg-container: #1e1e1e;
+  --bg-input: #2d2d2d;
+  --bg-input-focus: #383838;
   --bg-btn: #4A90E2;
   --bg-btn-hover: #357ab8;
   --text-primary: #a0cfff;
   --text-label: #e0e0e0;
   --text-input: #ffffff;
-  --text-btn: #fff;
-  --text-link: #e0e0e0;
-  --text-link-hover: #a0cfff;
-  --border-input: rgba(255, 255, 255, 0.15);
+  --text-btn: #ffffff;
+  --text-link: #a0cfff;
+  --text-link-hover: #80b8ff;
+  --border-input: #444444;
   --border-input-focus: #4A90E2;
-  --shadow-container: rgba(0, 0, 0, 0.6);
-  --shadow-input: rgba(0, 0, 0, 0.2);
-  --shadow-input-focus: rgba(0, 0, 0, 0.3);
-  --shadow-btn: rgba(0, 0, 0, 0.3);
-  --shadow-btn-hover: rgba(0, 0, 0, 0.4);
-  --shadow-text: rgba(0, 0, 0, 0.3);
-  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --shadow-container: rgba(0,0,0,0.5);
+  --shadow-input: rgba(0,0,0,0.3);
+  --shadow-btn: rgba(74,144,226,0.4);
 }
 
-/* =============== Theme Switch Button =============== */
+/* =============== THEME SWITCH =============== */
 #theme-switch {
-  height: 50px;
-  width: 50px;
-  padding: 0;
-  border-radius: 50%;
-  background-color: var(--bg-btn);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: fixed;
   bottom: 20px;
   right: 20px;
-  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  background: var(--bg-btn);
   border: 2px solid var(--border-input-focus);
-  transition: all 0.3s ease;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   z-index: 1000;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--shadow-btn);
 }
 
 #theme-switch:hover {
-  background-color: var(--bg-btn-hover);
+  background: var(--bg-btn-hover);
   transform: scale(1.1);
 }
 
 #theme-switch svg {
-  width: 80%;
-  height: 80%;
+  width: 24px;
+  height: 24px;
   fill: var(--text-btn);
   transition: fill 0.3s ease;
 }
 
-#theme-switch svg:last-child { 
-  display: none; 
+#theme-switch svg:last-child { display: none; }
+.darkmode #theme-switch svg:first-child { display: none; }
+.darkmode #theme-switch svg:last-child { display: block; }
+
+/* =============== GLOBAL =============== */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.darkmode #theme-switch svg:first-child { 
-  display: none; 
-}
-.darkmode #theme-switch svg:last-child { 
-  display: block; 
-}
-
-
-/* =============== Global Styles =============== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background: var(--bg-body);
-  overflow: hidden;
-  transition: background 0.3s ease;
-}
-
-/* =============== Login Container =============== */
-.login-container {
-  position: relative;
-  width: 500px;
-  height: auto;
-  max-width: 95%;
-  max-height: 90vh;
-  padding: 30px 40px 40px 40px;
-  border-radius: 20px;
-  backdrop-filter: blur(15px);
-  background: var(--bg-container);
-  box-shadow: 0px 0px 45px var(--shadow-container);
-  z-index: 10;
-}
-
-.login-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.login-container::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb);
-  border-radius: 3px;
-}
-
-.login-container h2 {
   color: var(--text-primary);
-  font-size: 32px;
-  font-weight: 600;
-  text-align: center;
-  letter-spacing: 0.5px;
-  text-shadow: 0 2px 4px var(--shadow-text);
 }
 
-/* =============== Header Section =============== */
-.header-section {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding-bottom: 25px;
-}
-
-.hospital-logo {
-  width: 75px;
-  height: 75px;
-  object-fit: contain;
-  flex-shrink: 0;
-  filter: drop-shadow(0 2px 4px var(--shadow-text));
-}
-
-/* =============== Input Groups =============== */
-.input-group {
-  position: relative;
-  margin-bottom: 25px;
-  display: flex;
-  flex-direction: column-reverse;
-}
-
-.input-group label {
+/* =============== FORM LABELS =============== */
+.field-label {
   display: block;
-  color: var(--text-label);
-  font-size: 15px;
-  margin-bottom: 10px;
-  margin-left: 8px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 15px 20px;
-  background: var(--bg-input);
-  border: 2px solid var(--border-input);
-  outline: none;
-  border-radius: 35px;
-  font-size: 16px;
-  color: var(--text-input);
-  box-shadow: 0 5px 15px var(--shadow-input);
-  transition: all 0.3s ease;
-}
-
-.input-group input:focus {
-  border: 2px solid var(--border-input-focus);
-  background: var(--bg-input-focus);
-  box-shadow: 0 8px 20px var(--shadow-input-focus);
-}
-
-/* =============== Forgot Password Link =============== */
-.input-group-with-link {
-  position: relative;
-  margin-bottom: 35px;
-}
-
-.input-group-with-link .input-group {
-  margin-bottom: 0;
-}
-
-.forgot-password-link {
-  position: absolute;
-  top: 0;
-  right: 8px;
-  color: var(--text-primary);
-  font-size: 13px;
-  text-decoration: none;
-  font-weight: 500;
-  letter-spacing: 0.2px;
-  transition: all 0.3s ease;
-}
-
-.forgot-password-link:hover {
-  text-decoration: underline;
-  color: var(--text-link-hover);
-}
-
-/* =============== Select Dropdown =============== */
-.input-group select {
-  width: 100%;
-  padding: 15px 20px;
-  background: var(--bg-input);
-  border: 2px solid var(--border-input);
-  outline: none;
-  border-radius: 35px;
-  font-size: 16px;
-  color: var(--text-input);
-  box-shadow: 0 5px 15px var(--shadow-input);
-  transition: all 0.3s ease;
-  appearance: none;
-  cursor: pointer;
-  position: relative;
-}
-
-.input-group select:focus {
-  border: 2px solid var(--border-input-focus);
-  background: var(--bg-input-focus);
-  box-shadow: 0 8px 20px var(--shadow-input-focus);
-}
-
-.input-group select::-ms-expand {
-  display: none;
-}
-.input-group {
-  position: relative;
-}
-.input-group select + label::after {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: var(--text-label);
-  pointer-events: none;
-  transition: color 0.3s ease;
-}
-.input-group select:focus + label::after {
-  color: var(--border-input-focus);
-}
-
-/* =============== Login Button =============== */
-.login-btn {
-  width: 100%;
-  padding: 15px;
-  background: var(--bg-btn);
-  border: none;
-  border-radius: 35px;
-  color: var(--text-btn);
-  font-size: 16px;
+  margin-bottom: 8px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px var(--shadow-btn);
-}
-
-.login-btn:hover {
-  background: var(--bg-btn-hover);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px var(--shadow-btn-hover);
-}
-
-.login-btn:active {
-  transform: translateY(-1px);
-}
-
-/* =============== Register Link =============== */
-.register-link {
-  text-align: center;
-  margin-top: 8px;
-  color: var(--text-link);
+  color: var(--text-label);
   font-size: 14px;
 }
 
-.register-link a {
-  color: var(--text-primary);
-  font-weight: 600;
-  text-decoration: none;
+/* =============== LOGIN PAGE =============== */
+.container {
+  position: relative;
+  width: 850px;
+  height: 550px;
+  background: var(--bg-container);
+  border-radius: 30px;
+  box-shadow: 0 0 30px var(--shadow-container);
+  margin: 80px auto;
+  overflow: hidden;
+  display: flex;
+  position: relative;
+}
+
+.blue-panel {
+  width: 50%;
+  height: 100%;
+  background: var(--bg-btn);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 50px;
+  text-align: center;
+  z-index: 1;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: right 0.6s ease-in-out;
+}
+.blue-panel .btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 8px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.register-link a:hover {
-  text-decoration: underline;
+.blue-panel .btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.panel-logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 16px;
+  filter: brightness(1.2);
+}
+
+.blue-panel h1 {
+  margin-bottom: 12px;
+}
+
+.blue-panel p {
+  margin-bottom: 16px;
+}
+
+.blue-panel .panel-logo {
+  filter: brightness(1.5);
+}
+.panel-logo:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 650px) {
+  .panel-logo {
+    width: 100px;
+  }
+}
+
+/* =============== FORM BOX =============== */
+.form-box {
+  position: absolute;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: var(--bg-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  z-index: 2;
+  transition: left 0.6s ease-in-out;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.container.active .form-box {
+  left: 50%;
+}
+
+.container.active .blue-panel {
+  right: 50%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+}
+
+.form-box.login {
+  visibility: visible;
+}
+
+.form-box.register {
+  visibility: hidden;
+  overflow-y: auto;
+  padding: 300px 40px 20px;
+  scroll-behavior: smooth;
+}
+
+.form-box.register form {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.form-box.register .input-box:first-child {
+  margin-top: 15px;
+}
+
+/* =============== SCROLLBAR =============== */
+.form-box.register::-webkit-scrollbar {
+  width: 8px;
+}
+
+.form-box.register::-webkit-scrollbar-track {
+  background: var(--bg-input);
+  border-radius: 10px;
+}
+
+.form-box.register::-webkit-scrollbar-thumb {
+  background: var(--border-input);
+  border-radius: 10px;
+}
+
+.form-box.register::-webkit-scrollbar-thumb:hover {
+  background: var(--border-input-focus);
+}
+
+/* =============== INPUT BOX =============== */
+.input-box {
+  position: relative;
+  margin: 15px 0;
+}
+
+.input-box input,
+.input-box select {
+  width: 100%;
+  padding: 13px 50px 13px 20px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 12px;
+  outline: none;
+  font-size: 16px;
+  color: var(--text-input);
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.input-box input:focus,
+.input-box select:focus {
+  background: var(--bg-input-focus);
+  border-color: var(--border-input-focus);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.5);
+}
+
+.input-box i {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--text-label);
+  pointer-events: none;
+}
+
+.input-box input[type="date"] {
+  padding-right: 50px;
+}
+
+.input-box input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.7;
+  cursor: pointer;
+}
+
+/* =============== SELECT DROPDOWN =============== */
+.select-wrap {
+  position: relative;
+  margin: 15px 0;
+}
+
+.select-wrap select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding: 13px 50px 13px 20px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: 12px;
+  outline: none;
+  font-size: 16px;
+  color: var(--text-input);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.select-wrap select:focus {
+  background: var(--bg-input-focus);
+  border-color: var(--border-input-focus);
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.5);
+}
+
+.select-wrap i {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: var(--text-label);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* =============== BUTTONS =============== */
+.btn {
+  width: 100%;
+  height: 48px;
+  background: var(--bg-btn);
+  color: var(--text-btn);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px var(--shadow-btn);
+}
+
+.btn:hover {
+  background: var(--bg-btn-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--shadow-btn);
+}
+
+.toggle-link {
+  color: var(--text-link);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.toggle-link:hover {
   color: var(--text-link-hover);
+  text-decoration: underline;
 }
 
+/* Responsive */
+@media (max-width: 650px) {
+  .container {
+    height: calc(100vh - 40px);
+    margin: 20px auto;
+    width: calc(100% - 40px);
+    flex-direction: column;
+  }
 
-/* =============== Responsive =============== */
-@media (max-width: 768px) {
-  .login-container {
-    width: 90%;
-    max-width: 380px;
-    padding: 25px 30px 35px 30px;
+  .blue-panel {
+    width: 100%;
+    height: 30%;
+    padding: 20px;
+    border-radius: 0;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    position: static !important;
+    right: auto;
+    left: auto;
   }
-  
-  .header-section {
-    flex-direction: row;
-    gap: 15px;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
+
+  .form-box {
+    width: 100%;
+    height: 70%;
+    top: 0;
+    bottom: auto;
+    left: 0;
+    padding: 20px;
+    border-radius: 0;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    position: static !important;
+    overflow-y: auto;
   }
-  
-  .hospital-logo { width: 50px; height: 50px; }
-  .login-container h2 { font-size: 26px; }
-  #theme-switch { height: 45px; width: 45px; bottom: 15px; right: 15px; }
-}
+
+  .container.active .form-box {
+    left: 0;
+    top: 30%;
+  }
+
+  .input-box {
+    margin: 12px 0;
+  }
+
+  .btn {
+    margin-top: 15px;
+  }
+} 

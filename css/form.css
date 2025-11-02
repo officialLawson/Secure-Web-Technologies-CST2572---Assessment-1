@@ -7,8 +7,8 @@
   --bg-input: #ffffff;
   --border-color: #e5e7eb;
   --border-opacity: rgba(0,0,0,0.1);
-  --accent: #4f46e5;
-  --accent-hover: #6366f1;
+  --accent: #007bff;
+  --accent-hover: #0056b3;
   --accent-focus-shadow: rgba(79,70,229,0.2);
   --shadow-input: rgba(0,0,0,0.05);
   --shadow-dropdown: rgba(0,0,0,0.15);
@@ -97,6 +97,18 @@
   color: var(--text-primary);
 }
 .form-group input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--trigger-bg);
+  color: var(--trigger-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 44px;
+}
+.form-group textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;

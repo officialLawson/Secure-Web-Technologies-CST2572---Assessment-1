@@ -3,6 +3,7 @@
 
 
 async function importLoginData(dataArray, storeName) {
+  console.log("Activated importLoginData");
   if (!Array.isArray(dataArray)) {
     console.warn(`importLoginData: expected array for ${storeName}, got`, dataArray);
     return { imported: 0, skipped: 0 };
@@ -71,6 +72,8 @@ async function importLoginData(dataArray, storeName) {
         req.onerror = () => reject(req.error);
       });
 
+      console.log("Completed importLoginData");
+
     } catch (err) {
       skipped++;
       console.warn(`Skipped ${storeName} record due to error:`, err, raw);
@@ -88,27 +91,37 @@ async function importLoginData(dataArray, storeName) {
   return { imported, skipped };
 }
 
+async function importAllData() {
+  // Step 1: Fetch and import encrypted login tables first
+  const usersResp = await fetch(JSON_URLS.users);
+  const usersJson = await usersResp.json();
+
+  const adminsResp = await fetch(JSON_URLS.admins);
+  const adminsJson = await adminsResp.json();
+
+  await importLoginData(usersJson, "users");
+  await importLoginData(adminsJson, "admins");
+
+  // Step 2: Import the rest of the data
+  await fetchAndImportAll();
+
+  return "✅ All data imported.";
+}
+
+
 // Top-level init: open DB, fetch JSONs, import users+admins
 async function initImport() {
   try {
     await openClinicDB();
 
-    // fetch login JSONs (use your URLs)
-    const usersResp = await fetch(JSON_URLS.users);
-    const usersJson = await usersResp.json();
+   const result = await importAllData();
 
-    const adminsResp = await fetch(JSON_URLS.admins);
-    const adminsJson = await adminsResp.json();
-
-    // import each
-    const r1 = await importLoginData(usersJson, "users");
-    const r2 = await importLoginData(adminsJson, "admins");
-
-    console.log("✅ All login data imported.", { usersImported: r1, adminsImported: r2 });
+    console.log(result);
   } catch (err) {
     console.error("initImport failed:", err);
   }
 }
+
 
 // Run automatically when script loads (if you want automatic import)
 window.addEventListener("DOMContentLoaded", () => {
@@ -120,6 +133,3 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-
-// Example usage:
-// importLoginData([{ username: "doctor1", password: "pass123", role: "doctor" }]);

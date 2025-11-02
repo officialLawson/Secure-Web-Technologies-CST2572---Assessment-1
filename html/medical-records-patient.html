@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Appointments</title>
+    <title>Medical Records</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/table.css">
@@ -118,7 +118,7 @@
                                     d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                             </svg>
                             </span>
-                            <input id="search" type="text" placeholder="Search appointments..." />
+                            <input id="search" type="text" placeholder="Search medcial record..." />
                         </div>
                     </div>
 
@@ -126,10 +126,10 @@
                         <table class="table"  id="medicalRecordsTable">
                             <thead>
                             <tr>
-                                <th>Doctor Name</th>
-                                <th>Reason</th>
-                                <th>Date - Time</th>
-                                <th>Status</th>
+                                <th>Doctor Id</th>
+                                <th>Diagnosis</th>
+                                <th>Treatment</th>
+                                <th>Date</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -162,7 +162,7 @@
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
-    <script src="../js/appointments.js"></script>
+    <script src="../js/medicalRecords.js"></script>
     <script>
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         if (userRole !== 'patient') {

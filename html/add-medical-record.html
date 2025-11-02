@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Appointments</title>
+    <title>Add Medical Record</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../css/form.css">
 </head>
 <body>
     <div class="container">
@@ -24,7 +25,7 @@
                     <span class="nav-text">Dashboard</span>
                 </a></li>
 
-                <li><a href="appointments-doctor.html" class="active">
+                <li><a href="appointments-doctor.html">
                     <svg class="dashboard-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect fill='none' x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                         <line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line>
@@ -33,9 +34,9 @@
                     <span class="nav-text">Appointments</span>
                 </a></li>
 
-                <li><a href="users-doctor.html">
+                <li><a href="users-doctor.html"  class="active">
                     <svg class="dashboard-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        <path fill='none' d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle fill='none' cx="9" cy="7" r="4"></circle><path fill='none' d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path fill='none' d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                     </svg>
                     <span class="nav-text">Patients</span>
                 </a></li>
@@ -114,45 +115,64 @@
             </header>
 
             <section class="content">
-                <h2 class="content-title">Appointments</h2>
+                <h2 class="content-title">Add Medical Record</h2>
                 
                 <div class="card-container">
-                    <div class="top-bar">
-                        <!-- Search -->
-                        <div class="search-container">
-                            <span class="search-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                            </svg>
-                            </span>
-                            <input id="search" type="text" placeholder="Search appointments..." />
-                        </div>
+                    <form onsubmit="handleAddAppointment(event)" novalidate>
+                        <div class="form-section">
+                            <h2>Visit Date</h2>
+                            <p class="description">Date of medical record.</p>
 
-                        <!-- Actions -->
-                        <div class="actions">
-                            <a href="#">
-                            <button class="btn-add">+ Add Appointment</button>
-                            </a>
+                            <div class="form-grid">
+                                <!-- Date of Birth -->
+                                <div class="form-group">
+                                    <label for="appointmentDate">Date</label>
+                                    <div class="custom-date" id="datePicker">
+                                        <div class="custom-date__input placeholder">Select date of visit</div>
+                                        <div class="custom-date__calendar" hidden></div>
+                                    </div>
+                                    <input type="hidden" id="appointmentDate" name="appointmentDate" required>
+                                    <p id="appointmentDate-form-error" class="error-message"></p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <div class="form-section">
+                            <h2>Diagnosis and Treatment</h2>
+                            <p class="description">Medical assessment and care plan.</p>
 
-                    <div class="table-container">
-                        <table class="table"  id="medicalRecordsTable">
-                            <thead>
-                            <tr>
-                                <th>Doctor Name</th>
-                                <th>Reason</th>
-                                <th>Date - Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody id="medicalRecordsBody">
-                            <!-- Appointment rows will be populated here dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
+                            <div class="form-grid">
+                                <!-- Diagnosis -->
+                                <div class="form-group">
+                                    <label for="userDiagnosis">Diagnosis</label>
+                                    <textarea id="userDiagnosis" name="userDiagnosis" placeholder="Diagnosis" required rows="4" style="width: 100%; resize: vertical;"></textarea>
+                                    <p id="userDiagnosis-form-error" class="error-message"></p>
+                                </div>
+                                <!-- Treatment -->
+                                <div class="form-group">
+                                    <label for="userTreatment">Treatment</label>
+                                    <textarea id="userTreatment" name="userTreatment" placeholder="Treatment" required rows="4" style="width: 100%; resize: vertical;"></textarea>
+                                    <p id="userTreatment-form-error" class="error-message"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-section">
+                            <h2>Prescriptions</h2>
+                            <p class="description">Prescribed medications and dosage.</p>
+
+                            <div class="form-grid">
+                                <!-- Prescriptions -->
+                                <div class="form-group">
+                                    <label for="userPrescriptions">Prescriptions</label>
+                                    <div id="prescriptions-container"></div>
+                                    <button type="button" onclick="addPrescription()">Add Medicine</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
+                            <button onclick="handleAddAppointment()" class="submit-btn">Add Record</button>
+                        </div>
+                    </form>
                 </div>
             </section>        
 
@@ -174,6 +194,7 @@
         </div> 
     </div>
 
+    <script src="../js/form.js"></script>
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
@@ -198,6 +219,43 @@
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });
+    </script>
+    <script>
+        let prescriptionIndex = 0;
+
+        function addPrescription() {
+            const container = document.getElementById('prescriptions-container');
+
+            const prescriptionDiv = document.createElement('div');
+            prescriptionDiv.className = 'prescription-entry';
+            prescriptionDiv.style.marginBottom = '1em';
+            prescriptionDiv.innerHTML = `
+                <fieldset style="border: 1px solid #ccc; padding: 10px;">
+                    <legend>Medicine ${prescriptionIndex + 1}</legend>
+                    <label>Medicine Name:</label>
+                    <input type="text" name="medicineName_${prescriptionIndex}" required><br>
+
+                    <label>Dosage:</label>
+                    <input type="text" name="dosage_${prescriptionIndex}" required><br>
+
+                    <label>Duration:</label>
+                    <input type="text" name="duration_${prescriptionIndex}" required><br>
+
+                    <label>Instructions:</label>
+                    <textarea name="instructions_${prescriptionIndex}" rows="3" style="width: 100%;"></textarea><br>
+
+                    <button type="button" onclick="removePrescription(this)">Remove</button>
+                </fieldset>
+            `;
+
+            container.appendChild(prescriptionDiv);
+            prescriptionIndex++;
+        }
+
+        function removePrescription(button) {
+            const entry = button.closest('.prescription-entry');
+            entry.remove();
+        }
     </script>
 </body>
 </html>

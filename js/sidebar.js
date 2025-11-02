@@ -55,29 +55,7 @@
 
     // Sign out function
     async function signOut() {
-    try {
-        // Ensure DB connection exists
-        if (!window.db) {
-        console.log("🔄 Opening DB before clearing...");
-        await openClinicDB();
-        }
-
-        // Now clear data except 'admins' and 'users'
-        await clearData([
-        'medicalRecord',
-        'doctors',
-        'patients',
-        'medicines',
-        'appointments',
-        'notifications'
-        ]);
-
-        // 🔄 Optional: refresh DevTools IndexedDB view
-        db.close();
-        db = null;
-        await openClinicDB();
-
-        console.log("✅ Data cleared. Signing out...");
+        console.log("Signing out...");
 
         // Clear login info
         localStorage.removeItem('currentUser');
@@ -85,9 +63,6 @@
 
         // Redirect
         window.location.href = "login.html";
-    } catch (err) {
-        console.error("❌ Sign out failed:", err);
-    }
     }
 
     // ==============================
@@ -119,35 +94,7 @@
     if (modalConfirm) {
         modalConfirm.addEventListener('click', async () => {
             try {
-                // Ensure DB connection exists
-                if (!window.db) {
-                    console.log("🔄 Opening DB before clearing...");
-                    await openClinicDB();
-                }
-
-                // Now clear data except 'admins' and 'users'
-                await clearData([
-                    'medicalRecord',
-                    'doctors',
-                    'patients',
-                    'medicines',
-                    'appointments',
-                    'notifications'
-                ]);
-
-                // 🔄 Optional: refresh DevTools IndexedDB view
-                db.close();
-                db = null;
-                await openClinicDB();
-
-                console.log("✅ Data cleared. Signing out...");
-
-                // Clear login info
-                localStorage.removeItem('currentUser');
-                sessionStorage.removeItem('currentUser');
-
-                // Redirect
-                window.location.href = "login.html";
+                signOut();
             } catch (err) {
                 console.error("❌ Sign out failed:", err);
                 if (signOutModal) {

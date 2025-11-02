@@ -939,3 +939,54 @@ body {
   text-decoration: underline;
   color: var(--text-negative);
 }
+
+/* View Medical Record */
+.card-section {
+  padding-bottom: 1.5rem;
+}
+.card-section h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-value);
+}
+.card-section .description {
+  margin-top: .25rem;
+  font-size: .875rem;
+  color: var(--text-muted);
+}
+
+.record-info-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 0.5rem; /* gap-4 (default spacing scale: 1rem) */
+}
+
+/* Large screens and up (default breakpoint: 1024px) */
+@media (min-width: 1024px) {
+  .record-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* lg:grid-cols-2 */
+    gap: 1.75rem; /* lg:gap-7 (default spacing scale: 1.75rem) */
+  }
+}
+
+/* 2XL screens and up (default breakpoint: 1536px) */
+@media (min-width: 1536px) {
+  .record-info-grid {
+    column-gap: 8rem; /* 2xl:gap-x-32 (default spacing scale: 8rem) */
+    /* row-gap remains 1.75rem from the large screen breakpoint unless explicitly overridden */
+  }
+}
+
+.record-info-title {
+  margin-bottom: 0.25rem; /* mb-2 */
+  font-size: 0.75rem; /* text-xs */
+  line-height: 1.5rem; /* leading-normal (translates to 1.5 if no explicit value is given, or a specific value if defined in your Tailwind config) */
+  color: var(--text-card-title); /* text-gray-500 */
+}
+
+.record-info-info {
+  margin-top: 0;  
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500;    /* font-medium */
+  color: var(--text-title);      /* text-gray-800 */
+}

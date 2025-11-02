@@ -38,7 +38,7 @@ async function getUserInfo() {
 
                     const doctor = currentUserData[0];
 
-                    const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`
+                    const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
                     const doctorRole = (user.role.charAt(0).toUpperCase() + user.role.slice(1));
                     const doctorFirstName = doctor.first_name;
                     const doctorLastName = doctor.last_name;
@@ -59,8 +59,8 @@ async function getUserInfo() {
                     userRole.innerText = doctorRole;
                 };
 
-                doctorsReq.onerror = function(event) {
-                    console.error('Failed to load appointments:', request.error);
+                doctorsReq.onerror = function() {
+                    console.error('Failed to load doctors info:', request.error);
                 };
 
                 break;
@@ -115,7 +115,7 @@ async function getUserInfo() {
                     };
 
                 patientsReq.onerror = function(event) {
-                    console.error('Failed to load appointments:', request.error);
+                    console.error('Failed to load patients info:', request.error);
                 };
 
                 break;

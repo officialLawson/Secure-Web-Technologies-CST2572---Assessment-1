@@ -413,7 +413,6 @@ function getNotifications(roleOrId) {
 }
 
 
-
 //Doctor Dashboard Loader
 async function loadDoctorDashboard(doctorId) {
   try {
@@ -496,11 +495,10 @@ async function addMedicalRecord(record) {
   if (!record || !record.recordId) throw new Error("record.recordId required");
 
   // Build the stored object: keep indexes (recordId, patientId, doctorId, date) in plain text
-  const { recordId, patientId, doctorId, date } = record;
+  const { recordId, patientId, doctorId, date, prescriptions } = record;
   const sensitive = {
     diagnosis: record.diagnosis || "",
     treatment: record.treatment || "",
-    notes: record.notes || ""    // optional extra
   };
 
   const encryptedPayload = await encryptData(JSON.stringify(sensitive));
@@ -510,10 +508,24 @@ async function addMedicalRecord(record) {
     patientId,
     doctorId,
     date,
+    prescriptions,
     payload: encryptedPayload
   };
 
   return addItem('medicalRecord', stored);
+}
+
+// ---------- Decrypt medical record ---------------
+async function decryptMedicalRecord(d) {
+  if (d.payload) {
+    try {
+      const decrypted = await decryptData(d.payload);
+      Object.assign(d, JSON.parse(decrypted));
+    } catch (err) {
+      console.warn("Failed to decrypt medical record:", err);
+    }
+  }
+  return d;
 }
 
 // Fetch JSONs (from GitHub raw) 
@@ -600,9 +612,9 @@ async function filterDataForUser(allData, user) {
       break;
 
     case 'doctor':
-      filtered.doctors = doctors.filter(d => d.id === user.linkedId);
+      filtered.doctors = doctors;
       filtered.patients = patients; // all patients visible
-      filtered.medicalRecord = medicalRecord.filter(r => r.doctorId === user.linkedId);
+      filtered.medicalRecord = medicalRecord;
       filtered.appointment = appointment.filter(a => a.doctorId === user.linkedId);
       filtered.medicines = medicines; // all medicines visible
       filtered.notification = notification.filter(
@@ -639,6 +651,43 @@ async function filterDataForUser(allData, user) {
   return filtered;
 }
 
+/* =============================
+   🧠 Set All Data
+   ============================= */
+async function allDataForUser(allData) {
+
+  try{
+    // Ensure all tables exist
+    const {
+      patients = [],
+      doctors = [],
+      admins = [],
+      medicines = [],
+      users = [],
+      medicalRecord = [],
+      appointment = [],
+      notification = []
+    } = allData || {};
+
+    // Initialize filtered object
+    const filtered = {};
+
+    
+    filtered.admins = admins;
+    filtered.doctors = doctors;
+    filtered.patients = patients;
+    filtered.medicines = medicines;
+    filtered.users = users;
+    filtered.medicalRecord = medicalRecord;
+    filtered.appointment = appointment;
+    filtered.notification = notification;
+
+    return filtered;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 // Import filtered data into IndexedDB
 async function importFetchedDataToDB(filteredData) {
   if (!db) throw new Error('DB not opened. Call openClinicDB() first.');
@@ -665,7 +714,6 @@ async function importFetchedDataToDB(filteredData) {
     notification = []
   } = filteredData || {};
 
-
   // Doctors
   for (const d of doctors) {
     try {
@@ -684,7 +732,6 @@ async function importFetchedDataToDB(filteredData) {
       if (!p.NHS) continue;
       const encryptedPatient = await encryptPatientInfo(p);
       await addItem('patients', encryptedPatient);
-      console.log(p.Email);
       results.patients++;
     } catch (err) {
       console.warn('Skipping patient (exists?):', p.NHS, err);
@@ -702,7 +749,7 @@ async function importFetchedDataToDB(filteredData) {
         date: r.date || r.Date || null,
         diagnosis: r.diagnosis || r.Diagnosis || "",
         treatment: r.treatment || r.Treatment || "",
-        notes: r.notes || ""
+        prescriptions: r.prescriptions || []
       };
       await addMedicalRecord(toAdd);
       results.medicalRecord++;
@@ -744,7 +791,6 @@ async function importFetchedDataToDB(filteredData) {
     }
   }
 
-  console.log('✅ Import completed', results);
   return results;
 }
 
@@ -919,6 +965,8 @@ function closeDB() {
 window.clinicDB = {
   openClinicDB,
   fetchAllJsons,
+  filterDataForUser,
+  allDataForUser,
   importFetchedDataToDB,
   registerPatientAccount,
   createDoctorAccountByAdmin,
@@ -946,3 +994,4 @@ window.clinicDB = {
   _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
   JSON_URLS
 };
+

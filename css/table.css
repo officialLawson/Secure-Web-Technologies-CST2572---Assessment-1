@@ -209,6 +209,30 @@
   font-size: 14px;
 }
 
+.btn-view {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-view-doctor {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-view-request {
+  background: var(--text-negative);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
 .btn-edit {
   background: var(--text-positive);
   color: white;
@@ -226,5 +250,8 @@
   cursor: pointer;
   margin-left: 4px;
 }
+.btn-view:hover { background: var(--accent-hover); }
+.btn-view-doctor:hover { background: var(--accent-hover); }
+.btn-view-request:hover { background: var(--btn-delete-hover); }
 .btn-edit:hover { background: var(--btn-edit-hover); }
 .btn-delete:hover { background: var(--btn-delete-hover); }

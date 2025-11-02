@@ -6,70 +6,112 @@ async function fetchAllUserData() {
     try {
         const db = await openClinicDB();
 
-        const [doctors, patients, users] = await Promise.all([
-            new Promise((res, rej) => {
-                const req = db.transaction('doctors', 'readonly').objectStore('doctors').getAll();
-                req.onsuccess = () => res(req.result || []);
-                req.onerror = () => rej(req.error);
-            }),
-            new Promise((res, rej) => {
-                const req = db.transaction('patients', 'readonly').objectStore('patients').getAll();
-                req.onsuccess = () => res(req.result || []);
-                req.onerror = () => rej(req.error);
-            }),
-            new Promise((res, rej) => {
-                const req = db.transaction('users', 'readonly').objectStore('users').getAll();
-                req.onsuccess = () => res(req.result || []);
-                req.onerror = () => rej(req.error);
-            }),
-        ]);
+        // Fetch doctors first and build a lookup map
+        const doctorTx = db.transaction('doctors', 'readonly');
+        const doctorStore = doctorTx.objectStore('doctors');
+        const doctorsReq = doctorStore.getAll();
 
-        const doctorMap = Object.fromEntries(doctors.map(d => [d.id, d.name || `${d.first_name || ''} ${d.last_name || ''}`.trim()]));
-        const patientMap = Object.fromEntries(patients.map(p => [p.NHS, p.name || ` ${p.Title || ''} ${p.First || ''} ${p.Last || ''}`.trim()]));
+        doctorsReq.onsuccess = async function() {
+            const encryptedDoctors = doctorsReq.result || [];
 
-        tbody.innerHTML = '';
+            // Decrypt all patients in parallel
+            const decryptedDoctors = await Promise.all(
+                encryptedDoctors.map(p => decryptDoctorInfo(p))
+            );
 
-        if (!users.length) {
-            tbody.innerHTML = "<tr><td colspan='5'>No users found.</td></tr>";
-            return;
-        }
+            // Fetch patients first and build a lookup map
+            const patientTx = db.transaction('patients', 'readonly');
+            const patientStore = patientTx.objectStore('patients');
+            const patientsReq = patientStore.getAll();
 
-        users.forEach(u => {
-            const row = document.createElement('tr');
-            const role = (u.role || '').toLowerCase();
+            patientsReq.onsuccess = async function () {
+                const encryptedPatients = patientsReq.result || [];
 
-            if (role === 'doctor') {
-                const doctorName = doctorMap[u.linkedId] || 'Unknown Doctor';
-                row.innerHTML = `
-                <tr>
-                    <td>${doctorName}</td>
-                    <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
-                    <td class="actions">
-                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}">Edit</button></a>
-                        <button class="btn-delete" data-id="${u.username}">Delete</button>
-                    </td>
-                </tr>
-                `;
-            } else if (role === 'patient') {
-                const patientName = patientMap[u.linkedId] || 'Unknown Patient';
-                row.innerHTML = `
-                <tr>
-                    <td>${patientName}</td>
-                    <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
-                    <td class="actions">
-                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}">Edit</button></a>
-                        <button class="btn-delete" data-id="${u.username}">Delete</button>
-                    </td>
-                </tr>
-                `;
-            } else {
-                // Skip unknown roles but log
-                console.warn(`Unknown user role: ${u.role}`);
-                return;
-            }
+                // Decrypt all patients in parallel
+                const decryptedPatients = await Promise.all(
+                    encryptedPatients.map(p => decryptPatientInfo(p))
+                );
 
-            tbody.appendChild(row);
-        });
+                // Fetch userss first and build a lookup map
+                const userTx = db.transaction('users', 'readonly');
+                const userStore = userTx.objectStore('users');
+                const usersReq = userStore.getAll();
+
+                usersReq.onsuccess = async function () {
+                    const users = usersReq.result || [];
+
+                    tbody.innerHTML = '';
+
+                    if (!users.length) {
+                        tbody.innerHTML = "<tr><td colspan='5'>No users found.</td></tr>";
+                        return;
+                    }
+
+                    users.forEach(u => {
+                        const row = document.createElement('tr');
+                        const role = (u.role || '').toLowerCase();
+
+                        if (role === 'doctor') {
+                            const currentUserData = decryptedDoctors.filter(d => d.id === u.linkedId) || [];
+                            const doctor = currentUserData[0];
+                            const doctorName = `Dr ${doctor.first_name} ${doctor.last_name}` || 'Unknown Doctor';
+                            const gender = doctor.Gender || 'N/A';
+                            const email = doctor.Email || 'N/A';
+
+                            row.innerHTML = `
+                            <tr>
+                                <td>${doctorName}</td>
+                                <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
+                                <td>${gender}</td>
+                                <td>${email}</td>
+                                <td class="actions">
+                                    <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}">Edit</button></a>
+                                    <button class="btn-delete" data-id="${u.username}">Delete</button>
+                                </td>
+                            </tr>
+                            `;
+                        } else if (role === 'patient') {
+                            const currentUserData = decryptedPatients.filter(d => d.NHS === u.linkedId);
+                            const patient = currentUserData[0];
+                            const patientName = `${patient.Title} ${patient.First} ${patient.Last}` || 'Unknown Patient';
+                            const gender = patient.Gender || 'N/A';
+                            const email = patient.Email || 'N/A';
+
+                            row.innerHTML = `
+                                <tr>
+                                    <td>${patientName}</td>
+                                    <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
+                                    <td>${gender}</td>
+                                    <td>${email}</td>
+                                    <td class="actions">
+                                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}">Edit</button></a>
+                                        <button class="btn-delete" data-id="${u.username}">Delete</button>
+                                    </td>
+                                </tr>
+                            `;
+                        } else {
+                            // Skip unknown roles but log
+                            console.warn(`Unknown user role: ${u.role}`);
+                            return;
+                        }
+
+                        tbody.appendChild(row);
+                    });
+                };
+                
+                usersReq.onerror = function() {
+                    console.error('Failed to load users info:', usersReq.error);
+                };
+            };
+
+            patientsReq.onerror = function() {
+                console.error('Failed to load patients info:', patientsReq.error);
+            };
+        };
+
+        doctorsReq.onerror = function() {
+            console.error('Failed to load doctors info:', doctorsReq.error);
+        };
 
     } catch (error) {
         console.error('Error opening DB:', error);
@@ -83,91 +125,75 @@ async function fetchAllPatientData() {
     if (!tbody) return console.warn('Table body #patientsBody not found.');
     tbody.innerHTML = '<tr><td colspan="5">Loading patients...</td></tr>';
 
-    // helper: parse many date formats robustly
-    function parseDate(value) {
-        if (!value) return null;
-        // If already a Date object
-        if (value instanceof Date && !isNaN(value)) return value;
-        // If number (timestamp)
-        if (typeof value === 'number' && isFinite(value)) return new Date(value);
-        // If string: try ISO first
-        if (typeof value === 'string') {
-            // Trim
-            const s = value.trim();
-            // Common ISO or yyyy-mm-dd
-            const iso = Date.parse(s);
-            if (!isNaN(iso)) return new Date(iso);
-
-            // Try dd/mm/yyyy or dd-mm-yyyy
-            const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-            if (dmy) {
-                const day = parseInt(dmy[1], 10);
-                const month = parseInt(dmy[2], 10) - 1;
-                let year = parseInt(dmy[3], 10);
-                if (year < 100) year += 1900; // rare case
-                return new Date(year, month, day);
-            }
-        }
-        // fallback
-        return null;
-    }
-
-    // helper: nice date string
-    function formatDate(date) {
-        if (!date || !(date instanceof Date) || isNaN(date)) return 'N/A';
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`; // ISO-ish display
-    }
-
     try {
         const db = await openClinicDB();
 
-        const [patients, users] = await Promise.all([
-            new Promise((res, rej) => {
-                const req = db.transaction('patients', 'readonly').objectStore('patients').getAll();
-                req.onsuccess = () => res(req.result || []);
-                req.onerror = () => rej(req.error);
-            }),
-            new Promise((res, rej) => {
-                const req = db.transaction('users', 'readonly').objectStore('users').getAll();
-                req.onsuccess = () => res(req.result || []);
-                req.onerror = () => rej(req.error);
-            }),
-        ]);
+        // Fetch patients first and build a lookup map
+        const patientTx = db.transaction('patients', 'readonly');
+        const patientStore = patientTx.objectStore('patients');
+        const patientsReq = patientStore.getAll();
+
+        patientsReq.onsuccess = async function () {
+            const encryptedPatients = patientsReq.result || [];
+
+            // Decrypt all patients in parallel
+            const decryptedPatients = await Promise.all(
+                encryptedPatients.map(p => decryptPatientInfo(p))
+            );
+
+            // Fetch userss first and build a lookup map
+            const userTx = db.transaction('users', 'readonly');
+            const userStore = userTx.objectStore('users');
+            const usersReq = userStore.getAll();
+
+            usersReq.onsuccess = async function () {
+                const users = usersReq.result || [];
+
+                tbody.innerHTML = '';
+
+                const patientUsers = users.filter(u => (u.role || '').toLowerCase() === 'patient');
+
+                if (!patientUsers.length) {
+                    tbody.innerHTML = "<tr><td colspan='5'>No patients found.</td></tr>";
+                    return;
+                }
+
+                patientUsers.forEach(u => {
+                    const row = document.createElement('tr');
+                    const currentUserData = decryptedPatients.filter(d => d.NHS === u.linkedId) || [];
+                    const patient = currentUserData[0];
+                    const patientName = `${patient.Title} ${patient.First} ${patient.Last}` || 'Unknown Patient';
+                    const gender = patient.Gender || 'N/A';
+                    const dob = patient.DOB || 'N/A'; // Assuming your field is called "DOB"
+                    const email = patient.Email || 'N/A';
+                    
+                    row.innerHTML = `
+                        <td>${patientName}</td>
+                        <td>${gender}</td>
+                        <td>${dob}</td>
+                        <td>${email}</td>
+                    `;
+
+                    // Add a click event to make the row behave like a link
+                    row.style.cursor = 'pointer';
+                    row.addEventListener('click', () => {
+                        window.location.href = `medical-records-doctor.html?patientId=${u.linkedId}`; // Adjust URL as needed
+                    });
 
 
-        tbody.innerHTML = '';
+                    tbody.appendChild(row);
+                });
 
-        const patientUsers = users.filter(u => (u.role || '').toLowerCase() === 'patient');
+            };
+                
+            usersReq.onerror = function() {
+                console.error('Failed to load users info:', request.error);
+            };
+        };
 
-        if (!patientUsers.length) {
-            tbody.innerHTML = "<tr><td colspan='5'>No patients found.</td></tr>";
-            return;
-        }
-
-        patientUsers.forEach(u => {
-            const row = document.createElement('tr');
-            const patient = patients.find(p => p.NHS === u.linkedId);
-            const name = patient 
-                ? `${patient.Title || ''} ${patient.First || ''} ${patient.Last || ''}`.trim() 
-                : 'Unknown Patient';
-            const gender = patient?.Gender || 'N/A';
-            const dob = patient?.DOB || 'N/A'; // Assuming your field is called "DOB"
-            const email = patient?.Email || 'N/A';
-
-            
-            row.innerHTML = `
-            <tr>
-                <td>${name}</td>
-                <td>${gender}</td>
-                <td>${dob}</td>
-                <td>${email}</td>
-            </tr>
-            `;
-            tbody.appendChild(row);
-        });
+        patientsReq.onerror = function() {
+            console.error('Failed to load patients info:', request.error);
+        };
 
     } catch (error) {
         console.error('Error opening DB:', error);
