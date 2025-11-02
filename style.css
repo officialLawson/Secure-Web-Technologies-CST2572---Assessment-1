@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+body {
+  min-height: 100vh;
+  background: linear-gradient(90deg, #e2e2e2, #c9d6ff);
+  color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* ---------- Container (MedTrack theme preserved) ---------- */
+.container {
+  position: relative;
+  width: 950px;
+  max-width: 98%;
+  height: 600px;
+  background: #fff;
+  border-radius: 30px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  overflow: hidden;
+}
+
+/* ---------- Form boxes (50% width panels like MedTrack) ---------- */
+.form-box {
+  position: absolute;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+  padding: 40px 56px;
+  z-index: 1;
+  transition: .6s ease-in-out;
+}
+
+.container.active .form-box { right: 50%; }
+
+/* Register starts hidden visually (MedTrack logic) */
+.form-box.register { visibility: hidden; }
+.container.active .form-box.register { visibility: visible; }
+
+.form-box h1 {
+  font-size: 32px;
+  margin-bottom: 18px;
+  color: #2b5da4;
+}
+
+/* compact shared layout for inputs inside the panels */
+.form-box form {
+  width: 100%;
+  max-width: 380px;
+}
+
+/* Input / select styles (blend new form look into MedTrack theme) */
+.form-group { margin-bottom: 14px; }
+label { display:block; margin-bottom:6px; color:#4a5568; font-size:14px; }
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e6e9f2;
+  background: #f6f8ff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .18s ease, transform .12s ease;
+}
+input:focus, select:focus { border-color: #4a78e6; transform: translateY(-1px); }
+
+/* Input boxes that include icons */
+.input-box { position: relative; margin: 14px 0; }
+.input-box i { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #8b94a8; font-size:18px; }
+
+/* remember */
+.remember { display:flex; align-items:center; gap:8px; margin: 10px 0 18px; color:#456; font-size:14px; }
+
+/* Buttons */
+.btn {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, #4a78e6, #2b5da4);
+  border-radius: 10px;
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(74,120,230,0.18);
+  transition: transform .12s ease, filter .12s ease;
+}
+.btn:hover { transform: translateY(-3px); filter: brightness(.98); }
+
+/* toggle text links inside forms */
+.toggle-text { margin-top: 14px; color: #556; text-align: left; }
+.link-as-action { color: #2b5da4; font-weight:600; text-decoration:none; cursor:pointer; }
+
+/* ---------- Toggle overlay & panels (exact MedTrack animation preserved) ---------- */
+.toggle-box {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0;
+}
+
+.toggle-box::before {
+  content: '';
+  position: absolute;
+  left: -250%;
+  width: 300%;
+  height: 100%;
+  background: linear-gradient(135deg, #4a78e6, #2b5da4);
+  border-radius: 150px;
+  z-index: 2;
+  transition: 1.8s ease-in-out;
+}
+
+.container.active .toggle-box::before { left: 50%; }
+
+.toggle-panel {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  transition: .6s ease-in-out;
+}
+
+.toggle-panel.toggle-left { left: 0; transition-delay: 1.2s; }
+.container.active .toggle-panel.toggle-left { left: -50%; transition-delay: .6s; }
+
+.toggle-panel.toggle-right { right: -50%; transition-delay: .6s; }
+.container.active .toggle-panel.toggle-right { right: 0; transition-delay: 1.2s; }
+
+.toggle-panel h1 { color: #fff; margin-bottom: 8px; }
+.toggle-panel p { margin-bottom: 18px; color: rgba(255,255,255,0.95); }
+
+/* Panel buttons */
+.toggle-panel .btn { width: 160px; height: 44px; background: transparent; border:2px solid #fff; box-shadow:none; }
+
+/* ---------- Strength meter (styled to match MedTrack) ---------- */
+.strength-meter {
+  width: 100%;
+  height: 8px;
+  background: #e9eefb;
+  border-radius: 6px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+#strengthBar {
+  height: 100%;
+  width: 0%;
+  background: red;
+  border-radius: 6px;
+  transition: width 0.36s ease, background 0.28s ease;
+}
+.strength-label { font-size:13px; margin-top:6px; color:#344; font-weight:600; }
+
+/* verification text */
+.verify-text { margin-top:10px; color:#2b5da4; font-size:14px; text-align:left; }
+
+/* ---------- Responsiveness: use the new form's compact behavior ---------- */
+@media screen and (max-width: 850px) {
+  .container { width: 95%; height: auto; border-radius: 18px; padding-bottom: 20px; }
+  .form-box { position: re

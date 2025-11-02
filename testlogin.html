@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedTrack - Login / Register</title>
+
+  <!-- icons (keeps your previous assets compatible) -->
+  <link href="https://cdn.boxicons.com/fonts/basic/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="container" id="medContainer">
+    <!-- LOGIN FORM BOX -->
+    <div class="form-box login">
+      <form id="loginForm" action="#" method="get" novalidate>
+        <h1>Welcome Back</h1>
+
+        <div class="form-group">
+          <label for="loginType">Login as</label>
+          <select id="loginType" name="loginType">
+            <option value="doctor">Doctor</option>
+            <option value="patient">Patient</option>
+            <option value="admin">Admin</option>
+          </select>
+          <i class='bx bx-chevron-down select-icon' aria-hidden="true"></i>
+        </div>
+
+        <!-- Role-based inputs -->
+        <div id="loginRoleFields">
+          <div class="input-box" data-role="doctor">
+            <input type="email" id="doctorEmail" name="doctorEmail" placeholder="you@example.com" required />
+            <i class='bx bx-envelope'></i>
+          </div>
+
+          <div class="input-box" data-role="patient" hidden>
+            <input type="text" id="patientNIC_login" name="patientNIC_login" placeholder="NHS / NIC e.g. 123456789" inputmode="numeric" />
+            <i class='bx bx-id-card'></i>
+          </div>
+
+          <div class="input-box" data-role="admin" hidden>
+            <input type="text" id="adminUsername" name="adminUsername" placeholder="Admin Username" />
+            <i class='bx bx-user-voice'></i>
+          </div>
+        </div>
+
+        <div class="input-box">
+          <input type="password" id="loginPassword" name="loginPassword" placeholder="Password" required />
+          <i class='bx bx-lock'></i>
+        </div>
+
+        <div class="remember">
+          <input type="checkbox" id="rememberMe" /> <label for="rememberMe">Remember me</label>
+        </div>
+
+        <button type="submit" class="btn">Login</button>
+
+        <p class="toggle-text">Don't have an account?
+          <a href="#" id="linkShowRegister" class="link-as-action">Create Account</a>
+        </p>
+      </form>
+    </div>
+
+    <!-- REGISTER FORM BOX -->
+    <div class="form-box register">
+      <form id="registerForm" action="#" novalidate>
+        <h1>Create Account</h1>
+
+        <div class="form-group">
+          <label for="registerAs">Register as</label>
+          <select id="registerAs" name="registerAs" required>
+            <option value="doctor">Doctor</option>
+            <option value="patient">Patient</option>
+            <option value="admin">Admin</option>
+          </select>
+          <i class='bx bx-chevron-down select-icon' aria-hidden="true"></i>
+        </div>
+
+        <div class="input-box">
+          <input type="text" id="fullName" name="fullName" placeholder="Full name" required />
+          <i class='bx bx-user'></i>
+        </div>
+
+        <div class="input-box">
+          <input type="email" id="regEmail" name="regEmail" placeholder="you@example.com" required />
+          <i class='bx bx-envelope'></i>
+        </div>
+
+        <div class="form-group">
+          <label for="regPhone">Mobile Number</label>
+          <input type="tel" id="regPhone" name="regPhone" placeholder="Your mobile number" required />
+        </div>
+
+        <div class="form-group" id="extraField"></div>
+
+        <div class="input-box">
+          <input type="password" id="regPassword" name="regPassword" placeholder="Create a password" required />
+          <i class='bx bx-lock'></i>
+        </div>
+
+        <div class="strength-meter">
+          <div id="strengthBar"></div>
+        </div>
+        <div class="strength-label" id="strengthLabel" aria-live="polite"></div>
+
+        <button class="btn" type="submit">Register</button>
+        <div class="verify-text" id="verifyText"></div>
+
+        <p class="toggle-text">Already have an account?
+          <a href="#" id="linkShowLogin" class="link-as-action">Login</a>
+        </p>
+      </form>
+    </div>
+
+    <!-- TOGGLE PANELS (Overlay) -->
+    <div class="toggle-box">
+      <div class="toggle-panel toggle-left">
+        <h1>Hello, Welcome!</h1>
+        <p>Don't have an account?</p>
+        <button class="btn register-btn" id="panelRegisterBtn">Register</button>
+      </div>
+
+      <div class="toggle-panel toggle-right">
+        <h1>Welcome Back!</h1>
+        <p>Already have an account?</p>
+        <button class="btn login-btn" id="panelLoginBtn">Login</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- external JS -->
+  <script src="login.js"></script>
+</body>
+</html>
