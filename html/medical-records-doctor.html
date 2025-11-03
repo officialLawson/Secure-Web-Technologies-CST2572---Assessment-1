@@ -127,7 +127,7 @@
 
                         <!-- Actions -->
                         <div class="actions">
-                            <a href="add-medical-record.html">
+                            <a id="addRecordLink" href="#">
                             <button class="btn-add">+ Add Record</button>
                             </a>
                         </div>
@@ -193,6 +193,27 @@
         // Close if click outside modal
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const patientId = params.get('patientId');
+            const addRecordLink = document.querySelector('.actions a');
+            
+            if (patientId && addRecordLink) {
+                addRecordLink.href = `add-medical-record.html?patientId=${patientId}`;
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const patientId = params.get('patientId');
+            const link = document.getElementById('addRecordLink');
+            if (patientId && link) {
+            link.href = `add-medical-record.html?patientId=${patientId}`;
+            }
         });
     </script>
 </body>

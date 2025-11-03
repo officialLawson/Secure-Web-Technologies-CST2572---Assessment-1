@@ -118,7 +118,7 @@
                 <h2 class="content-title">Add Medical Record</h2>
                 
                 <div class="card-container">
-                    <form onsubmit="handleAddAppointment(event)" novalidate>
+                    <form id="addRecordForm" novalidate>
                         <div class="form-section">
                             <h2>Visit Date</h2>
                             <p class="description">Date of medical record.</p>
@@ -170,7 +170,7 @@
                         </div>
                         <div class="form-actions">
                             <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
-                            <button onclick="handleAddAppointment()" class="submit-btn">Add Record</button>
+                            <button type="submit" class="submit-btn">Add Record</button>
                         </div>
                     </form>
                 </div>
@@ -199,6 +199,7 @@
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
+    <script src="../js/addMedicalRecords.js"></script>
     <script>
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         if (userRole !== 'doctor') {
@@ -219,43 +220,6 @@
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });
-    </script>
-    <script>
-        let prescriptionIndex = 0;
-
-        function addPrescription() {
-            const container = document.getElementById('prescriptions-container');
-
-            const prescriptionDiv = document.createElement('div');
-            prescriptionDiv.className = 'prescription-entry';
-            prescriptionDiv.style.marginBottom = '1em';
-            prescriptionDiv.innerHTML = `
-                <fieldset style="border: 1px solid #ccc; padding: 10px;">
-                    <legend>Medicine ${prescriptionIndex + 1}</legend>
-                    <label>Medicine Name:</label>
-                    <input type="text" name="medicineName_${prescriptionIndex}" required><br>
-
-                    <label>Dosage:</label>
-                    <input type="text" name="dosage_${prescriptionIndex}" required><br>
-
-                    <label>Duration:</label>
-                    <input type="text" name="duration_${prescriptionIndex}" required><br>
-
-                    <label>Instructions:</label>
-                    <textarea name="instructions_${prescriptionIndex}" rows="3" style="width: 100%;"></textarea><br>
-
-                    <button type="button" onclick="removePrescription(this)">Remove</button>
-                </fieldset>
-            `;
-
-            container.appendChild(prescriptionDiv);
-            prescriptionIndex++;
-        }
-
-        function removePrescription(button) {
-            const entry = button.closest('.prescription-entry');
-            entry.remove();
-        }
     </script>
 </body>
 </html>
