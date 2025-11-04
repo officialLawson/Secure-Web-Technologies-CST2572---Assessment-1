@@ -113,7 +113,7 @@
                 <div class="card-container">
                     <form id="addRecordForm" novalidate>
 
-                        <!-- Auto-filled Date & Time (Hidden) -->
+                        <!-- Date & Time  -->
                         <input type="hidden" id="appointmentDate" value="">
 
                         <div class="form-section">
@@ -141,8 +141,10 @@
                                 <!-- Prescriptions -->
                                 <div class="form-group">
                                     <label for="userPrescriptions">Prescriptions</label>
-                                    <div id="prescriptions-container"></div>
-                                    <button type="button" onclick="addPrescription()">Add Medicine</button>
+                                    <div id="prescriptions-container" class="prescriptions-list"></div>
+                                    <button type="button" class="btn-add-prescription" onclick="addPrescription()">
+                                        + Add Medicine
+                                    </button>
                                 </div>
                             </div>
                         </div>

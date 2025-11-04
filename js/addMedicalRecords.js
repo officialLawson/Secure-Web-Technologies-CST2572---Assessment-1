@@ -28,14 +28,18 @@ function addPrescription() {
   const entry = document.createElement('div');
   entry.className = 'prescription-entry';
   entry.innerHTML = `
-    <div class="form-group">
-      <label>Prescription ${prescriptionCount}</label>
-      <input type="text" name="medicineName_${prescriptionCount}" placeholder="Medicine Name" required>
-      <input type="text" name="dosage_${prescriptionCount}" placeholder="Dosage (e.g., 500mg)" required>
-      <input type="text" name="duration_${prescriptionCount}" placeholder="Duration (e.g., 3 months)" required>
-      <input type="text" name="instructions_${prescriptionCount}" placeholder="Instructions">
-      <button type="button" class="remove-btn" onclick="this.parentElement.parentElement.remove()">Remove</button>
+    <div class="prescription-header">
+      <span class="prescription-title">Prescription ${prescriptionCount}</span>
     </div>
+    <label for="medicineName_${prescriptionCount}">Medicine Name</label>
+    <input type="text" id="medicineName_${prescriptionCount}" name="medicineName_${prescriptionCount}" placeholder="e.g., Amoxicillin" required>
+    <label for="dosage_${prescriptionCount}">Dosage</label>
+    <input type="text" id="dosage_${prescriptionCount}" name="dosage_${prescriptionCount}" placeholder="e.g., 500mg" required>
+    <label for="duration_${prescriptionCount}">Duration</label>
+    <input type="text" id="duration_${prescriptionCount}" name="duration_${prescriptionCount}" placeholder="e.g., 7 days" required>
+    <label for="instructions_${prescriptionCount}">Instructions (Optional)</label>
+    <input type="text" id="instructions_${prescriptionCount}" name="instructions_${prescriptionCount}" placeholder="e.g., Take with food">
+    <button type="button" class="remove-btn" onclick="this.closest('.prescription-entry').remove()">Remove</button>
   `;
   container.appendChild(entry);
 }
