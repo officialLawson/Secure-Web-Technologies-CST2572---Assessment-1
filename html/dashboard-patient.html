@@ -111,52 +111,25 @@
             <section class="content">
                 <!-- Welcome banner -->
                 <div class="welcome-banner">
-                    <h2 class="content-title">Welcome back, <span id="patient-name">John Doe</span>!</h2>
+                    <h2 class="content-title">Welcome back, <span id="userFullName"></span>!</h2>
+                    <h2 class="content-title"><span id="userFullName"></span></h2>
                     <p>Your health dashboard – everything you need in one place.</p>
                 </div>
-
-                <!-- Quick stats -->
-                <div class="cards-container">
-                    <!-- Upcoming Appointment -->
-                    <div class="card">
-                        <h3>Next Appointment</h3>
-                        <p class="value">Oct 30, 2025</p>
-                        <div class="stats">
-                            <span class="positive">2 days</span>
-                            <span class="compare">Dr. Sarah Lee – Cardiology</span>
-                        </div>
-                    </div>
-
-                    <!-- Total Visits This Year -->
-                    <div class="card">
-                        <h3>Visits This Year</h3>
-                        <p class="value">8</p>
-                        <div class="stats">
-                            <span class="positive">+2</span>
-                            <span class="compare">vs last year</span>
-                        </div>
-                    </div>
-
-                    <!-- Pending Prescriptions -->
-                    <div class="card">
-                        <h3>Pending Prescriptions</h3>
-                        <p class="value">3</p>
-                        <div class="stats">
-                            <span class="negative">-1</span>
-                            <span class="compare">since last refill</span>
-                        </div>
-                    </div>
-
-                    <!-- Health Score -->
-                    <div class="card">
-                        <h3>Health Score</h3>
-                        <p class="value">87%</p>
-                        <div class="stats">
-                            <span class="positive">+5%</span>
-                            <span class="compare">vs last month</span>
-                        </div>
-                    </div>
+            
+                 <!-- Quick action buttons -->
+                <div class="quick-actions">
+                    <a href="add-appointment.html" class="action-btn">
+                        <svg class="action-icon" viewBox="0 0 24 24"><path fill="currentColor"
+                               d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        Book New Appointment
+                    </a>
+                    <a href="medical-records-patient.html" class="action-btn">
+                        <svg class="action-icon" viewBox="0 0 24 24"><path fill="currentColor"
+                               d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        View Medical Records
+                    </a>
                 </div>
+            
 
                 <div class="second-row-container">
                     <!-- Booked Appointments -->
@@ -190,20 +163,6 @@
                         </ul>
                     </div>
                 </div>
-
-                <!-- Quick action buttons -->
-                <div class="quick-actions">
-                    <a href="add-appointment.html" class="action-btn">
-                        <svg class="action-icon" viewBox="0 0 24 24"><path fill="currentColor"
-                               d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                        Book New Appointment
-                    </a>
-                    <a href="medical-records-patient.html" class="action-btn">
-                        <svg class="action-icon" viewBox="0 0 24 24"><path fill="currentColor"
-                               d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        View Medical Records
-                    </a>
-                </div>
             </section>
 
             <footer class="footer">
@@ -223,7 +182,8 @@
             </div>
         </div> 
     </div>
-    
+
+    <script src="../js/profile.js"></script>
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>

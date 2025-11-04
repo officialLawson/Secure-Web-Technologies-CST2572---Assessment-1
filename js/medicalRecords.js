@@ -57,7 +57,7 @@ async function fetchPatientRecords() {
                         <td>${doctorFullName || 'Unknown'}</td>
                         <td>${med.diagnosis || '-'}</td>
                         <td>${med.treatment || '-'}</td>
-                        <td>${med.date || '-'}</td>
+                        <td>${med.dateTime || '-'}</td>
                         <td>
                         <button class="btn-view" data-id="${med.recordId}">View</button>
                         </td>
@@ -72,10 +72,6 @@ async function fetchPatientRecords() {
                 console.error('Failed to load medical records:', request.error);
             };
 
-        };
-
-        request.onerror = function() {
-            console.error('Failed to load medical records:', request.error);
         };
 
     } catch (err) {
@@ -164,7 +160,7 @@ async function fetchPatientRecordsforDoctor(patientId) {
                                 <td>${doctorFullName || 'Unknown'}</td>
                                 <td>${med.diagnosis || '-'}</td>
                                 <td>${med.treatment || '-'}</td>
-                                <td>${med.date || '-'}</td>
+                                <td>${med.dateTime || '-'}</td>
                                 <td>
                                 <button class="btn-view-doctor" data-id="${med.recordId}">View</button>
                                 </td>
@@ -174,7 +170,7 @@ async function fetchPatientRecordsforDoctor(patientId) {
                                 <td>${doctorFullName || 'Unknown'}</td>
                                 <td>${med.diagnosis || '-'}</td>
                                 <td>${med.treatment || '-'}</td>
-                                <td>${med.date || '-'}</td>
+                                <td>${med.dateTime || '-'}</td>
                                 <td>
                                 <button class="btn-view-request" data-id="${med.recordId}">Request Access</button>
                                 </td>
@@ -187,9 +183,6 @@ async function fetchPatientRecordsforDoctor(patientId) {
                     });
                 };
                 
-                request.onerror = function() {
-                    console.error('Failed to load medical records:', request.error);
-                };
             };
 
             patientsReq.onerror = function() {
@@ -279,7 +272,7 @@ async function viewMedicalRecord(medicalrecordId) {
 
                 // Populate Data
                 recordDoctorName.innerText = doctorFullName;
-                recordDate.innerText = medicalrecord.date;
+                recordDate.innerText = medicalrecord.dateTime;
                 recordDiagnosis.innerText = medicalrecord.diagnosis;
                 recordTreatment.innerText = medicalrecord.treatment;
 
@@ -302,20 +295,19 @@ async function viewMedicalRecord(medicalrecordId) {
                     const medicines = medReq.result || [];
 
                     recordPrescriptions.forEach(pre => {
-                    const row = document.createElement('tr');
+                        const row = document.createElement('tr');
 
-                    const medicineList = medicines.filter(m => m.id === pre.medicineId ) || [];
-                    const medicine = medicineList[0];
-                    
-                    row.innerHTML = `
-                            <td>${medicine.Drug || 'Unknown'}</td>
+                        // SAFE LOOKUP: handles string/number mismatch
+                        const medicine = medicines.find(m => m.id == pre.medicineId);
+
+                        row.innerHTML = `
+                            <td>${medicine?.Drug || 'Unknown (ID: ' + pre.medicineId + ')'}</td>
                             <td>${pre.dosage || '-'}</td>
                             <td>${pre.duration || '-'}</td>
                             <td>${pre.instructions || '-'}</td>
                         `;
 
-                    prescriptionsBody.appendChild(row);
-
+                        prescriptionsBody.appendChild(row);
                     });
                 };
 
@@ -390,11 +382,11 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
                 const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
 
                 console.log(doctorFullName);
-                console.log(medicalrecord.date);
+                console.log(medicalrecord.dateTime);
 
                 // Populate Data
                 recordDoctorName.innerText = doctorFullName;
-                recordDate.innerText = medicalrecord.date;
+                recordDate.innerText = medicalrecord.dateTime;
                 recordDiagnosis.innerText = medicalrecord.diagnosis;
                 recordTreatment.innerText = medicalrecord.treatment;
 

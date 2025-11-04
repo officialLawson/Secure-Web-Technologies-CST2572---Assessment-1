@@ -214,7 +214,7 @@ function openClinicDB() {
         records.createIndex('doctorId', 'doctorId', { unique: false });
         records.createIndex("diagnosis","diagnosis",{ unique: false });
         records.createIndex("treatment","treatment",{ unique: false });
-        records.createIndex("date", "date", { unique: false })
+        records.createIndex("dateTime", "dateTime", { unique: false })
       }
       //notif
       if (!db.objectStoreNames.contains('notifications')) {
@@ -343,7 +343,7 @@ function getRecordsByPatientId(patientId) {
                   recordId: r.recordId,
                   patientId: r.patientId,
                   doctorId: r.doctorId,
-                  date: r.date,
+                  dateTime: r.dateTime,
                   diagnosis: sensitive.diagnosis,
                   treatment: sensitive.treatment,
                   notes: sensitive.notes
@@ -354,7 +354,7 @@ function getRecordsByPatientId(patientId) {
                   recordId: r.recordId,
                   patientId: r.patientId,
                   doctorId: r.doctorId,
-                  date: r.date,
+                  dateTime: r.dateTime,
                   diagnosis: plain,
                   treatment: "",
                   notes: ""
@@ -547,7 +547,7 @@ async function addMedicalRecord(record) {
   if (!record || !record.recordId) throw new Error("record.recordId required");
 
   // Build the stored object: keep indexes (recordId, patientId, doctorId, date) in plain text
-  const { recordId, patientId, doctorId, date, prescriptions } = record;
+  const { recordId, patientId, doctorId, dateTime, prescriptions } = record;
   const sensitive = {
     diagnosis: record.diagnosis || "",
     treatment: record.treatment || "",
@@ -559,7 +559,7 @@ async function addMedicalRecord(record) {
     recordId,
     patientId,
     doctorId,
-    date,
+    dateTime,
     prescriptions,
     payload: encryptedPayload
   };
@@ -596,9 +596,9 @@ async function fetchAllJsons(urls = JSON_URLS) {
     fetchJson(urls.patients).catch(err => { console.error('patients fetch error', err); return []; }),
     fetchJson(urls.medicines).catch(err => { console.error('medicines fetch error', err); return []; }),
     fetchJson(urls.users).catch(err => {console.error('users fetch error',err); return[];}),
-    fetchJson(urls.medicalRecord).catch(err => {console.error('medicale Record fetch error',err); return[]}),
-    fetchJson(urls.appointment).catch(err => {console.error('appointment fetch erroe',err); return []}),
-    fetchJson(urls .notification).catch(err => {console.error('notif fetch error', err); return[]})
+    fetchJson(urls.medicalRecord).catch(err => {console.error('medical Record fetch error',err); return[]}),
+    fetchJson(urls.appointment).catch(err => {console.error('appointment fetch error',err); return []}),
+    fetchJson(urls .notification).catch(err => {console.error('notif fetch error', err); return[]}),
 
   ]);
 
@@ -798,7 +798,7 @@ async function importFetchedDataToDB(filteredData) {
         recordId: r.recordId,
         patientId: r.patientId || r.NHS || null,
         doctorId: r.doctorId || null,
-        date: r.date || r.Date || null,
+        dateTime: r.dateTime || r.DateTime || null,
         diagnosis: r.diagnosis || r.Diagnosis || "",
         treatment: r.treatment || r.Treatment || "",
         prescriptions: r.prescriptions || []
@@ -1046,4 +1046,3 @@ window.clinicDB = {
   _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
   JSON_URLS
 };
-
