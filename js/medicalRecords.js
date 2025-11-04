@@ -57,7 +57,7 @@ async function fetchPatientRecords() {
                         <td>${doctorFullName || 'Unknown'}</td>
                         <td>${med.diagnosis || '-'}</td>
                         <td>${med.treatment || '-'}</td>
-                        <td>${med.date || '-'}</td>
+                        <td>${med.dateTime || '-'}</td>
                         <td>
                         <button class="btn-view" data-id="${med.recordId}">View</button>
                         </td>
@@ -160,7 +160,7 @@ async function fetchPatientRecordsforDoctor(patientId) {
                                 <td>${doctorFullName || 'Unknown'}</td>
                                 <td>${med.diagnosis || '-'}</td>
                                 <td>${med.treatment || '-'}</td>
-                                <td>${med.date || '-'}</td>
+                                <td>${med.dateTime || '-'}</td>
                                 <td>
                                 <button class="btn-view-doctor" data-id="${med.recordId}">View</button>
                                 </td>
@@ -170,7 +170,7 @@ async function fetchPatientRecordsforDoctor(patientId) {
                                 <td>${doctorFullName || 'Unknown'}</td>
                                 <td>${med.diagnosis || '-'}</td>
                                 <td>${med.treatment || '-'}</td>
-                                <td>${med.date || '-'}</td>
+                                <td>${med.dateTime || '-'}</td>
                                 <td>
                                 <button class="btn-view-request" data-id="${med.recordId}">Request Access</button>
                                 </td>
@@ -272,7 +272,7 @@ async function viewMedicalRecord(medicalrecordId) {
 
                 // Populate Data
                 recordDoctorName.innerText = doctorFullName;
-                recordDate.innerText = medicalrecord.date;
+                recordDate.innerText = medicalrecord.dateTime;
                 recordDiagnosis.innerText = medicalrecord.diagnosis;
                 recordTreatment.innerText = medicalrecord.treatment;
 
@@ -382,11 +382,11 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
                 const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
 
                 console.log(doctorFullName);
-                console.log(medicalrecord.date);
+                console.log(medicalrecord.dateTime);
 
                 // Populate Data
                 recordDoctorName.innerText = doctorFullName;
-                recordDate.innerText = medicalrecord.date;
+                recordDate.innerText = medicalrecord.dateTime;
                 recordDiagnosis.innerText = medicalrecord.diagnosis;
                 recordTreatment.innerText = medicalrecord.treatment;
 

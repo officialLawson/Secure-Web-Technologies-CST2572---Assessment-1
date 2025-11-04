@@ -139,7 +139,7 @@ async function handleAddMedicalRecord(event) {
     recordId: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     patientId,
     doctorId,
-    date: dateTime,
+    dateTime: dateTime,
     diagnosis,
     treatment,
     prescriptions

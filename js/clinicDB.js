@@ -598,7 +598,7 @@ async function fetchAllJsons(urls = JSON_URLS) {
     fetchJson(urls.users).catch(err => {console.error('users fetch error',err); return[];}),
     fetchJson(urls.medicalRecord).catch(err => {console.error('medical Record fetch error',err); return[]}),
     fetchJson(urls.appointment).catch(err => {console.error('appointment fetch error',err); return []}),
-    fetchJson(urls .notification).catch(err => {console.error('notif fetch error', err); return[]})
+    fetchJson(urls .notification).catch(err => {console.error('notif fetch error', err); return[]}),
 
   ]);
 
