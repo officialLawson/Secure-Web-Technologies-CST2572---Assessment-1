@@ -484,7 +484,6 @@ const timeContainer = document.getElementById('timePicker');
       });
       return tx.done;
     }).then(() => {
-      alert('Appointment added!');
       window.location.href = `appointments-${user.role.toLowerCase()}.html`;
     }).catch(err => {
       console.error(err);
