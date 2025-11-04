@@ -74,10 +74,6 @@ async function fetchPatientRecords() {
 
         };
 
-        request.onerror = function() {
-            console.error('Failed to load medical records:', request.error);
-        };
-
     } catch (err) {
         console.error('Error opening DB:', err);
         tbody.innerHTML = "<tr><td colspan='5'>Error connecting to database.</td></tr>";
@@ -187,9 +183,6 @@ async function fetchPatientRecordsforDoctor(patientId) {
                     });
                 };
                 
-                request.onerror = function() {
-                    console.error('Failed to load medical records:', request.error);
-                };
             };
 
             patientsReq.onerror = function() {
@@ -303,14 +296,17 @@ async function viewMedicalRecord(medicalrecordId) {
 
                     recordPrescriptions.forEach(pre => {
                         const row = document.createElement('tr');
+
+                        // SAFE LOOKUP: handles string/number mismatch
                         const medicine = medicines.find(m => m.id == pre.medicineId);
-                        const drugName = medicine?.Drug || `Unknown (ID: ${pre.medicineId})`;
+
                         row.innerHTML = `
-                            <td>${drugName}</td>
+                            <td>${medicine?.Drug || 'Unknown (ID: ' + pre.medicineId + ')'}</td>
                             <td>${pre.dosage || '-'}</td>
                             <td>${pre.duration || '-'}</td>
                             <td>${pre.instructions || '-'}</td>
                         `;
+
                         prescriptionsBody.appendChild(row);
                     });
                 };

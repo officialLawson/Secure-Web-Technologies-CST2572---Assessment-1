@@ -280,11 +280,11 @@
     }
   }
 
-  // -----------------------------------------------------------------
-  // 4. TIME
-  // -----------------------------------------------------------------
-  const timeInp = document.getElementById('appointmentTime');
-  const timeContainer = document.getElementById('timePicker');
+// -----------------------------------------------------------------
+// 4. TIME
+// -----------------------------------------------------------------
+const timeInp = document.getElementById('appointmentTime');
+const timeContainer = document.getElementById('timePicker');
   const timeTrigger = timeContainer.querySelector('.custom-time__input');
 
   if (timeInp && timeContainer && timeTrigger) {
@@ -495,125 +495,3 @@
   };
 
 })();
-
-
-// -----------------------------------------------------------------
-  // 6. DATE OF BIRTH
-  // -----------------------------------------------------------------
-  const dateInp = document.getElementById('appointmentDate');
-  const dateContainer = document.getElementById('datePicker');
-  let calYear = new Date().getFullYear();
-  let calMonth = new Date().getMonth();
-
-  const renderCalendar = (y, m) => {
-    const existing = dateContainer.querySelector('.custom-date__calendar');
-    if (existing) existing.remove();
-
-    const cal = document.createElement('div');
-    cal.className = 'custom-date__calendar';
-
-    const firstDay = new Date(y, m, 1).getDay();
-    const lastDate = new Date(y, m + 1, 0).getDate();
-    const today = new Date(); today.setHours(0,0,0,0);
-
-    cal.innerHTML = `
-      <div class="cal-header">
-        <button type="button" class="cal-btn prev" aria-label="Previous month">Previous</button>
-        <span class="cal-title">${new Date(y, m).toLocaleString('default', {month:'long', year:'numeric'})}</span>
-        <button type="button" class="cal-btn next" aria-label="Next month">Next</button>
-      </div>
-      <div class="cal-weekdays">
-        ${['S','M','T','W','T','F','S'].map(d => `<div role="columnheader" aria-label="${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][d === 'S' ? (cal.querySelector('.cal-weekdays div')?.textContent === 'S' && !cal.querySelector('.cal-weekdays div:nth-child(2)')?.textContent ? 0 : 6) : ['S','M','T','W','T','F','S'].indexOf(d)]}">${d}</div>`).join('')}
-      </div>
-      <div class="cal-grid" role="grid"></div>
-    `;
-
-    const grid = cal.querySelector('.cal-grid');
-    for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement('div');
-      empty.setAttribute('role', 'gridcell');
-      grid.appendChild(empty);
-    }
-    for (let d = 1; d <= lastDate; d++) {
-      const cell = document.createElement('div');
-      const dateObj = new Date(y, m, d);
-      const isPast = dateObj < today;
-      cell.textContent = d;
-      cell.className = 'cal-day';
-      cell.setAttribute('role', 'gridcell');
-      cell.setAttribute('tabindex', '-1');
-      if (isPast) {
-        cell.classList.add('disabled');
-        cell.setAttribute('aria-disabled', 'true');
-      } else {
-        cell.classList.add('selectable');
-        cell.setAttribute('tabindex', '0');
-        cell.addEventListener('click', () => {
-          const formattedValue = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-          dateInp.value = formattedValue;
-
-          const displayDiv = dateContainer.querySelector('.custom-date__input');
-          if (displayDiv) {
-            const displayDate = new Date(y, m, d);
-            displayDiv.textContent = displayDate.toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric'
-            });
-            displayDiv.classList.remove('placeholder');
-          }
-
-          cal.remove();
-          const displayDivFinal = dateContainer.querySelector('.custom-date__input');
-          if (displayDivFinal) displayDivFinal.focus();
-        });
-        cell.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            cell.click();
-          }
-        });
-      }
-      grid.appendChild(cell);
-    }
-
-    cal.querySelector('.prev').addEventListener('click', e => {
-      e.stopPropagation();
-      calMonth = m === 0 ? 11 : m - 1;
-      calYear = m === 0 ? y - 1 : y;
-      renderCalendar(calYear, calMonth);
-    });
-    cal.querySelector('.next').addEventListener('click', e => {
-      e.stopPropagation();
-      calMonth = m === 11 ? 0 : m + 1;
-      calYear = m === 11 ? y + 1 : y;
-      renderCalendar(calYear, calMonth);
-    });
-
-    dateContainer.appendChild(cal);
-  };
-
-  if (dateInp && dateContainer) {
-    const displayDiv = dateContainer.querySelector('.custom-date__input');
-    if (dateInp.value && displayDiv) {
-      const [year, month, day] = dateInp.value.split('-').map(Number);
-      const dateObj = new Date(year, month - 1, day);
-      if (!isNaN(dateObj.getTime())) {
-        displayDiv.textContent = dateObj.toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric'
-        });
-        displayDiv.classList.remove('placeholder');
-      }
-    }
-
-    // Click on visible date box opens calendar
-    if (displayDiv) {
-      displayDiv.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeAll();
-        renderCalendar(calYear, calMonth);
-      });
-    }
-  }

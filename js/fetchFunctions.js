@@ -13,3 +13,12 @@ function fetchDoctors(db) {
     return none
   };
 }
+async function fetchJson(url) {
+  url = url.trim();
+  const resp = await fetch(url);
+  if (!resp.ok) {
+    console.error(`❌ Bad response from: "${url}" → ${resp.status} ${resp.statusText}`);
+    throw new Error(`Fetch failed: ${resp.status}`);
+  }
+  return resp.json();
+}

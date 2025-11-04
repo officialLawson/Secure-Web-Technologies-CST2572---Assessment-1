@@ -214,7 +214,7 @@ function openClinicDB() {
         records.createIndex('doctorId', 'doctorId', { unique: false });
         records.createIndex("diagnosis","diagnosis",{ unique: false });
         records.createIndex("treatment","treatment",{ unique: false });
-        records.createIndex("date", "date", { unique: false })
+        records.createIndex("dateTime", "dateTime", { unique: false })
       }
       //notif
       if (!db.objectStoreNames.contains('notifications')) {
@@ -343,7 +343,7 @@ function getRecordsByPatientId(patientId) {
                   recordId: r.recordId,
                   patientId: r.patientId,
                   doctorId: r.doctorId,
-                  date: r.date,
+                  dateTime: r.dateTime,
                   diagnosis: sensitive.diagnosis,
                   treatment: sensitive.treatment,
                   notes: sensitive.notes
@@ -354,7 +354,7 @@ function getRecordsByPatientId(patientId) {
                   recordId: r.recordId,
                   patientId: r.patientId,
                   doctorId: r.doctorId,
-                  date: r.date,
+                  dateTime: r.dateTime,
                   diagnosis: plain,
                   treatment: "",
                   notes: ""
@@ -410,6 +410,58 @@ function getNotifications(roleOrId) {
     };
     reqRole.onerror = reject;
   });
+}
+
+// Deleting all the linked records
+async function deleteLinkedRecords(tableName, indexName, linkedId) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(tableName, "readwrite");
+    const store = tx.objectStore(tableName);
+
+    // Check if the index exists
+    if (!store.indexNames.contains(indexName)) {
+      return reject(new Error(`Index "${indexName}" not found in "${tableName}"`));
+    }
+
+    const index = store.index(indexName);
+    const request = index.getAllKeys(linkedId);
+
+    request.onsuccess = () => {
+      const keys = request.result;
+
+      if (!keys.length) {
+        return resolve(`No records found in "${tableName}" for ${indexName} = ${linkedId}`);
+      }
+
+      let deletedCount = 0;
+
+      keys.forEach(key => {
+        const deleteReq = store.delete(key);
+        deleteReq.onsuccess = () => {
+          deletedCount++;
+          if (deletedCount === keys.length) {
+            resolve(`✅ Deleted ${deletedCount} record(s) from "${tableName}"`);
+          }
+        };
+        deleteReq.onerror = () => reject(deleteReq.error);
+      });
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+
+// Deleting Patient and all records
+async function deletePatientCompletely(patientId) {
+  const results = [];
+
+  results.push(await deleteLinkedRecords("medicalRecord", "patientId", patientId));
+  results.push(await deleteLinkedRecords("appointments", "patientId", patientId));
+  results.push(await deleteLinkedRecords("notifications", "recipientId", patientId));
+  results.push(await deleteLinkedRecords("users", "linkedId", patientId));
+  results.push(await deleteLinkedRecords("patients", "NHS", patientId));
+
 }
 
 
@@ -495,7 +547,7 @@ async function addMedicalRecord(record) {
   if (!record || !record.recordId) throw new Error("record.recordId required");
 
   // Build the stored object: keep indexes (recordId, patientId, doctorId, date) in plain text
-  const { recordId, patientId, doctorId, date, prescriptions } = record;
+  const { recordId, patientId, doctorId, dateTime, prescriptions } = record;
   const sensitive = {
     diagnosis: record.diagnosis || "",
     treatment: record.treatment || "",
@@ -507,7 +559,7 @@ async function addMedicalRecord(record) {
     recordId,
     patientId,
     doctorId,
-    date,
+    dateTime,
     prescriptions,
     payload: encryptedPayload
   };
@@ -544,8 +596,8 @@ async function fetchAllJsons(urls = JSON_URLS) {
     fetchJson(urls.patients).catch(err => { console.error('patients fetch error', err); return []; }),
     fetchJson(urls.medicines).catch(err => { console.error('medicines fetch error', err); return []; }),
     fetchJson(urls.users).catch(err => {console.error('users fetch error',err); return[];}),
-    fetchJson(urls.medicalRecord).catch(err => {console.error('medicale Record fetch error',err); return[]}),
-    fetchJson(urls.appointment).catch(err => {console.error('appointment fetch erroe',err); return []}),
+    fetchJson(urls.medicalRecord).catch(err => {console.error('medical Record fetch error',err); return[]}),
+    fetchJson(urls.appointment).catch(err => {console.error('appointment fetch error',err); return []}),
     fetchJson(urls .notification).catch(err => {console.error('notif fetch error', err); return[]})
 
   ]);
@@ -746,7 +798,7 @@ async function importFetchedDataToDB(filteredData) {
         recordId: r.recordId,
         patientId: r.patientId || r.NHS || null,
         doctorId: r.doctorId || null,
-        date: r.date || r.Date || null,
+        dateTime: r.dateTime || r.DateTime || null,
         diagnosis: r.diagnosis || r.Diagnosis || "",
         treatment: r.treatment || r.Treatment || "",
         prescriptions: r.prescriptions || []
@@ -994,4 +1046,3 @@ window.clinicDB = {
   _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
   JSON_URLS
 };
-
