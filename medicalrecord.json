@@ -2645,16 +2645,3 @@
       }
     ]
   },
-  {
-    "recordId": "MR4136",
-    "patientId": "9231682180",
-    "doctorId": 6,
-    "diagnosis": "Migraine",
-    "treatment": "Iron supplements and rest",
-    "dateTime": "2024-02-22 12:05",
-    "accessedBy": [6],
-    "prescriptions": [
-      {
-        "medicineId": 22,
-        "dosage": "1000mg",
-        "duration": "As needed
