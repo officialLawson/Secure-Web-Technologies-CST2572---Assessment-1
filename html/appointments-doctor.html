@@ -117,6 +117,42 @@
                 <h2 class="content-title">Appointments</h2>
                 
                 <div class="card-container">
+                    <h2 class="table-title">Confirmed Appointments</h2>
+
+                    <div class="top-bar">
+                        <!-- Search -->
+                        <div class="search-container">
+                            <span class="search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                            </svg>
+                            </span>
+                            <input id="search" type="text" placeholder="Search appointments..." />
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table"  id="appointmentsConfirmedTable">
+                            <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Reason</th>
+                                <th>Date - Time</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody id="appointmentsConfirmedBody">
+                            <!-- Appointment rows will be populated here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-container">
+                    <h2 class="table-title">Past/Cancelled Appointments</h2>
+
                     <div class="top-bar">
                         <!-- Search -->
                         <div class="search-container">
@@ -134,7 +170,7 @@
                         <table class="table"  id="appointmentsTable">
                             <thead>
                             <tr>
-                                <th>Doctor Name</th>
+                                <th>Patient Name</th>
                                 <th>Reason</th>
                                 <th>Date - Time</th>
                                 <th>Status</th>
@@ -165,6 +201,18 @@
             <button id="modalConfirm" class="btn-primary">Yes, Sign Out</button>
             </div>
         </div> 
+    </div>
+
+    <!-- Cancel Modal -->
+    <div id="cancelModal" class="modal-overlay hidden">
+        <div class="modal-content">
+                <h3>Cancel Appointment</h3>
+                <p>Are you sure you want to Cancel this appointment? This action cannot be undone.</p>
+                <div class="modal-actions">
+                <button id="cancelCancel" class="btn-secondary">No</button>
+                <button id="confirmCancel" class="btn-primary">Yes, Cancel Appointment</button>
+                </div>
+        </div>
     </div>
 
      <!-- Delete Modal -->

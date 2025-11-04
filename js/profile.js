@@ -20,7 +20,6 @@ async function getUserInfo() {
 
         switch (user.role.toLowerCase()) {
             case 'doctor':
-                console.log('doctors checked')
                 // Fetch doctors first and build a lookup map
                 const doctorTx = db.transaction('doctors', 'readonly');
                 const doctorStore = doctorTx.objectStore('doctors');

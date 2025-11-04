@@ -32,6 +32,18 @@
   --btn-edit-hover: #34d399;
   --btn-delete-hover: #f87171;
 }
+
+.table-title {
+  margin-top: 0px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  font-size: 1rem; 
+  line-height: 1.75rem; 
+  font-weight: 650;
+  color: var(--text-title);
+  border-bottom: 1px dashed var(--border-color);
+}
+
 .top-bar {
   display: flex;
   align-items: center;
@@ -250,8 +262,18 @@
   cursor: pointer;
   margin-left: 4px;
 }
+.btn-cancel {
+  background: var(--text-negative);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 4px;
+}
 .btn-view:hover { background: var(--accent-hover); }
 .btn-view-doctor:hover { background: var(--accent-hover); }
 .btn-view-request:hover { background: var(--btn-delete-hover); }
 .btn-edit:hover { background: var(--btn-edit-hover); }
 .btn-delete:hover { background: var(--btn-delete-hover); }
+.btn-cancel:hover { background: var(--btn-delete-hover); }

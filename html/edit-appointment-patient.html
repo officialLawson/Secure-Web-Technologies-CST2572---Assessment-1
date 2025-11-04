@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Appointments</title>
+    <title>Edit Appointment</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
-    <link rel="stylesheet" href="../css/table.css">
+    <link rel="stylesheet" href="../css/form.css">
 </head>
 <body>
     <div class="container">
@@ -23,6 +23,7 @@
                     </svg>
                     <span class="nav-text">Dashboard</span>
                 </a></li>
+
                 <li><a href="appointments-patient.html" class="active">
                     <svg class="dashboard-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect fill='none' x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -45,12 +46,9 @@
             <header class="header">
                 <button id="mobile-toggle" class="toggle-btn" aria-label="Open menu">☰</button>
                 <div class="left-controls">
-                    <button id="collapse-toggle" class="sidebar-toggle" aria-label="Collapse sidebar"
-                            title="Collapse sidebar">
-                        <svg class="sidebar-icon" width="16" height="12" viewBox="0 0 16 12"
-                             xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                  d="M0.583252 1C0.583252 0.585788 0.919038 0.25 1.33325 0.25H14.6666C15.0808 0.25 15.4166 0.585786 15.4166 1C15.4166 1.41421 15.0808 1.75 14.6666 1.75L1.33325 1.75C0.919038 1.75 0.583252 1.41422 0.583252 1ZM0.583252 11C0.583252 10.5858 0.919038 10.25 1.33325 10.25L14.6666 10.25C15.0808 10.25 15.4166 10.5858 15.4166 11C15.4166 11.4142 15.0808 11.75 14.6666 11.75L1.33325 11.75C0.919038 11.75 0.583252 11.4142 0.583252 11ZM1.33325 5.25C0.919038 5.25 0.583252 5.58579 0.583252 6C0.583252 6.41421 0.919038 6.75 1.33325 6.75L7.99992 6.75C8.41413 6.75 8.74992 6.41421 8.74992 6C8.74992 5.58579 8.41413 5.25 7.99992 5.25L1.33325 5.25Z"></path>
+                    <button id="collapse-toggle" class="sidebar-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
+                        <svg class="sidebar-icon" width="16" height="12" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M0.583252 1C0.583252 0.585788 0.919038 0.25 1.33325 0.25H14.6666C15.0808 0.25 15.4166 0.585786 15.4166 1C15.4166 1.41421 15.0808 1.75 14.6666 1.75L1.33325 1.75C0.919038 1.75 0.583252 1.41422 0.583252 1ZM0.583252 11C0.583252 10.5858 0.919038 10.25 1.33325 10.25L14.6666 10.25C15.0808 10.25 15.4166 10.5858 15.4166 11C15.4166 11.4142 15.0808 11.75 14.6666 11.75L1.33325 11.75C0.919038 11.75 0.583252 11.4142 0.583252 11ZM1.33325 5.25C0.919038 5.25 0.583252 5.58579 0.583252 6C0.583252 6.41421 0.919038 6.75 1.33325 6.75L7.99992 6.75C8.41413 6.75 8.74992 6.41421 8.74992 6C8.74992 5.58579 8.41413 5.25 7.99992 5.25L1.33325 5.25Z" fill=""></path>
                         </svg>
                     </button>
                 </div>
@@ -69,7 +67,7 @@
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M10.75 2.29248C10.75 1.87827 10.4143 1.54248 10 1.54248C9.58583 1.54248 9.25004 1.87827 9.25004 2.29248V2.83613C6.08266 3.20733 3.62504 5.9004 3.62504 9.16748V14.4591H3.33337C2.91916 14.4591 2.58337 14.7949 2.58337 15.2091C2.58337 15.6234 2.91916 15.9591 3.33337 15.9591H4.37504H15.625H16.6667C17.0809 15.9591 17.4167 15.6234 17.4167 15.2091C17.4167 14.7949 17.0809 14.4591 16.6667 14.4591H16.375V9.16748C16.375 5.9004 13.9174 3.20733 10.75 2.83613V2.29248ZM14.875 14.4591V9.16748C14.875 6.47509 12.6924 4.29248 10 4.29248C7.30765 4.29248 5.12504 6.47509 5.12504 9.16748V14.4591H14.875ZM8.00004 17.7085C8.00004 18.1228 8.33583 18.4585 8.75004 18.4585H11.25C11.6643 18.4585 12 18.1228 12 17.7085C12 17.2943 11.6643 16.9585 11.25 16.9585H8.75004C8.33583 16.9585 8.00004 17.2943 8.00004 17.7085Z" fill=""></path>
                         </svg>
                     </button>
-                    <button id="profileButton" class="user-btn" aria-label="User menu">
+                    <button id='profileButton' class="user-btn" aria-label="User menu">
                         <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
                             <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
                         </svg>
@@ -108,91 +106,77 @@
             </header>
 
             <section class="content">
-                <h2 class="content-title">Appointments</h2>
+                <h2 class="content-title">Edit Appointment</h2>
                 
                 <div class="card-container">
-                    <h2 class="table-title">Confirmed Appointments</h2>
+                    <form onsubmit="handleAddAppointment(event)" novalidate>
+                        <div class="form-section">
+                            <h2>Appointment Information</h2>
+                            <p class="description">Basic appointment details.</p>
 
-                    <div class="top-bar">
-                        <!-- Search -->
-                        <div class="search-container">
-                            <span class="search-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                            </svg>
-                            </span>
-                            <input id="search" type="text" placeholder="Search appointments..." />
+                            <div class="form-grid">
+                                <!-- DOCTOR -->
+                                <div class="form-group">
+                                <label for="doctorName">Doctor Name:</label>
+                                <div class="custom-select" id="doctorSelect">
+                                    <div class="custom-select__trigger placeholder">
+                                    <span class="trigger-text">Select a doctor</span>
+                                    <div class="arrow"></div>
+                                    </div>
+                                    <div class="custom-select__options" hidden></div>
+                                </div>
+                                <input type="hidden" id="doctorName" name="doctorName" required>
+                                <p id="doctorName-form-error" class="error-message-custom">Please select a doctor.</p>
+                                </div>
+                                <!-- DATE -->
+                                <div class="form-group">
+                                <label for="appointmentDate">Date:</label>
+                                <div class="custom-date" id="datePicker">
+                                    <div class="custom-date__input placeholder">Pick a date</div>
+                                    <div class="custom-date__calendar" hidden></div>
+                                </div>
+                                <input type="hidden" id="appointmentDate" name="appointmentDate" required>
+                                <p id="appointmentDate-form-error" class="error-message-custom">Please pick a date.</p>
+                                </div>
+                                <!-- TIME -->
+                                <div class="form-group">
+                                <label for="appointmentTimes">Time:</label>
+                                <div class="custom-time" id="timePicker">
+                                    <div class="custom-time__input placeholder">Pick a time</div>
+                                </div>
+                                <input type="time" id="appointmentTimes" required>
+                                <input type="date" id="appointmentTime" name="appointmentTime" required>
+                                <p id="appointmentTime-form-error" class="error-message-custom">Please pick a time.</p>
+                                </div>
+                                <!-- REASON -->
+                                <div class="form-group">
+                                <label for="appointmentReason">Reason:</label>
+                                <div class="custom-select" id="reasonSelect">
+                                    <div class="custom-select__trigger placeholder">
+                                    <span class="trigger-text">Select Appointment Reason</span>
+                                    <div class="arrow"></div>
+                                    </div>
+                                    <div class="custom-select__options" hidden></div>
+                                </div>
+                                <input type="hidden" id="appointmentReason" name="appointmentReason" required>
+                                <p id="appointmentReason-form-error" class="error-message-custom">Please select a reason.</p>
+                                </div>
+                            </div>
                         </div>
-
-                        <!-- Actions -->
-                        <div class="actions">
-                            <a href="add-appointment.html">
-                            <button class="btn-add">+ Add Appointment</button>
-                            </a>
+                        <div class="form-actions">
+                            <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
+                            <button onclick="handleAddAppointment()" class="submit-btn">Add Appointment</button>
                         </div>
-                    </div>
-
-                    <div class="table-container">
-                        <table class="table"  id="appointmentsConfirmedTable">
-                            <thead>
-                            <tr>
-                                <th>Doctor Name</th>
-                                <th>Reason</th>
-                                <th>Date - Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody id="appointmentsConfirmedBody">
-                            <!-- Appointment rows will be populated here dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
+                    </form>
                 </div>
-
-                <div class="card-container">
-                    <h2 class="table-title">Past/Cancelled Appointments</h2>
-
-                    <div class="top-bar">
-                        <!-- Search -->
-                        <div class="search-container">
-                            <span class="search-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                            </svg>
-                            </span>
-                            <input id="search" type="text" placeholder="Search appointments..." />
-                        </div>
-                        
-                    </div>
-
-                    <div class="table-container">
-                        <table class="table"  id="appointmentsTable">
-                            <thead>
-                            <tr>
-                                <th>Doctor Name</th>
-                                <th>Reason</th>
-                                <th>Date - Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody id="appointmentsBody">
-                            <!-- Appointment rows will be populated here dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>        
+            </section>
 
             <footer class="footer">
                 <p>Copyright &copy; 2025 MedTrack. All rights reserved.</p>
             </footer>
         </main>
     </div>
-
+    
     <!-- Sign Out Modal -->
     <div id="signOutModal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -205,39 +189,18 @@
         </div> 
     </div>
 
-    <!-- Cancel Modal -->
-    <div id="cancelModal" class="modal-overlay hidden">
-        <div class="modal-content">
-                <h3>Cancel Appointment</h3>
-                <p>Are you sure you want to Cancel this appointment? This action cannot be undone.</p>
-                <div class="modal-actions">
-                <button id="cancelCancel" class="btn-secondary">No</button>
-                <button id="confirmCancel" class="btn-primary">Yes, Cancel Appointment</button>
-                </div>
-        </div>
-    </div>
-
-    <!-- Delete Modal -->
-    <div id="deleteModal" class="modal-overlay hidden">
-        <div class="modal-content">
-                <h3>Cancel Appointment</h3>
-                <p>Are you sure you want to cancel this appointment? This action cannot be undone.</p>
-                <div class="modal-actions">
-                <button id="cancelDelete" class="btn-secondary">Close</button>
-                <button id="confirmDelete" class="btn-primary">Yes, Cancel</button>
-                </div>
-        </div>
-    </div>
-
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
+    <script src="../js/form.js"></script>
     <script>
-        const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
-        if (userRole !== 'patient') {
+        const back = document.getElementById('back');
+        back.addEventListener('click', (e) => {
+            e.preventDefault();
+            const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
             window.location.href = `appointments-${userRole}.html`;
-        } 
+        });
 
         const profileButton = document.getElementById('profileButton')
         const profileModal = document.getElementById('profileModal')

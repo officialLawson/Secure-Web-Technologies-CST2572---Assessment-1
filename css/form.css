@@ -128,7 +128,16 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
 }
-.error-message.show {
+.error-message-custom {
+  color: var(--text-negative);
+  font-size: .85rem;
+  margin-top: .25rem;
+  min-height: 1.2em;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  display: none;
+}
+.error-message-custom.show {
   display: block;
 }
 .form-actions {
