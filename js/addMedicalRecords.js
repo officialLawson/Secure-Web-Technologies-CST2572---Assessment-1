@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  await clinicDB.openClinicDB();
+  const db = await clinicDB.openClinicDB();
 
   // Fix form submit handler
   const form = document.querySelector('form');
@@ -20,59 +20,53 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Initialize one prescription row
   addPrescription();
 });
-
-// Global index for prescription fields
-let prescriptionIndex = 0;
+let prescriptionCount = 0;
 
 function addPrescription() {
+  prescriptionCount++;
   const container = document.getElementById('prescriptions-container');
-  const div = document.createElement('div');
-  div.className = 'prescription-entry';
-  div.style.marginBottom = '1rem';
-  div.innerHTML = `
-    <fieldset style="border:1px solid #ccc; padding:10px; border-radius:6px;">
-      <legend>Prescription ${prescriptionIndex + 1}</legend>
-      <div style="margin-bottom:8px;">
-        <label style="display:block; margin-bottom:4px;">Medicine Name:</label>
-        <input type="text" name="medicineName_${prescriptionIndex}" placeholder="e.g. Paracetamol" required style="width:100%; padding:6px;">
-      </div>
-      <div style="margin-bottom:8px;">
-        <label style="display:block; margin-bottom:4px;">Dosage:</label>
-        <input type="text" name="dosage_${prescriptionIndex}" placeholder="e.g. 500mg" required style="width:100%; padding:6px;">
-      </div>
-      <div style="margin-bottom:8px;">
-        <label style="display:block; margin-bottom:4px;">Duration:</label>
-        <input type="text" name="duration_${prescriptionIndex}" placeholder="e.g. 5 days" required style="width:100%; padding:6px;">
-      </div>
-      <div style="margin-bottom:8px;">
-        <label style="display:block; margin-bottom:4px;">Instructions:</label>
-        <textarea name="instructions_${prescriptionIndex}" rows="2" placeholder="Take with food..." style="width:100%; padding:6px; resize:vertical;"></textarea>
-      </div>
-      <button type="button" onclick="this.closest('.prescription-entry').remove()" 
-              style="background:#e74c3c; color:white; border:none; padding:6px 10px; border-radius:4px; cursor:pointer;">
-        Remove
-      </button>
-    </fieldset>
+  const entry = document.createElement('div');
+  entry.className = 'prescription-entry';
+  entry.innerHTML = `
+    <div class="form-group">
+      <label>Prescription ${prescriptionCount}</label>
+      <input type="text" name="medicineName_${prescriptionCount}" placeholder="Medicine Name" required>
+      <input type="text" name="dosage_${prescriptionCount}" placeholder="Dosage (e.g., 500mg)" required>
+      <input type="text" name="duration_${prescriptionCount}" placeholder="Duration (e.g., 3 months)" required>
+      <input type="text" name="instructions_${prescriptionCount}" placeholder="Instructions">
+      <button type="button" class="remove-btn" onclick="this.parentElement.parentElement.remove()">Remove</button>
+    </div>
   `;
-  container.appendChild(div);
-  prescriptionIndex++;
+  container.appendChild(entry);
 }
 
 async function handleAddMedicalRecord(event) {
   event.preventDefault();
 
-  // === 1. Get form values ===
-  const appointmentDate = document.getElementById('appointmentDate').value.trim();
+  // Auto-capture current date and time
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+
+  const currentDate = `${year}-${month}-${day}`;
+  const currentTime = `${hours}:${minutes}`;
+  const dateTime = `${currentDate} - ${currentTime}`;
+
+  // Optional: set hidden input
+  document.getElementById('appointmentDate').value = currentDate;
+
   const diagnosis = document.getElementById('userDiagnosis').value.trim();
   const treatment = document.getElementById('userTreatment').value.trim();
 
-  if (!appointmentDate || !diagnosis || !treatment) {
-    alert('Please fill in Date, Diagnosis, and Treatment.');
+  if (!diagnosis || !treatment) {
+    alert('Please fill in Diagnosis and Treatment.');
     return;
   }
 
-  // === 2. Collect prescriptions ===
-  const prescriptions = [];
+  const prescriptionInputs = [];
   document.querySelectorAll('.prescription-entry').forEach(entry => {
     const name = entry.querySelector(`[name^="medicineName_"]`).value.trim();
     const dosage = entry.querySelector(`[name^="dosage_"]`).value.trim();
@@ -80,16 +74,15 @@ async function handleAddMedicalRecord(event) {
     const instructions = entry.querySelector(`[name^="instructions_"]`).value.trim();
 
     if (name && dosage && duration) {
-      prescriptions.push({ name, dosage, duration, instructions });
+      prescriptionInputs.push({ name, dosage, duration, instructions });
     }
   });
 
-  if (prescriptions.length === 0) {
+  if (prescriptionInputs.length === 0) {
     alert('Please add at least one prescription.');
     return;
   }
 
-  // === 3. Get patientId and doctorId ===
   const urlParams = new URLSearchParams(window.location.search);
   const patientId = urlParams.get('patientId');
   if (!patientId) {
@@ -105,24 +98,83 @@ async function handleAddMedicalRecord(event) {
   }
   const doctorId = currentUser.linkedId;
 
-  // === 4. Build record ===
+  let db;
+  try {
+    db = await clinicDB.openClinicDB();
+  } catch (err) {
+    alert('Failed to open database.');
+    console.error(err);
+    return;
+  }
+
+  const medicineTx = db.transaction('medicines', 'readonly');
+  const medicineStore = medicineTx.objectStore('medicines');
+  const allMeds = await new Promise((resolve, reject) => {
+    const req = medicineStore.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+
+  const prescriptions = [];
+  for (const p of prescriptionInputs) {
+    // Fixed: Use "Drug" field
+    const med = allMeds.find(m =>
+      m.Drug?.toLowerCase() === p.name.toLowerCase()
+    );
+
+    if (!med) {
+      alert(`Medicine not found: "${p.name}". Please add it in Medicines first.`);
+      return;
+    }
+
+    prescriptions.push({
+      medicineId: med.id,
+      dosage: p.dosage,
+      duration: p.duration,
+      instructions: p.instructions
+    });
+  }
+
   const record = {
-    recordId: crypto.randomUUID(), // strong unique ID
+    recordId: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     patientId,
     doctorId,
-    date: appointmentDate,
+    date: dateTime,
     diagnosis,
     treatment,
     prescriptions
   };
 
   try {
-    // === 5. Add via clinicDB (encrypts diagnosis+treatment) ===
     await clinicDB.addMedicalRecord(record);
     alert('Medical record added successfully!');
     window.location.href = `medical-records-doctor.html?patientId=${patientId}`;
   } catch (err) {
-    console.error('Failed to add medical record:', err);
+    console.error('Failed to save record:', err);
     alert('Error saving record. Check console.');
   }
 }
+
+// DOM Ready – attach form, back button, and init first prescription
+document.addEventListener('DOMContentLoaded', async () => {
+  const db = await clinicDB.openClinicDB();
+
+  // Attach form submit
+  const form = document.querySelector('form');
+  if (form) {
+    form.onsubmit = handleAddMedicalRecord;
+  }
+
+  // "Cancel" link goes back to patient records
+  const backLink = document.getElementById('back');
+  if (backLink) {
+    backLink.addEventListener('click', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const patientId = urlParams.get('patientId');
+      window.location.href = `medical-records-doctor.html?patientId=${patientId}`;
+    });
+  }
+
+  // Start with one prescription row
+  addPrescription();
+});

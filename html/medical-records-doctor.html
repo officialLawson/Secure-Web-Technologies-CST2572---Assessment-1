@@ -140,7 +140,7 @@
                                 <th>Doctor Id</th>
                                 <th>Diagnosis</th>
                                 <th>Treatment</th>
-                                <th>Date</th>
+                                <th>Date - Time</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -206,15 +206,15 @@
             }
         });
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const params = new URLSearchParams(window.location.search);
-            const patientId = params.get('patientId');
-            const link = document.getElementById('addRecordLink');
-            if (patientId && link) {
-            link.href = `add-medical-record.html?patientId=${patientId}`;
-            }
-        });
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const params = new URLSearchParams(window.location.search);
+                const patientId = params.get('patientId');
+                const link = document.getElementById('addRecordLink');
+                if (patientId && link) {
+                link.href = `add-medical-record.html?patientId=${patientId}`;
+                }
+            });
     </script>
 </body>
 </html>

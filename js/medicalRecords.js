@@ -302,20 +302,16 @@ async function viewMedicalRecord(medicalrecordId) {
                     const medicines = medReq.result || [];
 
                     recordPrescriptions.forEach(pre => {
-                    const row = document.createElement('tr');
-
-                    const medicineList = medicines.filter(m => m.id === pre.medicineId ) || [];
-                    const medicine = medicineList[0];
-                    
-                    row.innerHTML = `
-                            <td>${medicine.Drug || 'Unknown'}</td>
+                        const row = document.createElement('tr');
+                        const medicine = medicines.find(m => m.id == pre.medicineId);
+                        const drugName = medicine?.Drug || `Unknown (ID: ${pre.medicineId})`;
+                        row.innerHTML = `
+                            <td>${drugName}</td>
                             <td>${pre.dosage || '-'}</td>
                             <td>${pre.duration || '-'}</td>
                             <td>${pre.instructions || '-'}</td>
                         `;
-
-                    prescriptionsBody.appendChild(row);
-
+                        prescriptionsBody.appendChild(row);
                     });
                 };
 
