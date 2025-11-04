@@ -125,10 +125,8 @@
   font-size: .85rem;
   margin-top: .25rem;
   min-height: 1.2em;
-  background: var(--error-bg);
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  display: none;
 }
 .error-message.show {
   display: block;

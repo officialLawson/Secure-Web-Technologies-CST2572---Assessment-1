@@ -412,6 +412,58 @@ function getNotifications(roleOrId) {
   });
 }
 
+// Deleting all the linked records
+async function deleteLinkedRecords(tableName, indexName, linkedId) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(tableName, "readwrite");
+    const store = tx.objectStore(tableName);
+
+    // Check if the index exists
+    if (!store.indexNames.contains(indexName)) {
+      return reject(new Error(`Index "${indexName}" not found in "${tableName}"`));
+    }
+
+    const index = store.index(indexName);
+    const request = index.getAllKeys(linkedId);
+
+    request.onsuccess = () => {
+      const keys = request.result;
+
+      if (!keys.length) {
+        return resolve(`No records found in "${tableName}" for ${indexName} = ${linkedId}`);
+      }
+
+      let deletedCount = 0;
+
+      keys.forEach(key => {
+        const deleteReq = store.delete(key);
+        deleteReq.onsuccess = () => {
+          deletedCount++;
+          if (deletedCount === keys.length) {
+            resolve(`✅ Deleted ${deletedCount} record(s) from "${tableName}"`);
+          }
+        };
+        deleteReq.onerror = () => reject(deleteReq.error);
+      });
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+
+// Deleting Patient and all records
+async function deletePatientCompletely(patientId) {
+  const results = [];
+
+  results.push(await deleteLinkedRecords("medicalRecord", "patientId", patientId));
+  results.push(await deleteLinkedRecords("appointments", "patientId", patientId));
+  results.push(await deleteLinkedRecords("notifications", "recipientId", patientId));
+  results.push(await deleteLinkedRecords("users", "linkedId", patientId));
+  results.push(await deleteLinkedRecords("patients", "NHS", patientId));
+
+}
+
 
 //Doctor Dashboard Loader
 async function loadDoctorDashboard(doctorId) {

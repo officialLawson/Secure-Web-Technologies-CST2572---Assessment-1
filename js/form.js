@@ -500,10 +500,14 @@
 // -----------------------------------------------------------------
   // 6. DATE OF BIRTH
   // -----------------------------------------------------------------
-  const dateInp = document.getElementById('appointmentDate');
+  const dateInp = document.getElementById('userDOB');
   const dateContainer = document.getElementById('datePicker');
   let calYear = new Date().getFullYear();
   let calMonth = new Date().getMonth();
+
+  if (dateInp) {
+    console.log("date exists");
+  }
 
   const renderCalendar = (y, m) => {
     const existing = dateContainer.querySelector('.custom-date__calendar');

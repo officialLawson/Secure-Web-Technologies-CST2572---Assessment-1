@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Add Patient</title>
+    <title>Add Doctor</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/form.css">
@@ -112,10 +112,10 @@
             </header>
 
             <section class="content">
-                <h2 class="content-title">Add Patient</h2>
+                <h2 class="content-title">Add Doctor</h2>
                 
                 <div class="card-container">
-                    <form onsubmit="handleAddAppointment(event)" novalidate>
+                    <form onsubmit="handleAddDoctor(event)" novalidate>
                         <div class="form-section">
                             <h2>Personal Information</h2>
                             <p class="description">Basic identity details.</p>
@@ -168,7 +168,7 @@
                         </div>
                         <div class="form-actions">
                             <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
-                            <button onclick="handleAddAppointment()" class="submit-btn">Add Doctor</button>
+                            <button type="submit" class="submit-btn">Add Doctor</button>
                         </div>
                     </form>
                 </div>
@@ -195,7 +195,7 @@
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
-    <script src="../js/appointments.js"></script>
+    <script src="../js/users.js"></script>
     <script src="../js/form.js"></script>
     <script>
         const back = document.getElementById('back');

@@ -322,7 +322,6 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
     const error = document.getElementById("appointmentTime-form-error");
     error.innerHTML = ``;
 
-    console.log(doctorId, patientId, reason, date, time);
 
     try {
       const db = await openClinicDB();
@@ -407,8 +406,6 @@ function handleAddAppointment(event) {
   const reason = document.getElementById('appointmentReason').value;
   const date = document.getElementById('appointmentDate').value;
   const time = document.getElementById('appointmentTime').value;
-
-  console.log(doctorId, patientId, reason, date, time);
 
   addAppointment(event, doctorId, patientId, reason, date, time);
 
