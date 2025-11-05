@@ -268,48 +268,51 @@ async function loadAppointments() {
 
 async function populateDoctorDropdown() {
   try {
-    const db = await openClinicDB(); // 👈 use your existing IndexedDB open function
+    const db = await openClinicDB();
     const tx = db.transaction('doctors', 'readonly');
     const store = tx.objectStore('doctors');
     const request = store.getAll();
 
-    request.onsuccess = function () {
-      const doctors = request.result || [];
-      const dropdown = document.getElementById("doctorName");
-      if (dropdown) {
-        // Clear existing options
-        dropdown.innerHTML = '<option value="">Select a doctor</option>';
+    request.onsuccess = async function () {
+      const encryptedDoctors = request.result || [];
 
-        // Populate doctors
-        doctors.forEach(doctor => {
-          const fullName =
-            doctor.name ||
-            `${doctor.first_name || ''} ${doctor.last_name || ''}`.trim() ||
-            'Unknown Doctor';
+      // Decrypt all patients in parallel
+      const decryptedDoctors = await Promise.all(
+          encryptedDoctors.map(p => decryptDoctorInfo(p))
+      );
 
-          const option = document.createElement('option');
-          option.value = doctor.id;   // ID for reference
-          option.textContent = fullName; // Name shown in dropdown
+      const doctors = decryptedDoctors || [];
 
-          dropdown.appendChild(option);
-      });
+      const dropdown = document.getElementById("doctorNameEdit");
+      if (!dropdown) {
+        console.log("Cannot find dropdown");
+        return;
       }
+      dropdown.innerHTML = '<option value="">Select a doctor</option>';
+
+      doctors.forEach(doctor => {
+        if (!doctor.id) return;
+
+        const fullName = doctor.name?.trim() ||
+          [doctor.first_name, doctor.last_name].filter(Boolean).join(' ').trim() ||
+          'Unknown Doctor';
+
+        const option = document.createElement('option');
+        option.value = doctor.id;
+        option.textContent = fullName;
+
+        dropdown.appendChild(option);
+      });
     };
 
     request.onerror = function () {
       console.error("Failed to fetch doctors:", request.error);
     };
-
   } catch (error) {
     console.error("Error populating doctor dropdown:", error);
   }
 }
 
-// Placeholder functions for Edit/Delete
-function editAppointment(id) {
-  alert(`Edit appointment with ID: ${id}`);
-  // TODO: open form or modal here
-}
 
 let appointmentToDelete = null;
 
@@ -479,7 +482,7 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
       const tx = db.transaction('appointments', 'readwrite');
       const store = tx.objectStore("appointments");
 
-      // ✅ 1. Get all medicines to check for duplicates and determine next ID
+      // ✅ 1. Get all appointments to check for duplicates and determine next ID
       const getAllReq = store.getAll();
 
       getAllReq.onsuccess = function() {
@@ -517,9 +520,11 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
           return `AP${randomNum}${timestamp}`;
         }
 
+        const appointmentId = generateAppointmentId();
+
         // ✅ Create the new appointment object
         const newAppointment = {
-          appointmentId: generateAppointmentId(),
+          appointmentId: appointmentId,
           doctorId,
           patientId,
           reason,
@@ -532,7 +537,10 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
 
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
 
-        addReq.onsuccess = () => {
+        addReq.onsuccess = async function() {
+          await createNotification("Appointment Confirmed", "Your appointment is confirmed.");
+          await createNotificationForUser("Appoinment Confirmed", "A patient has booked an appointment", doctorId, "doctor");
+          await logCurrentUserActivity("bookAppointment", appointmentId, `Patient with NHS ${patientId} booked an appointment`);
           console.log(`✅ Added appointment: ${reason} (id: ${newAppointment.appointmentId})`);
           window.location.href = `appointments-${userRole}.html`; // Redirect after adding
         };
@@ -565,13 +573,10 @@ function handleAddAppointment(event) {
 // Load on page ready
 document.addEventListener('DOMContentLoaded', () => {
   loadAppointments();
-  populateDoctorDropdown();
 });
 
 // Edit Appointment
 async function loadAppointmentForEdit(id) {
-  console.log("Function triggered with id:", id);
-
   try {
     const db = await openClinicDB();
 
@@ -602,7 +607,9 @@ async function loadAppointmentForEdit(id) {
         );
 
         const doctor = decryptedDoctors.find(d => d.id === parseInt(appointment.doctorId));
-        const doctorFullName = doctor ? `${doctor.first_name} ${doctor.last_name}` : "";
+        const  doctorFullName = doctor.name?.trim() ||
+            [doctor.first_name, doctor.last_name].filter(Boolean).join(' ').trim() ||
+            'Unknown Doctor';
 
         // Step 3: Parse time string to HH:MM format
         function parseTimeString(strTime) {
@@ -615,10 +622,10 @@ async function loadAppointmentForEdit(id) {
         }
 
         // Step 4: Populate form fields
-        document.getElementById('doctorName').value = doctorFullName;
-        document.getElementById('appointmentDate').value = appointment.date || '';
-        document.getElementById('appointmentTimes').value = parseTimeString(appointment.time);
-        document.getElementById('appointmentReason').value = appointment.reason || '';
+        document.getElementById('doctorNameEdit').value = doctor.id;
+        document.getElementById('appointmentDateEdit').value = appointment.date || '';
+        document.getElementById('appointmentTimeEdit').value = parseTimeString(appointment.time);
+        document.getElementById('appointmentReasonEdit').value = appointment.reason || '';
       };
 
       docReq.onerror = function (e) {
@@ -634,12 +641,141 @@ async function loadAppointmentForEdit(id) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  const role = params.get('role');
+async function editAppointment(event, doctorId, patientId, reason, date, time) {
+  // ✅ Prevent form submission reload
+  if (event) event.preventDefault();
 
-  if (id) {
-    loadAppointmentForEdit(id); // ✅ This runs on the correct page
+  const params = new URLSearchParams(window.location.search);
+  const appointmentId = params.get('id');
+
+  if (!appointmentId) {
+    console.error("❌ No appointment ID found in URL.");
+    return;
   }
-});
+
+  // 🔍 Field validation (same structure as patient)
+    const fields = [
+        { value: doctorNameEdit, id: "doctorNameEdit", message: "Please select a doctor." },
+        { value: appointmentDateEdit, id: "appointmentDateEdit", message: "Please enter a last name." },
+        { value: appointmentTimeEdit, id: "appointmentTimeEdit", message: "Please select an appointment date." },
+        { value: appointmentReasonEdit, id: "appointmentReasonEdit", message: "Please select an appointment reason." }
+    ];
+
+    for (const field of fields) {
+      const input = document.getElementById(field.id);
+      const error = document.getElementById(`${field.id}-form-error`);
+
+      if (!input || !error) {
+        console.warn(`⚠️ Missing field or error element for ID: ${field.id}`);
+        continue; // Skip this field
+      }
+
+      if (!field.value) {
+        input.style.borderColor = "red";
+        error.innerHTML = field.message;
+        return;
+      } else {
+        input.style.borderColor = "";
+        error.innerHTML = "";
+      }
+    }
+
+  if (new Date(`${date}T${time}`) < new Date()) {
+    const inputError = document.getElementById("appointmentTimeEdit");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("appointmentTimeEdit-form-error");
+    error.innerHTML = `Appointment date and time must be in the future.`;
+    return;
+  } else {
+    const inputError = document.getElementById("appointmentTimeEdit");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("appointmentTimeEdit-form-error");
+    error.innerHTML = ``;
+
+
+    try {
+      const db = await openClinicDB();
+      const tx = db.transaction('appointments', 'readwrite');
+      const store = tx.objectStore("appointments");
+
+      // ✅ 1. Get all appointments to check for duplicates and determine next ID
+      const getAllReq = store.getAll();
+
+      getAllReq.onsuccess = function() {
+        const appointments = getAllReq.result || [];
+
+        const existSame = appointments.find(app => 
+          app.appointmentId !== appointmentId &&
+          app.doctorId === doctorId &&
+          app.patientId === patientId &&
+          app.date === date &&
+          app.time === time
+        );
+
+        if (existSame) {
+          const error = document.getElementById("appointmentTimeEdit-form-error");
+          error.innerHTML = `Appointment with the same details already exists.`;
+          return;
+        }
+
+        const existDifferent = appointments.find(app => 
+          app.appointmentId !== appointmentId &&
+          app.doctorId === doctorId &&
+          app.date === date &&
+          app.time === time
+        );
+
+        if (existDifferent) {
+          const error = document.getElementById("appointmentTimeEdit-form-error");
+          error.innerHTML = `Appointment at this specified time is not possible.`;
+          return;
+        }
+
+        const appointment = appointments.find(d => d.appointmentId === appointmentId) || [];
+
+        // ✅ Create the new appointment object
+        const updatedAppointment = {
+          appointmentId: appointmentId,
+          doctorId,
+          patientId,
+          reason,
+          date,
+          time,
+          status: 'Confirmed',
+        };
+
+        const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+
+        const updateReq = store.put(updatedAppointment);
+
+        updateReq.onsuccess = function () {
+            console.log("✅ Appointment updated successfully.");
+            window.location.href = `appointments-${userRole}.html`;
+        };
+
+        updateReq.onerror = function (e) {
+            console.error("❌ Failed to update appointment:", e.target.error);
+        };
+
+      };
+
+      getAllReq.onerror = (e) => {
+        console.error("❌ Error fetching appointments:", e.target.error);
+      };
+
+    } catch (err) {
+        console.error("⚠️ Database error:", err);
+    }
+  }
+}
+
+function handleEditAppointment(event) {
+  const doctorId = document.getElementById('doctorNameEdit').value;
+  const patientId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
+  const reason = document.getElementById('appointmentReasonEdit').value;
+  const date = document.getElementById('appointmentDateEdit').value;
+  const time = document.getElementById('appointmentTimeEdit').value;
+
+  editAppointment(event, doctorId, patientId, reason, date, time);
+
+}
