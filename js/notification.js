@@ -17,7 +17,26 @@ function parseTimeAgo(str) {
   return Infinity;
 }
 function sortNotifications() {
-  notifications.sort((a,b) => parseTimeAgo(a.time) - parseTimeAgo(b.time));
+  notifications.sort((a, b) => {
+    const timeA = new Date(a.time).getTime();
+    const timeB = new Date(b.time).getTime();
+    return timeB - timeA; // newest first
+  });
+}
+async function generateUniqueNotificationId(store) {
+  let id;
+  let exists = true;
+
+  while (exists) {
+    id = "N" + Math.floor(100 + Math.random() * 900);
+    exists = await new Promise((resolve) => {
+      const request = store.get(id);
+      request.onsuccess = () => resolve(!!request.result);
+      request.onerror = () => resolve(false);
+    });
+  }
+
+  return id;
 }
 
 /* ---- DB (IndexedDB) ---- */
@@ -55,6 +74,74 @@ async function loadNotificationsFromDB() {
     updateBadge();
   }
 }
+
+/* ---- Creating ---- */
+async function createNotification(title, message) {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+  try {
+    const db = await openClinicDB();
+    const tx = db.transaction('notifications', 'readwrite');
+    const store = tx.objectStore('notifications');
+
+    const notifId = await generateUniqueNotificationId(store);
+
+    const notification = {
+      notifId, // ✅ matches keyPath
+      title,
+      message,
+      date: new Date().toISOString().split('T')[0],
+      recipientId: currentUser.linkedId,
+      recipientRole: currentUser.role.toLowerCase(),
+      read: false
+    };
+
+    store.add(notification);
+
+    tx.oncomplete = () => {
+      console.log("✅ Notification saved:", notification);
+    };
+
+    tx.onerror = (e) => {
+      console.error("❌ Failed to save notification:", e.target.error);
+    };
+  } catch (err) {
+    console.error("⚠️ DB error while saving notification:", err);
+  }
+}
+async function createNotificationForUser(title, message, recipientId, recipientRole) {
+  try {
+    const db = await openClinicDB();
+    const tx = db.transaction('notifications', 'readwrite');
+    const store = tx.objectStore('notifications');
+
+    const notifId = await generateUniqueNotificationId(store);
+
+    const notification = {
+      notifId: notifId, // e.g. "N125"
+      title: title,
+      message: message,
+      date: new Date().toISOString().split('T')[0], // "YYYY-MM-DD"
+      recipientId: recipientId,
+      recipientRole: recipientRole,
+      read: false
+    };
+
+    store.add(notification);
+
+    tx.oncomplete = () => {
+      console.log("✅ Notification saved:", notification);
+    };
+
+    tx.onerror = (e) => {
+      console.error("❌ Failed to save notification:", e.target.error);
+    };
+  } catch (err) {
+    console.error("⚠️ DB error while saving notification:", err);
+  }
+}
+
+
 
 /* ---- Rendering ---- */
 function renderNotifications() {

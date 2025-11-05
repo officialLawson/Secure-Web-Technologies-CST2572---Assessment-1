@@ -428,6 +428,7 @@ const timeContainer = document.getElementById('timePicker');
     });
   }
 
+<<<<<<< HEAD
   // -----------------------------------------------------------------
   // 5. FORM VALIDATION & SUBMIT
   // -----------------------------------------------------------------
@@ -504,4 +505,6 @@ const timeContainer = document.getElementById('timePicker');
     });
   };
 
+=======
+>>>>>>> origin/master
 })();

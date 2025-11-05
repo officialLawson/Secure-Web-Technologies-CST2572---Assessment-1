@@ -125,63 +125,50 @@
                 <h2 class="content-title">Edit Appointment</h2>
                 
                 <div class="card-container">
-                    <form onsubmit="handleAddAppointment(event)" novalidate>
+                    <form onsubmit="handleEditAppointment(event)" novalidate>
                         <div class="form-section">
                             <h2>Appointment Information</h2>
                             <p class="description">Basic appointment details.</p>
 
                             <div class="form-grid">
-                                <!-- DOCTOR -->
                                 <div class="form-group">
-                                <label for="doctorName">Doctor Name:</label>
-                                <div class="custom-select" id="doctorSelect">
-                                    <div class="custom-select__trigger placeholder">
-                                    <span class="trigger-text">Select a doctor</span>
-                                    <div class="arrow"></div>
-                                    </div>
-                                    <div class="custom-select__options" hidden></div>
-                                </div>
-                                <input type="hidden" id="doctorName" name="doctorName" required>
-                                <p id="doctorName-form-error" class="error-message-custom">Please select a doctor.</p>
+                                    <label for="doctorNameEdit">Doctor Name:</label>
+
+                                    <select id="doctorNameEdit" name="doctorNameEdit" required>
+                                        <option value="">Select a doctor</option>
+                                        <!-- Add more dynamically if needed -->
+                                    </select>
+
+                                    <p id="doctorNameEdit-form-error" class="error-message"></p>
                                 </div>
                                 <!-- DATE -->
                                 <div class="form-group">
-                                <label for="appointmentDate">Date:</label>
-                                <div class="custom-date" id="datePicker">
-                                    <div class="custom-date__input placeholder">Pick a date</div>
-                                    <div class="custom-date__calendar" hidden></div>
-                                </div>
-                                <input type="hidden" id="appointmentDate" name="appointmentDate" required>
-                                <p id="appointmentDate-form-error" class="error-message-custom">Please pick a date.</p>
+                                    <label for="appointmentDateEdit">Date:</label>
+                                    <input type="date" id="appointmentDateEdit" name="appointmentDateEdit" required>
+                                    <p id="appointmentDateEdit-form-error" class="error-message"></p>
                                 </div>
                                 <!-- TIME -->
                                 <div class="form-group">
-                                <label for="appointmentTimes">Time:</label>
-                                <div class="custom-time" id="timePicker">
-                                    <div class="custom-time__input placeholder">Pick a time</div>
-                                </div>
-                                <input type="time" id="appointmentTimes" required>
-                                <input type="date" id="appointmentTime" name="appointmentTime" required>
-                                <p id="appointmentTime-form-error" class="error-message-custom">Please pick a time.</p>
+                                <label for="appointmentTimeEdit">Time:</label>
+                                <input type="time" id="appointmentTimeEdit" name="appointmentTimeEdit" required>
+                                <p id="appointmentTimeEdit-form-error" class="error-message"></p>
                                 </div>
                                 <!-- REASON -->
                                 <div class="form-group">
-                                <label for="appointmentReason">Reason:</label>
-                                <div class="custom-select" id="reasonSelect">
-                                    <div class="custom-select__trigger placeholder">
-                                    <span class="trigger-text">Select Appointment Reason</span>
-                                    <div class="arrow"></div>
-                                    </div>
-                                    <div class="custom-select__options" hidden></div>
-                                </div>
-                                <input type="hidden" id="appointmentReason" name="appointmentReason" required>
-                                <p id="appointmentReason-form-error" class="error-message-custom">Please select a reason.</p>
+                                <label for="appointmentReasonEdit">Reason:</label>
+                                <select id="appointmentReasonEdit" name="doctorNameEdit" required>
+                                    <option value='Consultation'>Consultation</option>
+                                    <option value='Routine check-up'>Routine check-up</option>
+                                    <option value='Follow-up'>Follow-up</option>
+                                    <option value='Treatment review'>Treatment review</option>
+                                </select>
+                                <p id="appointmentReasonEdit-form-error" class="error-message-"></p>
                                 </div>
                             </div>
                         </div>
                         <div class="form-actions">
                             <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
-                            <button onclick="handleAddAppointment()" class="submit-btn">Add Appointment</button>
+                            <button type="submit" class="submit-btn">Edit Appointment</button>
                         </div>
                     </form>
                 </div>
@@ -211,6 +198,18 @@
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
     <script src="../js/form.js"></script>
+    <script>
+        populateDoctorDropdown();
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            const role = params.get('role');
+
+            if (id) {
+                loadAppointmentForEdit(id); // ✅ This runs on the correct page
+            }
+        });
+    </script>
     <script>
         const back = document.getElementById('back');
         back.addEventListener('click', (e) => {

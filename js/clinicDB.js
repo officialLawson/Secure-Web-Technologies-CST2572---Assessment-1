@@ -141,6 +141,7 @@ let users_data = null;
 let medicalRecord_data = null;
 let appointment_data = null;
 let notification_data = null;
+let logs_data = null;
 
 //Open/Create db
 function openClinicDB() {
@@ -221,10 +222,20 @@ function openClinicDB() {
         const notifs = db.createObjectStore('notifications', { keyPath: 'notifId'});
         notifs.createIndex('recipientRole', 'recipientRole', { unique: false });
         notifs.createIndex('recipientId', 'recipientId', { unique: false });
+        notifs.createIndex('title', 'title', { unique: false });
         notifs.createIndex('message', 'message', { unique: false });
         notifs.createIndex('date', 'date', { unique: false });
-        notifs.createIndex('read', 'read', { unique: false });
-        
+        notifs.createIndex('read', 'read', { unique: false }); 
+      }
+
+      //logs
+      if (!db.objectStoreNames.contains('activityLogs')) {
+        const logs = db.createObjectStore('activityLogs', { keyPath: 'logId'});
+        logs.createIndex('userRole', 'userRole', { unique: false });
+        logs.createIndex('userId', 'userId', { unique: false });
+        logs.createIndex('action', 'action', { unique: false });
+        logs.createIndex('target', 'target', { unique: false });
+        logs.createIndex('timestamp', 'timestamp', { unique: false });
       }
 
       console.log('[onupgradeneeded] clinicDB stores created/updated');
