@@ -257,7 +257,7 @@ body {
   border: 1px solid rgba(0,0,0,0.08); cursor: pointer;
 }
 .right-icons button { background: none; cursor: pointer; padding: 8px; }
-.notif-btn, .user-btn {
+.user-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 36px; height: 36px; border: 1px solid var(--border-btn);
   border-radius: 100%;
@@ -884,6 +884,20 @@ body {
   margin-bottom: 10px;
 }
 
+.header-btn {
+  position: relative;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+.header-btn:hover {
+  background: rgba(255,255,255,.1);
+}
+
 .btn-secondary {
   background: var(--bg-cancel-btn);
   color: var(--text-cancel);
@@ -1012,4 +1026,126 @@ body {
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
+}
+
+/* -------------------------------------------------
+   NOTIFICATION DROPDOWN
+   ------------------------------------------------- */
+#notifButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-panel);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#notifButton:hover {
+  background: var(--bg-body);
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--accent);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 600;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* Dropdown panel */
+.notification-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 340px;
+  max-height: 70vh;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.15);
+  overflow: hidden;
+  z-index: 1000;
+  animation: slideDown 0.25s ease-out;
+  display: none;
+}
+.notification-panel:not(.hidden) { display: block; }
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Header */
+.panel-header {
+  padding: 0.75rem 1rem;
+  background: rgba(0,0,0,.05);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.panel-header h3 { margin:0; font-size:1rem; }
+.btn-clear {
+  background:none; border:none; color:var(--text-muted);
+  font-size:.875rem; cursor:pointer; padding:0 .5rem;
+  border-radius:4px; transition:color .2s;
+}
+.btn-clear:hover { color:var(--text-negative); }
+
+/* Body & items */
+.panel-body { max-height: calc(70vh - 56px); overflow-y:auto; }
+.notification-item {
+  padding: .875rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex; gap: .75rem; align-items: flex-start;
+  cursor: pointer; transition: background .2s;
+}
+.notification-item:hover { background: var(--bg-graph-placeholder); }
+.notification-item.unread {
+  background: rgba(0,123,255,.07);
+  border-left: 3px solid var(--accent);
+}
+.notification-item .icon { flex-shrink:0; width:20px; height:20px; color:var(--text-muted); }
+.notification-item .title { font-weight:600; color:var(--text-primary); margin-bottom:.25rem; }
+.notification-item .message { font-size:.875rem; color:var(--text-muted); line-height:1.4; }
+.notification-item .time { font-size:.75rem; color:var(--text-muted); margin-top:.25rem; text-align:right; width:100%; }
+
+/* Empty state */
+.empty-state { padding:2rem; text-align:center; color:var(--text-muted); font-style:italic; }
+
+/* Undo button */
+.btn-undo {
+  background:var(--accent); color:#fff; border:none;
+  padding:6px 12px; border-radius:4px; cursor:pointer;
+  margin:10px auto; display:block; font-size:.9rem;
+}
+
+/* ---------- CUSTOM SCROLLBAR  ---------- */
+.notification-panel::-webkit-scrollbar { width:8px; }
+.notification-panel::-webkit-scrollbar-track { background:transparent; border-radius:4px; }
+.notification-panel::-webkit-scrollbar-thumb {
+  background:rgba(156,163,175,.4); border-radius:4px;
+  border:2px solid transparent; background-clip:content-box;
+}
+.notification-panel::-webkit-scrollbar-thumb:hover { background:rgba(156,163,175,.6); }
+.notification-panel { scrollbar-width:thin; scrollbar-color:rgba(156,163,175,.4) transparent; }
+
+/* Mobile  */
+@media (max-width:768px) {
+  .notification-panel { width:calc(100vw - 40px); left:20px; right:auto; }
 }
