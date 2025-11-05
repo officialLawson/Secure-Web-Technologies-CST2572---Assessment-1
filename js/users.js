@@ -1235,7 +1235,6 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
       };
     } catch (err) {
       console.error('DB error:', err);
-      alert('Database error.');
       userToDelete = null;
     }
   }

@@ -6,6 +6,8 @@ async function loadMedicines() {
     try {
         const db = await openClinicDB();
 
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+
         // Fetch medicines
         const medicineTx = db.transaction('medicines', 'readonly');
         const medicinesStore = medicineTx.objectStore('medicines');
@@ -27,7 +29,7 @@ async function loadMedicines() {
                     <td>${med.id}</td>
                     <td>${med.Drug || 'Unknown'}</td>
                     <td class="actions">
-                    <a href="edit-medicine.html"><button class="btn-edit" data-id="${med.id}">Edit</button></a>
+                    <button class="btn-edit" data-id="${med.id}" data-role="${user.role.toLowerCase()}">Edit</button>
                     <button class="btn-delete" data-id="${med.id}">Delete</button>
                     </td>
                 `;
@@ -108,54 +110,7 @@ async function addMedicine(drugName) {
   }
 }
 
-async function editMedicine(id, newDrugName) {
-  const db = await openClinicDB();
-  const transaction = db.transaction("medicines", "readwrite");
-  const store = transaction.objectStore("medicines");
 
-  const request = store.get(id);
-
-  request.onsuccess = async function () {
-    const medicine = request.result;
-
-    if (!medicine) {
-      console.error("Medicine not found");
-      alert("Medicine not found.");
-      return;
-    }
-
-    // ✅ Check for duplicates (case-insensitive)
-    const checkTx = db.transaction("medicines", "readonly");
-    const checkStore = checkTx.objectStore("medicines");
-    const all = await checkStore.getAll();
-    const exists = all.some(
-      (item) => item.Drug.toLowerCase() === newDrugName.toLowerCase() && item.id !== id
-    );
-
-    if (exists) {
-      alert(`Medicine "${newDrugName}" already exists.`);
-      return;
-    }
-
-    // Update and save
-    medicine.Drug = newDrugName;
-
-    const updateRequest = store.put(medicine);
-
-    updateRequest.onsuccess = function () {
-      console.log("Medicine updated successfully");
-      window.location.href = "medicines-admin.html"; // Redirect after editing
-    };
-
-    updateRequest.onerror = function (event) {
-      console.error("Error updating medicine:", event.target.error);
-    };
-  };
-
-  request.onerror = function (event) {
-    console.error("Error getting medicine:", event.target.error);
-  };
-}
 
 // async function deleteMedicine(id) {
 //   const db = await openClinicDB();
@@ -185,11 +140,129 @@ function handleAddMedicine() {
   input.value = ''; // clear after adding
 }
 
-function handleEditMedicine(id) {
+// Edit Medicine
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-edit')) {
+    e.preventDefault();
+    const id = e.target.dataset.id;
+    const role = e.target.dataset.role;
+    if (id) {
+      if (role === 'doctor') {
+        window.location.href = `edit-medicine.html?id=${id}`;
+      } else if (role === 'admin') {
+        window.location.href = `edit-medicine-admin.html?id=${id}`;
+      }
+    }
+  }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    if (id) {
+      displayEditMedicine(id);
+    }
+
+});
+
+async function displayEditMedicine(id) {
     const input = document.getElementById('medicineName');
-    const name = input.value;
-    editMedicine(id, name);
+    try {
+      const db = await openClinicDB();
+      const transaction = db.transaction("medicines", "readwrite");
+      const store = transaction.objectStore("medicines");
+      const request = store.getAll();
+
+      request.onsuccess = function() {
+        const medicines = request.result || [];
+
+        const medicine = medicines.find(m => m.id === parseInt(id));
+
+        if (!medicine) {
+          console.warn("Medicine not found!");
+        }
+
+        input.value = medicine.Drug;
+      };
+
+      request.onerror = function() {
+        alert('Error finding medicines.');
+      };
+
+    } catch (err) {
+      console.error('DB error:', err);
+    }
 }
+
+async function editMedicine(event, id, newDrugName) {
+  // ✅ Prevent form submission reload
+  if (event) event.preventDefault();
+
+   try {
+      const db = await openClinicDB();
+
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+
+      const transaction = db.transaction("medicines", "readwrite");
+      const store = transaction.objectStore("medicines");
+      const request = store.getAll();
+
+      request.onsuccess = function() {
+        const medicines = request.result || [];
+        console.log(medicines);
+        const medicine = medicines.find(m => m.id === parseInt(id));
+        console.log(medicine);
+
+        if (!medicine) {
+          console.error("Medicine not found");
+          alert("Medicine not found.");
+          return;
+        }
+
+        const newDrugNameLower = newDrugName.toLowerCase();
+
+        const exists = medicines.find(m => m.Drug.toLowerCase() === newDrugNameLower);
+
+        if (exists) {
+          alert(`Medicine "${newDrugName}" already exists.`);
+          return;
+        }
+
+        // Update and save
+        medicine.Drug = newDrugName;
+
+        const updateRequest = store.put(medicine);
+
+        updateRequest.onsuccess = function () {
+          console.log("Medicine updated successfully");
+          if (user.role.toLowerCase() === 'admin') {
+            window.location.href = "medicines-admin.html";
+          } else if (user.role.toLowerCase() === 'doctor') {
+            window.location.href = "medicines-doctor.html";
+          }
+        };
+
+        updateRequest.onerror = function (event) {
+          console.error("Error updating medicine:", event.target.error);
+        };
+      };
+
+      request.onerror = function (event) {
+        console.error("Error getting medicine:", event.target.error);
+      };
+    } catch (err) {
+      console.error('Delete failed:', err);
+    }
+}
+
+function handleEditMedicine(event) {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const medicineName = document.getElementById('medicineName').value;
+  editMedicine(event, id, medicineName);
+}
+
 
 
 // Initialize
@@ -225,12 +298,11 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
       };
 
       request.onerror = () => {
-        alert('Error deleting medicine.');
+        console.error('Error deleting medicine.');
         medicineToDelete = null;
       };
     } catch (err) {
       console.error('Delete failed:', err);
-      alert('Error deleting medicine.');
       medicineToDelete = null;
     }
   }
