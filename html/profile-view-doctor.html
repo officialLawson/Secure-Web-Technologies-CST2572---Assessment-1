@@ -183,6 +183,12 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Actions -->
+                <div class="profile-actions">
+                    <button class="btn-delete-account">Delete Account</button>
+                    <button class="btn-export-data">Export My Data</button>
+                </div>
                 
             </section>
 
@@ -192,7 +198,7 @@
         </main>
     </div>
 
-        <!-- Sign Out Modal -->
+    <!-- Sign Out Modal -->
     <div id="signOutModal" class="modal-overlay hidden">
         <div class="modal-content">
             <h3>Confirm Sign Out</h3>
@@ -202,6 +208,18 @@
             <button id="modalConfirm" class="btn-primary">Yes, Sign Out</button>
             </div>
         </div> 
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div id="deleteModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3>Delete Account</h3>
+            <p>Are you sure you want to delete your account? This action will delete all the records linked to this account and cannot be undone.</p>
+            <div class="modal-actions">
+                <button id="cancelDelete" class="btn-secondary">Cancel</button>
+                <button id="confirmDelete" class="btn-primary">Yes, Delete</button>
+            </div>
+        </div>
     </div>
 
     <script src="../js/profile.js"></script>

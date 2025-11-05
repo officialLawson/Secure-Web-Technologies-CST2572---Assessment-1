@@ -51,10 +51,10 @@ async function fetchPatientRecords() {
 
                 const doctor = currentUserData[0];
 
-                const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
-
-                row.innerHTML = `
-                        <td>${doctorFullName || 'Unknown'}</td>
+                if (doctor) {
+                    const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
+                    row.innerHTML = `
+                        <td>${doctorFullName}</td>
                         <td>${med.diagnosis || '-'}</td>
                         <td>${med.treatment || '-'}</td>
                         <td>${med.dateTime || '-'}</td>
@@ -63,7 +63,23 @@ async function fetchPatientRecords() {
                         </td>
                     `;
 
-                tbody.appendChild(row);
+                    tbody.appendChild(row);
+
+                } else {
+                    const doctorFullName = 'Unknown';
+                    row.innerHTML = `
+                        <td>${doctorFullName}</td>
+                        <td>${med.diagnosis || '-'}</td>
+                        <td>${med.treatment || '-'}</td>
+                        <td>${med.dateTime || '-'}</td>
+                        <td>
+                        <button class="btn-view" data-id="${med.recordId}">View</button>
+                        </td>
+                    `;
+
+                    tbody.appendChild(row);
+                }
+
 
                 });
             };

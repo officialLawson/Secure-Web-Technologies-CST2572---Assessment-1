@@ -758,8 +758,6 @@ body {
 
 
 .profile-container {
-  /* mb-6 */
-    margin-bottom: 1.5rem;
     
     /* rounded-2xl */
     border-radius: 1rem;
@@ -989,4 +987,29 @@ body {
   font-size: 0.875rem; /* text-sm */
   font-weight: 500;    /* font-medium */
   color: var(--text-title);      /* text-gray-800 */
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: space-between; /* Push buttons to opposite sides */
+  align-items: center;
+  margin: 1rem;
+}
+
+.btn-export-data {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-delete-account {
+  background: var(--text-negative);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
 }
