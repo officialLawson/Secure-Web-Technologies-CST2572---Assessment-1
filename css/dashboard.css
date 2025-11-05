@@ -1149,3 +1149,15 @@ body {
 @media (max-width:768px) {
   .notification-panel { width:calc(100vw - 40px); left:20px; right:auto; }
 }
+
+
+
+/* -------------------------------------------------
+  SETTINGS SPECIFIC
+------------------------------------------------- */
+.readonly { background:#f5f5f5; cursor:not-allowed; }
+.edit-mode input { background:#fff; }
+.msg { margin-top:8px; font-size:0.9rem; }
+.msg.success { color:green; }
+.msg.error   { color:#c00; }
+.form-actions { display: flex; gap: 10px; align-items: center; }
