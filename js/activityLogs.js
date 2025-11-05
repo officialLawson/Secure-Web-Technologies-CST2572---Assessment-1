@@ -24,7 +24,7 @@ async function logActivity({ userId, userRole, action, target, details }) {
     store.add(logEntry);
 
     tx.oncomplete = () => {
-      console.log("✅ Activity logged:", logEntry);
+      console.log("✅ Activity logged.");
     };
 
     tx.onerror = (e) => {
@@ -43,7 +43,6 @@ async function logCurrentUserActivity(action, target, details) {
     const tx = db.transaction('activityLogs', 'readwrite');
     const store = tx.objectStore('activityLogs');
 
-    console.log("Logging.....");
     const logEntry = {
         logId: generateLogId(),
         userId: user.linkedId,
@@ -57,7 +56,7 @@ async function logCurrentUserActivity(action, target, details) {
     store.add(logEntry);
 
     tx.oncomplete = () => {
-      console.log("✅ Activity logged:", logEntry);
+      console.log("✅ Activity logged.");
     };
 
     tx.onerror = (e) => {

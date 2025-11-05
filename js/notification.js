@@ -116,7 +116,7 @@ async function createNotificationForUser(title, message, recipientId, recipientR
     };
     store.add(notification);
     tx.oncomplete = () => {
-      console.log("Notification saved:", notification);
+      console.log("Notification saved.");
     };
     tx.onerror = (e) => {
       console.error("Failed to save notification:", e.target.error);

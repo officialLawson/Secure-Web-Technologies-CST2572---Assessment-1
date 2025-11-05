@@ -1,3 +1,31 @@
+// Helper function
+function normalizeTimeHHMM(str) {
+  if (typeof str !== "string") return null;
+
+  const parts = str.split(":");
+  if (parts.length !== 2) return null;
+
+  let [hour, minute] = parts;
+
+  // Pad with leading zeros if needed
+  hour = hour.padStart(2, "0");
+  minute = minute.padStart(2, "0");
+
+  // Validate ranges
+  const hourNum = parseInt(hour, 10);
+  const minuteNum = parseInt(minute, 10);
+
+  if (
+    isNaN(hourNum) || isNaN(minuteNum) ||
+    hourNum < 0 || hourNum > 23 ||
+    minuteNum < 0 || minuteNum > 59
+  ) {
+    return null;
+  }
+
+  return `${hour}:${minute}`;
+}
+
 // Appointments Management
 async function loadAppointments() {
   const tbody = document.getElementById('appointmentsBody');
@@ -290,6 +318,7 @@ async function populateDoctorDropdown() {
   }
 }
 let appointmentToDelete = null;
+
 function deleteAppointment(id) {
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   appointmentToDelete = sanitize(id);
@@ -324,6 +353,7 @@ document.getElementById('cancelDelete').addEventListener('click', () => {
   document.getElementById('deleteModal').classList.add('hidden');
   userToDelete = null;
 });
+
 let appointmentToCancel = null;
 function cancelAppointment(id) {
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
@@ -332,6 +362,7 @@ function cancelAppointment(id) {
 }
 // Handle "Yes, Cancel" in modal
 document.getElementById('confirmCancel').addEventListener('click', async () => {
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
   if (appointmentToCancel) {
     try {
       const db = await openClinicDB();
@@ -345,11 +376,23 @@ document.getElementById('confirmCancel').addEventListener('click', async () => {
           appointment.status = "Cancelled"; // or whatever new status you want
         }
         const updateReq = store.put(appointment); // put replaces the record with the same key
-        updateReq.onsuccess = () => {
-          console.log("Appointment status updated.");
-          loadAppointments(); // Refresh the table
-          document.getElementById('cancelModal').classList.add('hidden');
-          appointmentToCancel = null;
+        updateReq.onsuccess = async function() {
+          if (userRole === 'patient') {
+            await createNotification("Appointment Cancelled", "Your appointment is cancelled.");
+            await createNotificationForUser("Appoinment Cancelled", "A patient has cancelled an appointment", appointment.doctorId, "doctor");
+            await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Patient with NHS ${appointment.patientId} cancelled an appointment`);
+            console.log("Appointment cancelled.");
+            loadAppointments(); // Refresh the table
+            document.getElementById('cancelModal').classList.add('hidden');
+            appointmentToCancel = null;
+          } else if (userRole === 'doctor') {
+            await createNotification("Appoinment Cancelled", "Your appointment is cancelled.");
+            await createNotificationForUser("Appointment Cancelled", "A doctor has cancelled an appointment", appointment.patientId, "patient");
+            await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Doctor with ID ${appointment.doctorId} cancelled an appointment`);
+            console.log("Appointment cancelled.");
+            loadAppointments(); // Refresh the table
+            document.getElementById('cancelModal').classList.add('hidden');
+          }
         };
         updateReq.onerror = () => {
           console.error("Failed to update appointment:", updateReq.error);
@@ -367,11 +410,13 @@ document.getElementById('confirmCancel').addEventListener('click', async () => {
     }
   }
 });
+
 // Handle "Cancel"
 document.getElementById('cancelCancel').addEventListener('click', () => {
   document.getElementById('cancelModal').classList.add('hidden');
   userToCancel = null;
 });
+
 async function addAppointment(event, doctorId, patientId, reason, date, time) {
   // Prevent form submission reload
   if (event) event.preventDefault();
@@ -471,6 +516,9 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
           return `AP${randomNum}${timestamp}`;
         }
         const appointmentId = generateAppointmentId();
+
+        const fixedTime = normalizeTimeHHMM(time);
+
         // Create the new appointment object
         const newAppointment = {
           appointmentId: appointmentId,
@@ -478,7 +526,7 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
           patientId,
           reason,
           date,
-          time,
+          fixedTime,
           status: 'Confirmed',
         };
         const addReq = store.add(newAppointment);
@@ -502,6 +550,7 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
     }
   }
 }
+
 function handleAddAppointment(event) {
   const doctorId = document.getElementById('doctorName').value;
   const patientId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
@@ -643,21 +692,38 @@ async function editAppointment(event, doctorId, patientId, reason, date, time) {
           return;
         }
         const appointment = appointments.find(d => d.appointmentId === appointmentId) || [];
+
+        const fixedTime = normalizeTimeHHMM(time);
+        const fixedDoctorId = parseInt(doctorId)
+
         // Create the new appointment object
         const updatedAppointment = {
           appointmentId: appointmentId,
-          doctorId,
+          doctorId: fixedDoctorId,
           patientId,
           reason,
           date,
-          time,
+          time: fixedTime,
           status: 'Confirmed',
         };
+        
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         const updateReq = store.put(updatedAppointment);
-        updateReq.onsuccess = function () {
+        updateReq.onsuccess = async function () {
+
+          if (userRole === 'patient') {
+            await createNotification("Appointment Rescheduled", "Your appointment is rescheduled.");
+            await createNotificationForUser("Appoinment Rescheduled", "A patient has rescheduled an appointment", doctorId, "doctor");
+            await logCurrentUserActivity("editAppointment", appointmentId, `Patient with NHS ${patientId} rescheduled an appointment`);
             console.log("Appointment updated successfully.");
             window.location.href = `appointments-${userRole}.html`;
+          } else if (userRole === 'doctor') {
+            await createNotification("Appoinment Rescheduled", "Your appointment is rescheduled.");
+            await createNotificationForUser("Appointment Rescheduled", "A doctor has rescheduled an appointment", patientId, "patient");
+            await logCurrentUserActivity("editAppointment", appointmentId, `Doctor with ID ${doctorId} rescheduled an appointment`);
+            console.log("Appointment updated successfully.");
+            window.location.href = `appointments-${userRole}.html`;
+          }
         };
         updateReq.onerror = function (e) {
             console.error("Failed to update appointment:", e.target.error);
