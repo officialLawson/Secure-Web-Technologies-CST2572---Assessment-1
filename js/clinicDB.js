@@ -459,9 +459,23 @@ async function deletePatientCompletely(patientId) {
   results.push(await deleteLinkedRecords("medicalRecord", "patientId", patientId));
   results.push(await deleteLinkedRecords("appointments", "patientId", patientId));
   results.push(await deleteLinkedRecords("notifications", "recipientId", patientId));
-  results.push(await deleteLinkedRecords("users", "linkedId", patientId));
-  results.push(await deleteLinkedRecords("patients", "NHS", patientId));
+  results.push(await deleteItem("users", patientId));
+  results.push(await deleteItem("patients", patientId));
 
+  console.log("Deleted Patient Account.");
+  window.location.href = '../html/login.html';
+}
+
+async function deleteDoctorCompletely(doctorId) {
+  const results = [];
+
+  results.push(await deleteLinkedRecords("appointments", "doctorId", doctorId));
+  results.push(await deleteLinkedRecords("notifications", "recipientId", doctorId));
+  results.push(await deleteItem("users", doctorId));
+  results.push(await deleteItem("doctors", doctorId));
+
+  console.log("Deleted Doctor Account.");
+  window.location.href = '../html/login.html';
 }
 
 

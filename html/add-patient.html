@@ -115,7 +115,7 @@
                 <h2 class="content-title">Add Patient</h2>
                 
                 <div class="card-container">
-                    <form onsubmit="handleAddAppointment(event)" novalidate>
+                    <form onsubmit="handleAddPatient(event)" novalidate>
                         <div class="form-section">
                             <h2>Personal Information</h2>
                             <p class="description">Basic identity details.</p>
@@ -141,13 +141,14 @@
                                 </div>
                                 <!-- Date of Birth -->
                                 <div class="form-group">
-                                    <label for="appointmentDate">Date of Birth</label>
-                                    <div class="custom-date" id="datePicker">
+                                    <label for="userDOB">Date of Birth</label>
+                                    <!-- <div class="custom-date" id="datePicker">
                                         <div class="custom-date__input placeholder">Select date of birth</div>
                                         <div class="custom-date__calendar" hidden></div>
-                                    </div>
-                                    <input type="hidden" id="appointmentDate" name="appointmentDate" required>
-                                    <p id="appointmentDate-form-error" class="error-message"></p>
+                                        <input type="hidden" id="userDOB" name="userDOB" required>
+                                    </div> -->
+                                    <input type="date" id="userDOB" name="userDOB" required>
+                                    <p id="userDOB-form-error" class="error-message"></p>
                                 </div>
                                 <!-- NHS -->
                                 <div class="form-group">
@@ -190,7 +191,7 @@
                         </div>
                         <div class="form-actions">
                             <a id="back" style="cursor: pointer;" class="cancel-link">Cancel</a>
-                            <button onclick="handleAddAppointment()" class="submit-btn">Add Patient</button>
+                            <button type="submit" class="submit-btn">Add Patient</button>
                         </div>
                     </form>
                 </div>
@@ -217,8 +218,8 @@
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/clinicDB.js"></script>
     <script src="../js/sidebar.js"></script>
-    <script src="../js/users.js"></script>
     <script src="../js/form.js"></script>
+    <script src="../js/users.js"></script>
     <script>
         const back = document.getElementById('back');
         back.addEventListener('click', (e) => {

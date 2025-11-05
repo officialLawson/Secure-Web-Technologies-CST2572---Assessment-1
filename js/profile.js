@@ -20,7 +20,6 @@ async function getUserInfo() {
 
         switch (user.role.toLowerCase()) {
             case 'doctor':
-                console.log('doctors checked')
                 // Fetch doctors first and build a lookup map
                 const doctorTx = db.transaction('doctors', 'readonly');
                 const doctorStore = doctorTx.objectStore('doctors');
@@ -126,6 +125,39 @@ async function getUserInfo() {
         console.error('Error opening DB:', err);
     }
 }
+
+// Delete User Option
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-delete-account')) {
+        e.preventDefault();
+        document.getElementById('deleteModal').classList.remove('hidden');
+    }
+});
+
+document.getElementById('confirmDelete').addEventListener('click', async () => {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    console.log(user);
+    if (user.role.toLowerCase() === 'patient') {
+        deletePatientCompletely(user.linkedId);
+    } else if (user.role.toLowerCase() === 'doctor') {
+        deleteDoctorCompletely(user.linkedId);
+
+    }
+});
+
+// Handle "Cancel"
+document.getElementById('cancelDelete').addEventListener('click', () => {
+  document.getElementById('deleteModal').classList.add('hidden');
+  userToDelete = null;
+});
+
+// Close modal if clicking outside
+document.getElementById('deleteModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) {
+    e.currentTarget.classList.add('hidden');
+    userToDelete = null;
+  }
+});
 
 // Load on page ready
 document.addEventListener('DOMContentLoaded', () => {
