@@ -194,7 +194,7 @@ function openClinicDB() {
       // medicines 
       if (!db.objectStoreNames.contains('medicines')) {
         const medicines = db.createObjectStore("medicines", { keyPath: "id", autoIncrement: true });
-        medicines.createIndex('drugs','drugs',{unique: false});
+        medicines.createIndex('Drug','Drug',{unique: false});
       }
 
       // appointments
