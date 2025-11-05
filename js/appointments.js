@@ -326,16 +326,26 @@ function deleteAppointment(id) {
 }
 // Handle "Yes, Delete" in modal
 document.getElementById('confirmDelete').addEventListener('click', async () => {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+
   if (appointmentToDelete) {
     try {
       const db = await openClinicDB();
       const tx = db.transaction('appointments', 'readwrite');
       const store = tx.objectStore('appointments');
       store.delete(appointmentToDelete);
-      tx.oncomplete = () => {
-        loadAppointments(); // Refresh the table
-        document.getElementById('deleteModal').classList.add('hidden');
-        appointmentToDelete = null;
+      tx.oncomplete = async function() {
+        if (user.role.toLowerCase() === 'patient') {
+            await logCurrentUserActivity("deleteAppointment", appointmentToCancel, `Patient with NHS ${user.linkedId} deleted an appointment`);
+            loadAppointments(); // Refresh the table
+            document.getElementById('deleteModal').classList.add('hidden');
+            appointmentToDelete = null;
+          } else if (user.role.toLowerCase() === 'doctor') {
+            await logCurrentUserActivity("deleteAppointment", appointmentToDelete, `Doctor with ID ${user.linkedId} deleted an appointment`);
+            loadAppointments(); // Refresh the table
+            document.getElementById('deleteModal').classList.add('hidden');
+            appointmentToDelete = null;
+          }
       };
       tx.onerror = () => {
         alert('Error deleting appointment.');
@@ -392,6 +402,7 @@ document.getElementById('confirmCancel').addEventListener('click', async () => {
             console.log("Appointment cancelled.");
             loadAppointments(); // Refresh the table
             document.getElementById('cancelModal').classList.add('hidden');
+            appointmentToCancel = null;
           }
         };
         updateReq.onerror = () => {

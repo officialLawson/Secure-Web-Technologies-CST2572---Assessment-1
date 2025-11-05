@@ -43,6 +43,7 @@ async function loadMedicines() {
     }
 }
 async function addMedicine(drugName) {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
   if (!drugName || !drugName.trim()) {
     alert("Please enter a valid medicine name.");
     return;
@@ -74,7 +75,8 @@ async function addMedicine(drugName) {
       const newMedicine = { id: nextId, Drug: drug };
       const addReq = store.add(newMedicine);
       const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
-      addReq.onsuccess = () => {
+      addReq.onsuccess = async function() {
+        await logCurrentUserActivity("createMedicine", nextId, `User with ID ${user.linkedId} created a medicine`);
         console.log(`Added medicine: ${drug} (id: ${nextId})`);
         window.location.href = `medicines-${userRole}.html`; // Redirect after adding
       };
@@ -89,21 +91,7 @@ async function addMedicine(drugName) {
     console.error("Database error:", err);
   }
 }
-// async function deleteMedicine(id) {
-// const db = await openClinicDB();
-// const transaction = db.transaction("medicines", "readwrite");
-// const store = transaction.objectStore("medicines");
-// const request = store.delete(id);
-// request.onsuccess = function () {
-// console.log("Medicine deleted successfully");
-// alert("Medicine deleted successfully!");
-// loadMedicines(); // Refresh the list
-// };
-// request.onerror = function (event) {
-// console.error("Error deleting medicine:", event.target.error);
-// alert("Error deleting medicine.");
-// };
-// }
+
 function handleAddMedicine() {
   const input = document.getElementById('medicineName');
   const name = input.value;
@@ -165,9 +153,7 @@ async function editMedicine(event, id, newDrugName) {
       const request = store.getAll();
       request.onsuccess = function() {
         const medicines = request.result || [];
-        console.log(medicines);
         const medicine = medicines.find(m => m.id === parseInt(id));
-        console.log(medicine);
         if (!medicine) {
           console.error("Medicine not found");
           alert("Medicine not found.");
@@ -182,11 +168,13 @@ async function editMedicine(event, id, newDrugName) {
         // Update and save
         medicine.Drug = newDrugName;
         const updateRequest = store.put(medicine);
-        updateRequest.onsuccess = function () {
+        updateRequest.onsuccess = async function () {
           console.log("Medicine updated successfully");
           if (user.role.toLowerCase() === 'admin') {
+            await logCurrentUserActivity("editMedicine", medicine.id, `User with ID ${user.linkedId} edited a medicine`);
             window.location.href = "medicines-admin.html";
           } else if (user.role.toLowerCase() === 'doctor') {
+            await logCurrentUserActivity("editMedicine", medicine.id, `User with ID ${user.linkedId} edited a medicine`);
             window.location.href = "medicines-doctor.html";
           }
         };
@@ -224,13 +212,15 @@ document.addEventListener('click', (e) => {
 });
 // Handle "Yes, Delete"
 document.getElementById('confirmDelete').addEventListener('click', async () => {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
   if (medicineToDelete !== null) {
     try {
       const db = await openClinicDB();
       const tx = db.transaction('medicines', 'readwrite');
       const store = tx.objectStore('medicines');
       const request = store.delete(Number(medicineToDelete));
-      request.onsuccess = () => {
+      request.onsuccess = async function() {
+        await logCurrentUserActivity("deleteMedicine", Number(medicineToDelete), `User with ID ${user.linkedId} deleted a medicine`);
         loadMedicines(); // Refresh the table
         document.getElementById('deleteModal').classList.add('hidden');
         medicineToDelete = null;

@@ -1,16 +1,16 @@
 async function getUserInfo() {
-    const userFullName = document.getElementById("userFullName")
-    const userRoleMain = document.getElementById("userRoleMain")
-    const userEmail = document.getElementById("userEmail")
-    const userAddressMain = document.getElementById("userAddressMain")
-    const userFirstName = document.getElementById("userFirstName")
-    const userLastName = document.getElementById("userLastName")
-    const userTelephone = document.getElementById("userTelephone")
-    const userRole = document.getElementById("userRole")
-    const userDOB = document.getElementById("userDOB")
-    const userId = document.getElementById("userId")
-    const userAddress = document.getElementById("userAddress")
-    const userGender = document.getElementById("userGender")
+    const userFullName = document.getElementById("userFullName");
+    const userRoleMain = document.getElementById("userRoleMain");
+    const userEmail = document.getElementById("userEmail");
+    const userAddressMain = document.getElementById("userAddressMain");
+    const userFirstName = document.getElementById("userFirstName");
+    const userLastName = document.getElementById("userLastName");
+    const userTelephone = document.getElementById("userTelephone");
+    const userRole = document.getElementById("userRole");
+    const userDOB = document.getElementById("userDOB");
+    const userId = document.getElementById("userId");
+    const userAddress = document.getElementById("userAddress");
+    const userGender = document.getElementById("userGender");
     const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     try {
         const db = await openClinicDB();

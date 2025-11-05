@@ -55,7 +55,11 @@
 
     // Sign out function
     async function signOut() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+
         console.log("Signing out...");
+
+        await logCurrentUserActivity("signOut", user.linkedId, `User with ID ${user.linkedId} has signed out`);
 
         // Clear login info
         localStorage.removeItem('currentUser');

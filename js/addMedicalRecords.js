@@ -83,20 +83,19 @@ async function handleAddMedicalRecord(event) {
   });
 
   if (prescriptionInputs.length === 0) {
-    alert('Please add at least one prescription.');
+    console.log('Please add at least one prescription.');
     return;
   }
 
   const urlParams = new URLSearchParams(window.location.search);
   const patientId = urlParams.get('patientId');
   if (!patientId) {
-    alert('Missing patient ID.');
+    console.log('Missing patient ID.');
     return;
   }
 
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
   if (!currentUser || currentUser.role !== 'doctor') {
-    alert('Unauthorized. Please log in as a doctor.');
     window.location.href = 'login.html';
     return;
   }
@@ -106,7 +105,6 @@ async function handleAddMedicalRecord(event) {
   try {
     db = await clinicDB.openClinicDB();
   } catch (err) {
-    alert('Failed to open database.');
     console.error(err);
     return;
   }
@@ -127,7 +125,7 @@ async function handleAddMedicalRecord(event) {
     );
 
     if (!med) {
-      alert(`Medicine not found: "${p.name}". Please add it in Medicines first.`);
+      console.warn(`Medicine not found: "${p.name}". Please add it in Medicines first.`);
       return;
     }
 
@@ -139,8 +137,10 @@ async function handleAddMedicalRecord(event) {
     });
   }
 
+  const recordId = `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
   const record = {
-    recordId: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    recordId: recordId,
     patientId,
     doctorId,
     dateTime: dateTime,
@@ -150,12 +150,11 @@ async function handleAddMedicalRecord(event) {
   };
 
   try {
+    await logCurrentUserActivity("createMedicalRecord", recordId, `Doctor with ID ${doctorId} created a medical record`);
     await clinicDB.addMedicalRecord(record);
-    alert('Medical record added successfully!');
     window.location.href = `medical-records-doctor.html?patientId=${patientId}`;
   } catch (err) {
     console.error('Failed to save record:', err);
-    alert('Error saving record. Check console.');
   }
 }
 

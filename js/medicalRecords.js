@@ -103,7 +103,6 @@ async function fetchPatientRecordsforDoctor(patientId) {
                     const decryptedMedicalRecords = await Promise.all(
                         encryptedMedicalRecords.map(p => decryptMedicalRecord(p))
                     );
-                    console.log(decryptedMedicalRecords);
                     const medicalrecords = decryptedMedicalRecords.filter(med => med.patientId === patientId) || [];
                     tbody.innerHTML = '';
                     if (!medicalrecords || medicalrecords.length === 0) {

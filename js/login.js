@@ -288,6 +288,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           let redirectUrl = "../html/dashboard.html";
           switch (result.user.role?.toLowerCase()) {
             case "doctor":
+              
               redirectUrl = "../html/dashboard-doctor.html";
               break;
             case "admin":
@@ -300,6 +301,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               redirectUrl = "login.html";
           }
 
+          await logCurrentUserActivity("logIn", result.user.linkedId, `User with ID ${result.user.linkedId} has logged in`);
           window.location.href = redirectUrl;
 
         } else {

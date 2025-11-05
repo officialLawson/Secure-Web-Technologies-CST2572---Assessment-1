@@ -33,9 +33,10 @@ async function createDashboardAnalytics() {
     // -------------------------------------------------
     const usersTransaction = db.transaction("users", "readonly");
     const usersStore = usersTransaction.objectStore("users");
+    const usersReq = usersStore.getAll();
 
-    usersStore.getAll().onsuccess = () => {
-        const users = usersStore.getAll().result;
+    usersReq.onsuccess = () => {
+        const users = usersReq.result;
 
         const totalUsers = users.length;
         const totalPatients = users.filter(u => u.role?.toLowerCase() === 'patient').length;
@@ -73,9 +74,10 @@ async function createDashboardAnalytics() {
     // -------------------------------------------------
     const apptTransaction = db.transaction("appointments", "readonly");
     const apptStore = apptTransaction.objectStore("appointments");
+    const apptReq = apptStore.getAll();
 
-    apptStore.getAll().onsuccess = () => {
-        const appointments = apptStore.getAll().result;
+    apptReq.onsuccess = () => {
+        const appointments = apptReq.result || [];
 
         const now = new Date();
         const currentMonth = now.getMonth();
@@ -119,3 +121,4 @@ async function createDashboardAnalytics() {
 
 // Run immediately
 createDashboardAnalytics();
+getUserInfo();
