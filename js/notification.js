@@ -1,19 +1,17 @@
 /* ==================== NOTIFICATION SYSTEM ==================== */
-const notifButton       = document.getElementById('notifButton');
-const notifPanel        = document.getElementById('notificationPanel');
-const clearNotifsBtn    = document.getElementById('clearNotifsBtn');
+const notifButton = document.getElementById('notifButton');
+const notifPanel = document.getElementById('notificationPanel');
+const clearNotifsBtn = document.getElementById('clearNotifsBtn');
 const notificationsList = document.getElementById('notificationsList');
-
 let notifications = [];
 let clearedNotifications = [];
-
 /* ---- Helpers ---- */
 function parseTimeAgo(str) {
   const [num, unit] = str.split(' ');
   const n = parseInt(num);
-  if (unit.includes('min'))  return n;
+  if (unit.includes('min')) return n;
   if (unit.includes('hour')) return n * 60;
-  if (unit.includes('day'))  return n * 60 * 24;
+  if (unit.includes('day')) return n * 60 * 24;
   return Infinity;
 }
 function sortNotifications() {
@@ -26,7 +24,6 @@ function sortNotifications() {
 async function generateUniqueNotificationId(store) {
   let id;
   let exists = true;
-
   while (exists) {
     id = "N" + Math.floor(100 + Math.random() * 900);
     exists = await new Promise((resolve) => {
@@ -35,10 +32,8 @@ async function generateUniqueNotificationId(store) {
       request.onerror = () => resolve(false);
     });
   }
-
   return id;
 }
-
 /* ---- DB (IndexedDB) ---- */
 async function saveNotificationsToDB() {
   try {
@@ -74,92 +69,83 @@ async function loadNotificationsFromDB() {
     updateBadge();
   }
 }
-
 /* ---- Creating ---- */
 async function createNotification(title, message) {
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   try {
     const db = await openClinicDB();
     const tx = db.transaction('notifications', 'readwrite');
     const store = tx.objectStore('notifications');
-
     const notifId = await generateUniqueNotificationId(store);
-
     const notification = {
-      notifId, // ✅ matches keyPath
-      title,
-      message,
+      notifId, // matches keyPath
+      title: sanitize(title),
+      message: sanitize(message),
       date: new Date().toISOString().split('T')[0],
       recipientId: currentUser.linkedId,
       recipientRole: currentUser.role.toLowerCase(),
       read: false
     };
-
     store.add(notification);
-
     tx.oncomplete = () => {
-      console.log("✅ Notification saved:", notification);
+      console.log("Notification saved:", notification);
     };
-
     tx.onerror = (e) => {
-      console.error("❌ Failed to save notification:", e.target.error);
+      console.error("Failed to save notification:", e.target.error);
     };
   } catch (err) {
-    console.error("⚠️ DB error while saving notification:", err);
+    console.error("DB error while saving notification:", err);
   }
 }
 async function createNotificationForUser(title, message, recipientId, recipientRole) {
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   try {
     const db = await openClinicDB();
     const tx = db.transaction('notifications', 'readwrite');
     const store = tx.objectStore('notifications');
-
     const notifId = await generateUniqueNotificationId(store);
-
     const notification = {
       notifId: notifId, // e.g. "N125"
-      title: title,
-      message: message,
+      title: sanitize(title),
+      message: sanitize(message),
       date: new Date().toISOString().split('T')[0], // "YYYY-MM-DD"
       recipientId: recipientId,
       recipientRole: recipientRole,
       read: false
     };
-
     store.add(notification);
-
     tx.oncomplete = () => {
-      console.log("✅ Notification saved:", notification);
+      console.log("Notification saved:", notification);
     };
-
     tx.onerror = (e) => {
-      console.error("❌ Failed to save notification:", e.target.error);
+      console.error("Failed to save notification:", e.target.error);
     };
   } catch (err) {
-    console.error("⚠️ DB error while saving notification:", err);
+    console.error("DB error while saving notification:", err);
   }
 }
-
-
-
 /* ---- Rendering ---- */
 function renderNotifications() {
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   notificationsList.innerHTML = '';
   if (!notifications.length) {
-    notificationsList.innerHTML = `<div class="empty-state"><p>No new notifications.</p></div>`;
+    notificationsList.innerHTML = sanitize(`<div class="empty-state"><p>No new notifications.</p></div>`);
     return;
   }
   notifications.forEach(n => {
     const item = document.createElement('div');
     item.className = `notification-item ${n.read?'':'unread'}`;
-    item.dataset.id = n.id;
+    item.dataset.id = sanitize(n.id);
+    const safeTitle = sanitize(n.title);
+    const safeMessage = sanitize(n.message);
+    const safeTime = sanitize(n.time);
     item.innerHTML = `
       <span class="icon">${getIcon(n.type)}</span>
       <div class="content">
-        <div class="title">${n.title}</div>
-        <div class="message">${n.message}</div>
-        <div class="time">${n.time}</div>
+        <div class="title">${safeTitle}</div>
+        <div class="message">${safeMessage}</div>
+        <div class="time">${safeTime}</div>
       </div>
     `;
     item.addEventListener('click', () => markAsRead(n.id));
@@ -167,7 +153,6 @@ function renderNotifications() {
   });
   updateBadge();
 }
-
 /* ---- Icon helper ---- */
 function getIcon(type){
   const svg = {
@@ -176,7 +161,6 @@ function getIcon(type){
         <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/>
         <path d="M14 8V2l6 6h-6z" opacity=".3"/>
       </svg>`,
-
     appointment: `
       <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
@@ -187,7 +171,6 @@ function getIcon(type){
         <rect x="11" y="15" width="2" height="2"/>
         <rect x="15" y="15" width="2" height="2"/>
       </svg>`,
-
     access: `
       <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 1C8.7 1 6 3.7 6 7v3H5c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V7c0-3.3-2.7-6-6-6zm0 2c2.2 0 4 1.8 4 4v3H8V7c0-2.2 1.8-4 4-4zm-5 9h10v8H7v-8z"/>
@@ -196,7 +179,6 @@ function getIcon(type){
   };
   return svg[type] || svg.record;
 }
-
 /* ---- Mark as read ---- */
 function markAsRead(id){
   const n = notifications.find(x=>x.id==id);
@@ -206,7 +188,6 @@ function markAsRead(id){
     renderNotifications();
   }
 }
-
 /* ---- Badge ---- */
 function updateBadge(){
   const unread = notifications.filter(n=>!n.read).length;
@@ -214,7 +195,6 @@ function updateBadge(){
   badge.textContent = unread>9?'9+':unread;
   badge.style.display = unread?'flex':'none';
 }
-
 /* ---- Clear all ---- */
 function clearAll(){
   if(!confirm('Clear all notifications?')) return;
@@ -238,7 +218,6 @@ function showUndo(){
   setTimeout(()=>btn.remove(),5000);
 }
 clearNotifsBtn?.addEventListener('click',clearAll);
-
 /* ---- Toggle dropdown ---- */
 notifButton.addEventListener('click', e=>{
   e.stopPropagation();
@@ -246,7 +225,6 @@ notifButton.addEventListener('click', e=>{
   notifPanel.classList.toggle('hidden', !willOpen);
   notifButton.setAttribute('aria-expanded', willOpen);
 });
-
 /* ---- Close when clicking outside ---- */
 document.addEventListener('click', e=>{
   if(!e.target.closest('#notifButton') && !e.target.closest('#notificationPanel')){
@@ -254,7 +232,6 @@ document.addEventListener('click', e=>{
     notifButton.setAttribute('aria-expanded','false');
   }
 });
-
 /* ---- Close with ESC ---- */
 document.addEventListener('keydown', e=>{
   if(e.key==='Escape' && !notifPanel.classList.contains('hidden')){
@@ -262,6 +239,5 @@ document.addEventListener('keydown', e=>{
     notifButton.setAttribute('aria-expanded','false');
   }
 });
-
 /* ---- Init ---- */
 loadNotificationsFromDB();
