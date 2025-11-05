@@ -3,7 +3,8 @@
     "notifId": "N001",
     "recipientRole": "admin",
     "recipientId": "sheilah",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2024-10-27",
     "read": true
   },
@@ -11,7 +12,8 @@
     "notifId": "N002",
     "recipientRole": "admin",
     "recipientId": "joella",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2025-06-08",
     "read": true
   },
@@ -19,7 +21,8 @@
     "notifId": "N003",
     "recipientRole": "admin",
     "recipientId": "roselin",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2024-08-04",
     "read": true
   },
@@ -27,7 +30,8 @@
     "notifId": "N004",
     "recipientRole": "admin",
     "recipientId": "rozalin",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2025-04-10",
     "read": false
   },
@@ -35,7 +39,8 @@
     "notifId": "N005",
     "recipientRole": "admin",
     "recipientId": "melisse",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2025-07-06",
     "read": false
   },
@@ -43,7 +48,8 @@
     "notifId": "N006",
     "recipientRole": "admin",
     "recipientId": "berny",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2025-01-21",
     "read": false
   },
@@ -51,7 +57,8 @@
     "notifId": "N007",
     "recipientRole": "admin",
     "recipientId": "bink",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2024-03-27",
     "read": false
   },
@@ -59,7 +66,8 @@
     "notifId": "N008",
     "recipientRole": "admin",
     "recipientId": "vaughn",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2024-02-18",
     "read": false
   },
@@ -67,7 +75,8 @@
     "notifId": "N009",
     "recipientRole": "admin",
     "recipientId": "elmira",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2025-06-27",
     "read": false
   },
@@ -75,7 +84,8 @@
     "notifId": "N010",
     "recipientRole": "admin",
     "recipientId": "roddie",
-    "message": "System backup completed successfully.",
+    "title": "User profile deleted",
+    "message": "A user account has been deleted.",
     "date": "2024-10-07",
     "read": true
   },
@@ -83,7 +93,8 @@
     "notifId": "N011",
     "recipientRole": "doctor",
     "recipientId": 1,
-    "message": "You have new patient updates.",
+    "title": "New appointment scheduled",
+    "message": "New appointment scheduled with a patient.",
     "date": "2024-07-18",
     "read": true
   },
@@ -91,7 +102,8 @@
     "notifId": "N012",
     "recipientRole": "doctor",
     "recipientId": 2,
-    "message": "You have new patient updates.",
+    "title": "New appointment scheduled",
+    "message": "New appointment scheduled with a patient.",
     "date": "2025-03-22",
     "read": false
   },
@@ -99,7 +111,8 @@
     "notifId": "N013",
     "recipientRole": "doctor",
     "recipientId": 3,
-    "message": "You have new patient updates.",
+    "title": "New appointment scheduled",
+    "message": "New appointment scheduled with a patient.",
     "date": "2025-05-07",
     "read": false
   },
@@ -107,7 +120,8 @@
     "notifId": "N014",
     "recipientRole": "doctor",
     "recipientId": 4,
-    "message": "You have new patient updates.",
+    "title": "Appointment Rescheduled",
+    "message": "A patient has rescheduled their appointment.",
     "date": "2024-10-16",
     "read": true
   },
@@ -115,7 +129,8 @@
     "notifId": "N015",
     "recipientRole": "doctor",
     "recipientId": 5,
-    "message": "You have new patient updates.",
+    "title": "Appointment Rescheduled",
+    "message": "A patient has rescheduled their appointment.",
     "date": "2025-07-01",
     "read": true
   },
@@ -123,7 +138,8 @@
     "notifId": "N016",
     "recipientRole": "doctor",
     "recipientId": 6,
-    "message": "You have new patient updates.",
+    "title": "Appointment Rescheduled",
+    "message": "A patient has rescheduled their appointment.",
     "date": "2024-08-30",
     "read": false
   },
@@ -131,7 +147,8 @@
     "notifId": "N017",
     "recipientRole": "doctor",
     "recipientId": 7,
-    "message": "You have new patient updates.",
+    "title": "Appointment cancelled",
+    "message": "A patient has cancelled their appointment.",
     "date": "2024-12-13",
     "read": false
   },
@@ -139,7 +156,8 @@
     "notifId": "N018",
     "recipientRole": "doctor",
     "recipientId": 8,
-    "message": "You have new patient updates.",
+    "title": "Appointment cancelled",
+    "message": "A patient has cancelled their appointment.",
     "date": "2025-02-08",
     "read": false
   },
@@ -147,7 +165,8 @@
     "notifId": "N019",
     "recipientRole": "doctor",
     "recipientId": 9,
-    "message": "You have new patient updates.",
+    "title": "Appointment cancelled",
+    "message": "A patient has cancelled their appointment.",
     "date": "2024-09-10",
     "read": true
   },
@@ -155,7 +174,8 @@
     "notifId": "N020",
     "recipientRole": "doctor",
     "recipientId": 10,
-    "message": "You have new patient updates.",
+    "title": "Access Request Received",
+    "message": "New access request from a doctor.",
     "date": "2024-05-26",
     "read": false
   },
@@ -163,7 +183,8 @@
     "notifId": "N021",
     "recipientRole": "doctor",
     "recipientId": 11,
-    "message": "You have new patient updates.",
+    "title": "Access Request Received",
+    "message": "New access request from a doctor.",
     "date": "2024-05-29",
     "read": false
   },
@@ -171,7 +192,8 @@
     "notifId": "N022",
     "recipientRole": "doctor",
     "recipientId": 12,
-    "message": "You have new patient updates.",
+    "title": "Access Request Received",
+    "message": "New access request from a doctor.",
     "date": "2024-09-06",
     "read": false
   },
@@ -179,7 +201,8 @@
     "notifId": "N023",
     "recipientRole": "doctor",
     "recipientId": 13,
-    "message": "You have new patient updates.",
+    "title": "Patient record updated",
+    "message": "A patient’s medical record has been updated.",
     "date": "2024-05-14",
     "read": false
   },
@@ -187,7 +210,8 @@
     "notifId": "N024",
     "recipientRole": "doctor",
     "recipientId": 14,
-    "message": "You have new patient updates.",
+    "title": "Patient record updated",
+    "message": "A patient’s medical record has been updated.",
     "date": "2024-06-14",
     "read": true
   },
@@ -195,7 +219,8 @@
     "notifId": "N025",
     "recipientRole": "doctor",
     "recipientId": 15,
-    "message": "You have new patient updates.",
+    "title": "Patient record updated",
+    "message": "A patient’s medical record has been updated.",
     "date": "2024-09-11",
     "read": false
   },
@@ -203,7 +228,8 @@
     "notifId": "N026",
     "recipientRole": "patient",
     "recipientId": "6538586104",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2025-09-25",
     "read": false
   },
@@ -211,7 +237,8 @@
     "notifId": "N027",
     "recipientRole": "patient",
     "recipientId": "3748194617",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2025-06-17",
     "read": true
   },
@@ -219,7 +246,8 @@
     "notifId": "N028",
     "recipientRole": "patient",
     "recipientId": "1055801944",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2025-03-05",
     "read": true
   },
@@ -227,7 +255,8 @@
     "notifId": "N029",
     "recipientRole": "patient",
     "recipientId": "2842736109",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-10-23",
     "read": true
   },
@@ -235,7 +264,8 @@
     "notifId": "N030",
     "recipientRole": "patient",
     "recipientId": "4315792829",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-04-07",
     "read": true
   },
@@ -243,7 +273,8 @@
     "notifId": "N031",
     "recipientRole": "patient",
     "recipientId": "6703065764",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-09-30",
     "read": false
   },
@@ -251,7 +282,8 @@
     "notifId": "N032",
     "recipientRole": "patient",
     "recipientId": "9930757538",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-12-02",
     "read": false
   },
@@ -259,7 +291,8 @@
     "notifId": "N033",
     "recipientRole": "patient",
     "recipientId": "6412244999",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2025-07-18",
     "read": false
   },
@@ -267,7 +300,8 @@
     "notifId": "N034",
     "recipientRole": "patient",
     "recipientId": "1937225747",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-08-12",
     "read": true
   },
@@ -275,7 +309,8 @@
     "notifId": "N035",
     "recipientRole": "patient",
     "recipientId": "0834678659",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-07-27",
     "read": true
   },
@@ -283,7 +318,8 @@
     "notifId": "N036",
     "recipientRole": "patient",
     "recipientId": "8440179340",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-04-15",
     "read": true
   },
@@ -291,7 +327,8 @@
     "notifId": "N037",
     "recipientRole": "patient",
     "recipientId": "9427293039",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2024-07-22",
     "read": false
   },
@@ -299,7 +336,8 @@
     "notifId": "N038",
     "recipientRole": "patient",
     "recipientId": "3795743850",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2025-06-30",
     "read": true
   },
@@ -307,7 +345,8 @@
     "notifId": "N039",
     "recipientRole": "patient",
     "recipientId": "0176749152",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Confirmed",
+    "message": "Your appointment is confirmed.",
     "date": "2025-10-14",
     "read": true
   },
@@ -315,7 +354,8 @@
     "notifId": "N040",
     "recipientRole": "patient",
     "recipientId": "4647088979",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-05-30",
     "read": false
   },
@@ -323,7 +363,8 @@
     "notifId": "N041",
     "recipientRole": "patient",
     "recipientId": "7256963432",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-05-27",
     "read": false
   },
@@ -331,7 +372,8 @@
     "notifId": "N042",
     "recipientRole": "patient",
     "recipientId": "4054087388",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-03-17",
     "read": true
   },
@@ -339,7 +381,8 @@
     "notifId": "N043",
     "recipientRole": "patient",
     "recipientId": "1487623658",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-12-13",
     "read": false
   },
@@ -347,7 +390,8 @@
     "notifId": "N044",
     "recipientRole": "patient",
     "recipientId": "3906914518",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-05-30",
     "read": true
   },
@@ -355,7 +399,8 @@
     "notifId": "N045",
     "recipientRole": "patient",
     "recipientId": "9516004776",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-01-02",
     "read": true
   },
@@ -363,7 +408,8 @@
     "notifId": "N046",
     "recipientRole": "patient",
     "recipientId": "4063756793",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-06-29",
     "read": true
   },
@@ -371,7 +417,8 @@
     "notifId": "N047",
     "recipientRole": "patient",
     "recipientId": "7955347048",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-08-17",
     "read": true
   },
@@ -379,7 +426,8 @@
     "notifId": "N048",
     "recipientRole": "patient",
     "recipientId": "5954675740",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-07-17",
     "read": false
   },
@@ -387,7 +435,8 @@
     "notifId": "N049",
     "recipientRole": "patient",
     "recipientId": "3958557031",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-07-26",
     "read": true
   },
@@ -395,7 +444,8 @@
     "notifId": "N050",
     "recipientRole": "patient",
     "recipientId": "5430525790",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-04-12",
     "read": false
   },
@@ -403,7 +453,8 @@
     "notifId": "N051",
     "recipientRole": "patient",
     "recipientId": "2755133783",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-08-24",
     "read": false
   },
@@ -411,7 +462,8 @@
     "notifId": "N052",
     "recipientRole": "patient",
     "recipientId": "3927052396",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-08-02",
     "read": false
   },
@@ -419,7 +471,8 @@
     "notifId": "N053",
     "recipientRole": "patient",
     "recipientId": "9672170890",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-07-10",
     "read": false
   },
@@ -427,7 +480,8 @@
     "notifId": "N054",
     "recipientRole": "patient",
     "recipientId": "3298389188",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-03-10",
     "read": false
   },
@@ -435,7 +489,8 @@
     "notifId": "N055",
     "recipientRole": "patient",
     "recipientId": "0166036064",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-09-17",
     "read": false
   },
@@ -443,7 +498,8 @@
     "notifId": "N056",
     "recipientRole": "patient",
     "recipientId": "7495367466",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-05-17",
     "read": false
   },
@@ -451,7 +507,8 @@
     "notifId": "N057",
     "recipientRole": "patient",
     "recipientId": "2802706446",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-11-10",
     "read": false
   },
@@ -459,7 +516,8 @@
     "notifId": "N058",
     "recipientRole": "patient",
     "recipientId": "4009273895",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-07-05",
     "read": true
   },
@@ -467,7 +525,8 @@
     "notifId": "N059",
     "recipientRole": "patient",
     "recipientId": "9541088074",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-07-27",
     "read": true
   },
@@ -475,7 +534,8 @@
     "notifId": "N060",
     "recipientRole": "patient",
     "recipientId": "6471828837",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-02-25",
     "read": true
   },
@@ -483,7 +543,8 @@
     "notifId": "N061",
     "recipientRole": "patient",
     "recipientId": "4176305606",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-12-20",
     "read": false
   },
@@ -491,7 +552,8 @@
     "notifId": "N062",
     "recipientRole": "patient",
     "recipientId": "7586577323",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-03-28",
     "read": true
   },
@@ -499,7 +561,8 @@
     "notifId": "N063",
     "recipientRole": "patient",
     "recipientId": "6203338710",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-10-15",
     "read": true
   },
@@ -507,7 +570,8 @@
     "notifId": "N064",
     "recipientRole": "patient",
     "recipientId": "1455229172",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-09-28",
     "read": true
   },
@@ -515,7 +579,8 @@
     "notifId": "N065",
     "recipientRole": "patient",
     "recipientId": "4607334987",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-01-08",
     "read": true
   },
@@ -523,7 +588,8 @@
     "notifId": "N066",
     "recipientRole": "patient",
     "recipientId": "4920143451",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-04-20",
     "read": false
   },
@@ -531,7 +597,8 @@
     "notifId": "N067",
     "recipientRole": "patient",
     "recipientId": "5679629224",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-04-23",
     "read": true
   },
@@ -539,7 +606,8 @@
     "notifId": "N068",
     "recipientRole": "patient",
     "recipientId": "6664789957",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-07-12",
     "read": false
   },
@@ -547,7 +615,8 @@
     "notifId": "N069",
     "recipientRole": "patient",
     "recipientId": "3137478995",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2025-04-08",
     "read": true
   },
@@ -555,7 +624,8 @@
     "notifId": "N070",
     "recipientRole": "patient",
     "recipientId": "5456734834",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-07-25",
     "read": false
   },
@@ -563,7 +633,8 @@
     "notifId": "N071",
     "recipientRole": "patient",
     "recipientId": "9046839311",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-10-13",
     "read": false
   },
@@ -571,7 +642,8 @@
     "notifId": "N072",
     "recipientRole": "patient",
     "recipientId": "2029708895",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-08-29",
     "read": true
   },
@@ -579,7 +651,8 @@
     "notifId": "N073",
     "recipientRole": "patient",
     "recipientId": "9253511109",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-06-29",
     "read": false
   },
@@ -587,7 +660,8 @@
     "notifId": "N074",
     "recipientRole": "patient",
     "recipientId": "6034202965",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-11-27",
     "read": true
   },
@@ -595,7 +669,8 @@
     "notifId": "N075",
     "recipientRole": "patient",
     "recipientId": "0667088997",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Rescheduled",
+    "message": "Your appointment has been rescheduled.",
     "date": "2024-12-29",
     "read": true
   },
@@ -603,7 +678,8 @@
     "notifId": "N076",
     "recipientRole": "patient",
     "recipientId": "3852507189",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-10-13",
     "read": false
   },
@@ -611,7 +687,8 @@
     "notifId": "N077",
     "recipientRole": "patient",
     "recipientId": "7547043135",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-06-18",
     "read": false
   },
@@ -619,7 +696,8 @@
     "notifId": "N078",
     "recipientRole": "patient",
     "recipientId": "9880383567",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-02-21",
     "read": true
   },
@@ -627,7 +705,8 @@
     "notifId": "N079",
     "recipientRole": "patient",
     "recipientId": "4976220591",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-09-25",
     "read": true
   },
@@ -635,7 +714,8 @@
     "notifId": "N080",
     "recipientRole": "patient",
     "recipientId": "0901893994",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-07-23",
     "read": false
   },
@@ -643,7 +723,8 @@
     "notifId": "N081",
     "recipientRole": "patient",
     "recipientId": "0689695497",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-06-02",
     "read": true
   },
@@ -651,7 +732,8 @@
     "notifId": "N082",
     "recipientRole": "patient",
     "recipientId": "7516975605",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-07-27",
     "read": true
   },
@@ -659,7 +741,8 @@
     "notifId": "N083",
     "recipientRole": "patient",
     "recipientId": "5383430830",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-05-25",
     "read": true
   },
@@ -667,7 +750,8 @@
     "notifId": "N084",
     "recipientRole": "patient",
     "recipientId": "7494744711",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-07-01",
     "read": false
   },
@@ -675,7 +759,8 @@
     "notifId": "N085",
     "recipientRole": "patient",
     "recipientId": "5353682432",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-04-28",
     "read": false
   },
@@ -683,7 +768,8 @@
     "notifId": "N086",
     "recipientRole": "patient",
     "recipientId": "0379517825",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-05-10",
     "read": true
   },
@@ -691,7 +777,8 @@
     "notifId": "N087",
     "recipientRole": "patient",
     "recipientId": "1230322833",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-10-01",
     "read": true
   },
@@ -699,7 +786,8 @@
     "notifId": "N088",
     "recipientRole": "patient",
     "recipientId": "9252211462",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-08-30",
     "read": false
   },
@@ -707,7 +795,8 @@
     "notifId": "N089",
     "recipientRole": "patient",
     "recipientId": "2296156193",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-09-11",
     "read": true
   },
@@ -715,7 +804,8 @@
     "notifId": "N090",
     "recipientRole": "patient",
     "recipientId": "1575207966",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-09-05",
     "read": false
   },
@@ -723,7 +813,8 @@
     "notifId": "N091",
     "recipientRole": "patient",
     "recipientId": "9231682180",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-10-20",
     "read": true
   },
@@ -731,7 +822,8 @@
     "notifId": "N092",
     "recipientRole": "patient",
     "recipientId": "7059121684",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-09-19",
     "read": true
   },
@@ -739,7 +831,8 @@
     "notifId": "N093",
     "recipientRole": "patient",
     "recipientId": "0117253944",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-11-19",
     "read": true
   },
@@ -747,7 +840,8 @@
     "notifId": "N094",
     "recipientRole": "patient",
     "recipientId": "8549714305",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-05-21",
     "read": true
   },
@@ -755,7 +849,8 @@
     "notifId": "N095",
     "recipientRole": "patient",
     "recipientId": "5663733841",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-06-30",
     "read": false
   },
@@ -763,7 +858,8 @@
     "notifId": "N096",
     "recipientRole": "patient",
     "recipientId": "8201426894",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-06-15",
     "read": false
   },
@@ -771,7 +867,8 @@
     "notifId": "N097",
     "recipientRole": "patient",
     "recipientId": "4334743129",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-01-02",
     "read": false
   },
@@ -779,7 +876,8 @@
     "notifId": "N098",
     "recipientRole": "patient",
     "recipientId": "2014021686",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-03-17",
     "read": false
   },
@@ -787,7 +885,8 @@
     "notifId": "N099",
     "recipientRole": "patient",
     "recipientId": "2525930002",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-03-07",
     "read": true
   },
@@ -795,7 +894,8 @@
     "notifId": "N100",
     "recipientRole": "patient",
     "recipientId": "9385343513",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-07-10",
     "read": false
   },
@@ -803,7 +903,8 @@
     "notifId": "N101",
     "recipientRole": "patient",
     "recipientId": "0083453962",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-12-22",
     "read": true
   },
@@ -811,7 +912,8 @@
     "notifId": "N102",
     "recipientRole": "patient",
     "recipientId": "5892205592",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-07-10",
     "read": false
   },
@@ -819,7 +921,8 @@
     "notifId": "N103",
     "recipientRole": "patient",
     "recipientId": "6010203082",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-04-24",
     "read": false
   },
@@ -827,7 +930,8 @@
     "notifId": "N104",
     "recipientRole": "patient",
     "recipientId": "9369147934",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-02-11",
     "read": false
   },
@@ -835,7 +939,8 @@
     "notifId": "N105",
     "recipientRole": "patient",
     "recipientId": "6589057079",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-04-24",
     "read": false
   },
@@ -843,7 +948,8 @@
     "notifId": "N106",
     "recipientRole": "patient",
     "recipientId": "2936312639",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-09-18",
     "read": false
   },
@@ -851,7 +957,8 @@
     "notifId": "N107",
     "recipientRole": "patient",
     "recipientId": "0700059547",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-10-18",
     "read": false
   },
@@ -859,7 +966,8 @@
     "notifId": "N108",
     "recipientRole": "patient",
     "recipientId": "7113173489",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-03-31",
     "read": true
   },
@@ -867,7 +975,8 @@
     "notifId": "N109",
     "recipientRole": "patient",
     "recipientId": "2427976946",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-02-13",
     "read": false
   },
@@ -875,7 +984,8 @@
     "notifId": "N110",
     "recipientRole": "patient",
     "recipientId": "5974533852",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-10-03",
     "read": false
   },
@@ -883,7 +993,8 @@
     "notifId": "N111",
     "recipientRole": "patient",
     "recipientId": "5907940034",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-02-14",
     "read": true
   },
@@ -891,7 +1002,8 @@
     "notifId": "N112",
     "recipientRole": "patient",
     "recipientId": "4148515472",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-09-17",
     "read": false
   },
@@ -899,7 +1011,8 @@
     "notifId": "N113",
     "recipientRole": "patient",
     "recipientId": "2222769337",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-02-17",
     "read": true
   },
@@ -907,7 +1020,8 @@
     "notifId": "N114",
     "recipientRole": "patient",
     "recipientId": "0163065462",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-06-27",
     "read": true
   },
@@ -915,7 +1029,8 @@
     "notifId": "N115",
     "recipientRole": "patient",
     "recipientId": "8070302771",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-01-30",
     "read": false
   },
@@ -923,7 +1038,8 @@
     "notifId": "N116",
     "recipientRole": "patient",
     "recipientId": "4590278510",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-09-11",
     "read": false
   },
@@ -931,7 +1047,8 @@
     "notifId": "N117",
     "recipientRole": "patient",
     "recipientId": "9475373012",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-07-24",
     "read": false
   },
@@ -939,7 +1056,8 @@
     "notifId": "N118",
     "recipientRole": "patient",
     "recipientId": "2733019406",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-09-13",
     "read": true
   },
@@ -947,7 +1065,8 @@
     "notifId": "N119",
     "recipientRole": "patient",
     "recipientId": "1678031216",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-09-22",
     "read": false
   },
@@ -955,7 +1074,8 @@
     "notifId": "N120",
     "recipientRole": "patient",
     "recipientId": "5752908701",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-07-31",
     "read": true
   },
@@ -963,7 +1083,8 @@
     "notifId": "N121",
     "recipientRole": "patient",
     "recipientId": "0742718808",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-10-13",
     "read": false
   },
@@ -971,7 +1092,8 @@
     "notifId": "N122",
     "recipientRole": "patient",
     "recipientId": "6416503409",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-08-25",
     "read": true
   },
@@ -979,7 +1101,8 @@
     "notifId": "N123",
     "recipientRole": "patient",
     "recipientId": "1585276065",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-08-24",
     "read": true
   },
@@ -987,7 +1110,8 @@
     "notifId": "N124",
     "recipientRole": "patient",
     "recipientId": "7096153047",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2025-08-25",
     "read": true
   },
@@ -995,7 +1119,8 @@
     "notifId": "N125",
     "recipientRole": "patient",
     "recipientId": "0916757552",
-    "message": "Your upcoming appointment is confirmed.",
+    "title": "Appointment Cancelled",
+    "message": "Your appointment has been cancelled.",
     "date": "2024-01-12",
     "read": false
   }
