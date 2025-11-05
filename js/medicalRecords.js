@@ -199,13 +199,37 @@ async function viewMedicalRecord(medicalrecordId) {
                 );
                 const medicalrecords = decryptedMedicalRecords.filter(med => med.recordId === recordId) || [];
                 const medicalrecord = medicalrecords[0];
-                const currentUserData = decryptedDoctors.filter(d => d.id === medicalrecord.doctorId) || [];
+                
+                // Check if medical record exists
+                if (!medicalrecord) {
+                    console.error('Medical record not found');
+                    recordDoctorName.innerText = 'N/A';
+                    recordDate.innerText = 'N/A';
+                    recordDiagnosis.innerText = 'Record not found';
+                    recordTreatment.innerText = 'N/A';
+                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Medical record not found.</td></tr>");
+                    return;
+                }
+                
+                // Debug logging
+                console.log('Medical record doctorId:', medicalrecord.doctorId, typeof medicalrecord.doctorId);
+                console.log('Available doctors:', decryptedDoctors.map(d => ({ id: d.id, type: typeof d.id, name: `${d.first_name} ${d.last_name}` })));
+                
+                // Try both strict and loose comparison
+                const currentUserData = decryptedDoctors.filter(d => d.id == medicalrecord.doctorId) || [];
                 const doctor = currentUserData[0];
-                const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
+                
+                // Check if doctor exists, provide fallback
+                let doctorFullName = 'Unknown Doctor';
+                if (doctor && doctor.first_name && doctor.last_name) {
+                    doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
+                }
+                
                 const safeDoctor = sanitize(doctorFullName);
-                const safeDate = sanitize(medicalrecord.dateTime);
-                const safeDiagnosis = sanitize(medicalrecord.diagnosis);
-                const safeTreatment = sanitize(medicalrecord.treatment);
+                const safeDate = sanitize(medicalrecord.dateTime || 'N/A');
+                const safeDiagnosis = sanitize(medicalrecord.diagnosis || 'N/A');
+                const safeTreatment = sanitize(medicalrecord.treatment || 'N/A');
+                
                 recordDoctorName.innerText = safeDoctor;
                 recordDate.innerText = safeDate;
                 recordDiagnosis.innerText = safeDiagnosis;
@@ -214,7 +238,7 @@ async function viewMedicalRecord(medicalrecordId) {
                 const recordPrescriptions = medicalrecord.prescriptions || [];
            
                 if (!recordPrescriptions || recordPrescriptions.length === 0) {
-                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='5'>No prescriptions found.</td></tr>");
+                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>No prescriptions found.</td></tr>");
                     return;
                 }
                 const medicineTx = db.transaction('medicines', 'readonly');
@@ -253,7 +277,7 @@ async function viewMedicalRecord(medicalrecordId) {
         };
     } catch (err) {
         console.error('Error opening DB:', err);
-        prescriptionsBody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
+        prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Error connecting to database.</td></tr>");
     }
 }
 async function viewMedicalRecordforDoctors(medicalrecordId) {
@@ -286,15 +310,34 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
                 );
                 const medicalrecords = decryptedMedicalRecords.filter(med => med.recordId === recordId) || [];
                 const medicalrecord = medicalrecords[0];
+                
+                // Check if medical record exists
+                if (!medicalrecord) {
+                    console.error('Medical record not found');
+                    recordDoctorName.innerText = 'N/A';
+                    recordDate.innerText = 'N/A';
+                    recordDiagnosis.innerText = 'Record not found';
+                    recordTreatment.innerText = 'N/A';
+                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Medical record not found.</td></tr>");
+                    return;
+                }
+                
                 const currentUserData = decryptedDoctors.filter(d => d.id === medicalrecord.doctorId) || [];
                 const doctor = currentUserData[0];
-                const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
+                
+                // Check if doctor exists, provide fallback
+                let doctorFullName = 'Unknown Doctor';
+                if (doctor && doctor.first_name && doctor.last_name) {
+                    doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
+                }
+                
                 console.log(doctorFullName);
                 console.log(medicalrecord.dateTime);
                 const safeDoctor = sanitize(doctorFullName);
-                const safeDate = sanitize(medicalrecord.dateTime);
-                const safeDiagnosis = sanitize(medicalrecord.diagnosis);
-                const safeTreatment = sanitize(medicalrecord.treatment);
+                const safeDate = sanitize(medicalrecord.dateTime || 'N/A');
+                const safeDiagnosis = sanitize(medicalrecord.diagnosis || 'N/A');
+                const safeTreatment = sanitize(medicalrecord.treatment || 'N/A');
+                
                 recordDoctorName.innerText = safeDoctor;
                 recordDate.innerText = safeDate;
                 recordDiagnosis.innerText = safeDiagnosis;
@@ -303,7 +346,7 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
                 const recordPrescriptions = medicalrecord.prescriptions || [];
            
                 if (!recordPrescriptions || recordPrescriptions.length === 0) {
-                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='5'>No prescriptions found.</td></tr>");
+                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>No prescriptions found.</td></tr>");
                     return;
                 }
                 const medicineTx = db.transaction('medicines', 'readonly');
@@ -316,7 +359,7 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
                     const row = document.createElement('tr');
                     const medicineList = medicines.filter(m => m.id === pre.medicineId ) || [];
                     const medicine = medicineList[0];
-                    const safeDrug = sanitize(medicine.Drug || 'Unknown');
+                    const safeDrug = sanitize(medicine?.Drug || 'Unknown');
                     const safeDosage = sanitize(pre.dosage || '-');
                     const safeDuration = sanitize(pre.duration || '-');
                     const safeInstructions = sanitize(pre.instructions || '-');
@@ -330,7 +373,7 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
                     });
                 };
                 medReq.onerror = function() {
-                    console.error('Failed to load medicine info:', request.error);
+                    console.error('Failed to load medicine info:', medReq.error);
                 };
             };
            
@@ -339,11 +382,11 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
             };
         };
         doctorsReq.onerror = function() {
-            console.error('Failed to load doctors info:', request.error);
+            console.error('Failed to load doctors info:', doctorsReq.error);
         };
     } catch (err) {
         console.error('Error opening DB:', err);
-        prescriptionsBody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
+        prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Error connecting to database.</td></tr>");
     }
 }
 document.addEventListener('DOMContentLoaded', () => {
