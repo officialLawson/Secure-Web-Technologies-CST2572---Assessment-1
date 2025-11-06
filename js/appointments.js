@@ -52,6 +52,10 @@ function renderConfirmedAppointments(data) {
     const safeRole = DOMPurify.sanitize(app.role);
 
     if (userRole === 'doctor') {
+        // Only show "Mark Completed" button if status is "Confirmed"
+        const markCompletedBtn = app.status === "Confirmed" 
+          ? `<button class="complete-btn" data-id="${safeId}">Mark Completed</button>` 
+          : '';
       row.innerHTML = `
         <td>${safePatient}</td>
         <td>${safeReason}</td>
@@ -60,6 +64,7 @@ function renderConfirmedAppointments(data) {
         <td>
           <button class="btn-edit" data-id="${safeId}" data-role="${safeRole}">Edit</button>
           <button class="btn-cancel" data-id="${safeId}">Cancel</button>
+           ${markCompletedBtn}
         </td>
       `;
     } else if (userRole === 'patient') {
@@ -71,6 +76,7 @@ function renderConfirmedAppointments(data) {
         <td>
           <button class="btn-edit" data-id="${safeId}" data-role="${safeRole}">Edit</button>
           <button class="btn-cancel" data-id="${safeId}">Cancel</button>
+
         </td>
       `;
     } else if (userRole === 'admin') {
@@ -88,8 +94,10 @@ function renderConfirmedAppointments(data) {
     tbodyConfirmed.appendChild(row);
   });
 
+
   attachAppointmentListeners();
 }
+
 
 function renderCancelledAppointments(data) {
   const tbody = document.getElementById('appointmentsBody');
@@ -137,6 +145,14 @@ function renderCancelledAppointments(data) {
   });
 
   attachAppointmentListeners();
+  
+  if (window.__markAppointmentCompletedClient && typeof window.__markAppointmentCompletedClient === 'function') {
+      // Re-inject "Mark Completed" buttons after dynamic rendering
+      if (window.injectButtonsIntoRows) {
+          try { window.injectButtonsIntoRows(); } catch (err) { console.error(err); }
+      }
+  }
+
 }
 
 let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
@@ -187,122 +203,138 @@ async function loadAppointments() {
   tbodyConfirmed.innerHTML = "";
   try {
     const db = await openClinicDB();
+
    
     const user = JSON.parse(localStorage.getItem('currentUser'));
-    // Fetch doctors first and build a lookup map
-    const doctorTx = db.transaction('doctors', 'readonly');
-    const doctorStore = doctorTx.objectStore('doctors');
-    const doctorsReq = doctorStore.getAll();
-    doctorsReq.onsuccess = function() {
-      const doctors = doctorsReq.result || [];
-      const doctorMap = {};
-      doctors.forEach(doc => {
-        const name = doc.name || `${doc.first_name || ''} ${doc.last_name || ''}`.trim();
-        doctorMap[doc.id] = sanitize(name);
-      });
-        // Fetch patients first and build a lookup map
-        const patientTx = db.transaction('patients', 'readonly');
-        const patientStore = patientTx.objectStore('patients');
-        const patientsReq = patientStore.getAll();
-        patientsReq.onsuccess = function() {
-            const patients = patientsReq.result || [];
-            const patientMap = {};
-            patients.forEach(pat => {
-                const name = pat.name || `${pat.Title || ''} ${pat.First || ''} ${pat.Last || ''}`.trim();
-                patientMap[pat.NHS] = sanitize(name);
-            });
-            // Now fetch appointments
-            const tx = db.transaction('appointments', 'readonly');
-            const store = tx.objectStore('appointments');
-            const request = store.getAll();
-            request.onsuccess = function() {
-                const appointments = request.result;
-                if (!appointments || appointments.length === 0) {
-                  tbody.innerHTML = sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
-                  tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
-                 
-                  return;
-                }
-                // Populate Table
-                switch (user.role.toLowerCase()) {
-                case 'doctor':
-                    const appointmentsDoctor = appointments.filter(p => p.doctorId === user.linkedId) || [];
-                    if (!appointmentsDoctor || appointmentsDoctor.length === 0) {
+        // Define update function ONLY for doctors/admins
+    if (['doctor', 'admin'].includes(user.role.toLowerCase())) {
+      window.updateAppointmentStatus = async (id, newStatus) => {
+        const appt = await clinicDB.getItem('appointments', id);
+        if (!appt) throw new Error(`Appointment ${id} not found`);
+        appt.status = newStatus;
+        if (newStatus === 'Completed') {
+          appt.completedAt = new Date().toISOString();
+        }
+        await clinicDB.updateItem('appointments', appt);
+        return appt;
+      };
+    }
+        // Fetch doctors first and build a lookup map
+        const doctorTx = db.transaction('doctors', 'readonly');
+        const doctorStore = doctorTx.objectStore('doctors');
+        const doctorsReq = doctorStore.getAll();
+        doctorsReq.onsuccess = function() {
+          const doctors = doctorsReq.result || [];
+          const doctorMap = {};
+          doctors.forEach(doc => {
+            const name = doc.name || `${doc.first_name || ''} ${doc.last_name || ''}`.trim();
+            doctorMap[doc.id] = sanitize(name);
+          });
+            // Fetch patients first and build a lookup map
+            const patientTx = db.transaction('patients', 'readonly');
+            const patientStore = patientTx.objectStore('patients');
+            const patientsReq = patientStore.getAll();
+            patientsReq.onsuccess = function() {
+                const patients = patientsReq.result || [];
+                const patientMap = {};
+                patients.forEach(pat => {
+                    const name = pat.name || `${pat.Title || ''} ${pat.First || ''} ${pat.Last || ''}`.trim();
+                    patientMap[pat.NHS] = sanitize(name);
+                });
+                // Now fetch appointments
+                const tx = db.transaction('appointments', 'readonly');
+                const store = tx.objectStore('appointments');
+                const request = store.getAll();
+                request.onsuccess = function() {
+                    const appointments = request.result;
+                    if (!appointments || appointments.length === 0) {
                       tbody.innerHTML = sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
                       tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
-                     
+                    
                       return;
                     }
-                    appointmentsDoctor.forEach(app => {
-                    const row = document.createElement('tr');
-                    row.dataset.id = sanitize(app.appointmentId);
-                    row.dataset.date = sanitize(app.date);
-                    row.dataset.status = sanitize(app.status);
-                    const doctorName = doctorMap[app.doctorId] || 'Unknown';
-                    const patientName = patientMap[app.patientId] || 'Unknown';
-                    const safeReason = sanitize(app.reason || 'Unknown');
-                    const safeDate = sanitize(app.date || '-');
-                    const safeTime = sanitize(app.time || '-');
-                    const safeStatus = sanitize(app.status || 'Pending');
-                    const safeId = sanitize(app.appointmentId);
-                    if (app.status === "Confirmed") {
-                      row.innerHTML = `
-                          <td>${patientName}</td>
-                          <td>${safeReason}</td>
-                          <td>${safeDate} - ${safeTime}</td>
-                          <td>${safeStatus}</td>
-                          <td>
-                            <button class="btn-edit" data-id="${safeId}" data-role="${sanitize(user.role.toLowerCase())}">Edit</button>
-                            <button class="btn-cancel" data-id="${safeId}">Cancel</button>
-                          </td>
-                      `;
+                    // Populate Table
+                    switch (user.role.toLowerCase()) {
+                    case 'doctor':
+                        const appointmentsDoctor = appointments.filter(p => p.doctorId === user.linkedId) || [];
+                        if (!appointmentsDoctor || appointmentsDoctor.length === 0) {
+                          tbody.innerHTML = sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
+                          tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
+                        
+                          return;
+                        }
+                        appointmentsDoctor.forEach(app => {
+                        const row = document.createElement('tr');
+                        row.dataset.id = sanitize(app.appointmentId);
+                        row.dataset.date = sanitize(app.date);
+                        row.dataset.status = sanitize(app.status);
+                        const doctorName = doctorMap[app.doctorId] || 'Unknown';
+                        const patientName = patientMap[app.patientId] || 'Unknown';
+                        const safeReason = sanitize(app.reason || 'Unknown');
+                        const safeDate = sanitize(app.date || '-');
+                        const safeTime = sanitize(app.time || '-');
+                        const safeStatus = sanitize(app.status || 'Pending');
+                        const safeId = sanitize(app.appointmentId);
+                        if (app.status === "Confirmed") {
+                          
+                          row.innerHTML = `
+                              <td>${patientName}</td>
+                              <td>${safeReason}</td>
+                              <td>${safeDate} - ${safeTime}</td>
+                              <td>${safeStatus}</td>
+                              <td>
+                                <button class="btn-edit" data-id="${safeId}" data-role="${sanitize(user.role.toLowerCase())}">Edit</button>
+                                <button class="btn-cancel" data-id="${safeId}">Cancel</button>
+                                <button class="complete-btn" data-id="${safeId}">Mark Completed</button>
+                              </td>
+                          `;
 
-                      tbodyConfirmed.appendChild(row);
+                          tbodyConfirmed.appendChild(row);
 
-                      allRenderedCofirmedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: patientName || '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
-                        });
+                          allRenderedCofirmedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: patientName || '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
 
-                    } else if (app.status === "Completed") {
-                      row.innerHTML = `
-                          <td>${patientName}</td>
-                          <td>${safeReason}</td>
-                          <td>${safeDate} - ${safeTime}</td>
-                          <td>${safeStatus}</td>
-                          <td>
-                            <button class="btn-delete" data-id="${safeId}">Delete</button>
-                          </td>
-                      `;
-                      
-                      tbody.appendChild(row);
+                        } else if (app.status === "Completed") {
+                          row.innerHTML = `
+                              <td>${patientName}</td>
+                              <td>${safeReason}</td>
+                              <td>${safeDate} - ${safeTime}</td>
+                              <td>${safeStatus}</td>
+                              <td>
+                                <button class="btn-delete" data-id="${safeId}">Delete</button>
+                              </td>
+                          `;
+                          
+                          tbody.appendChild(row);
 
-                      allRenderedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: patientName || '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
-                        });
+                          allRenderedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: patientName || '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
 
-                    } else if (app.status === "Cancelled") {
-                      row.innerHTML = `
-                          <td>${patientName}</td>
-                          <td>${safeReason}</td>
-                          <td>${safeDate} - ${safeTime}</td>
-                          <td>${safeStatus}</td>
-                          <td>
-                            <button class="btn-delete" data-id="${safeId}">Delete</button>
-                          </td>
-                      `;
-                      tbody.appendChild(row);
+                        } else if (app.status === "Cancelled") {
+                          row.innerHTML = `
+                              <td>${patientName}</td>
+                              <td>${safeReason}</td>
+                              <td>${safeDate} - ${safeTime}</td>
+                              <td>${safeStatus}</td>
+                              <td>
+                                <button class="btn-delete" data-id="${safeId}">Delete</button>
+                              </td>
+                          `;
+                          tbody.appendChild(row);
 
                       allRenderedAppointments.push({
                           html: row.innerHTML,
@@ -324,7 +356,8 @@ async function loadAppointments() {
                     tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
                      
                       return;
-                    }                   
+                    }
+                   
                     appointmentsPatient.forEach(app => {
                       const row = document.createElement('tr');
                       const doctorName = doctorMap[app.doctorId] || 'Unknown';
@@ -347,185 +380,241 @@ async function loadAppointments() {
                        
                         tbodyConfirmed.appendChild(row);
 
-                        allRenderedCofirmedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
-                        });
-                      } else if (app.status === "Completed") {
-                        row.innerHTML = `
-                          <td>Dr. ${doctorName}</td>
-                          <td>${safeReason}</td>
-                          <td>${safeDate} - ${safeTime}</td>
-                          <td>${safeStatus}</td>
-                          <td>
-                            <button class="btn-delete" data-id="${safeId}">Delete</button>
-                          </td>
-                        `;
-                        tbody.appendChild(row);
+                            allRenderedCofirmedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
+                          } else if (app.status === "Completed") {
+                            row.innerHTML = `
+                              <td>Dr. ${doctorName}</td>
+                              <td>${safeReason}</td>
+                              <td>${safeDate} - ${safeTime}</td>
+                              <td>${safeStatus}</td>
+                              <td>
+                                <button class="btn-delete" data-id="${safeId}">Delete</button>
+                              </td>
+                            `;
+                            tbody.appendChild(row);
 
-                        allRenderedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
-                        });
-                    } else if (app.status === "Cancelled") {
-                        row.innerHTML = `
-                          <td>Dr. ${doctorName}</td>
-                          <td>${safeReason}</td>
-                          <td>${safeDate} - ${safeTime}</td>
-                          <td>${safeStatus}</td>
-                          <td>
-                            <button class="btn-delete" data-id="${safeId}">Delete</button>
-                          </td>
-                        `;
-                      tbody.appendChild(row);
+                            allRenderedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
+                        } else if (app.status === "Cancelled") {
+                            row.innerHTML = `
+                              <td>Dr. ${doctorName}</td>
+                              <td>${safeReason}</td>
+                              <td>${safeDate} - ${safeTime}</td>
+                              <td>${safeStatus}</td>
+                              <td>
+                                <button class="btn-delete" data-id="${safeId}">Delete</button>
+                              </td>
+                            `;
+                          tbody.appendChild(row);
 
-                      allRenderedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
+                          allRenderedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
+                        }
                         });
+                        break;
+                    case 'admin':
+                        appointments.forEach(app => {
+                        const row = document.createElement('tr');
+                        const doctorName = doctorMap[app.doctorId] || 'Unknown';
+                        const patientName = patientMap[app.patientId] || 'Unknown';
+                        const safeDate = sanitize(app.date || '-');
+                        const safeTime = sanitize(app.time || '-');
+                        const safeStatus = sanitize(app.status || 'Pending');
+                        const safeId = sanitize(app.appointmentId);
+                        if (app.status === "Confirmed") {
+                          row.innerHTML = `
+                              <td>Dr. ${doctorName}</td>
+                              <td>${patientName}</td>
+                              <td>${safeDate} - ${safeTime}</td>
+                              <td>${safeStatus}</td>
+                              <td>
+                                <button class="btn-cancel" data-id="${safeId}">Cancel</button>
+                              </td>
+                          `;
+                          tbodyConfirmed.appendChild(row);
+
+                          allRenderedCofirmedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: patientName || '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
+                        } else if (app.status === "Completed") {
+                            row.innerHTML = `
+                                <td>Dr. ${doctorName}</td>
+                                <td>${patientName}</td>
+                                <td>${safeDate} - ${safeTime}</td>
+                                <td>${safeStatus}</td>
+                                <td>
+                                  <button class="btn-delete" data-id="${safeId}">Delete</button>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+
+                            allRenderedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: patientName || '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
+                        } else if (app.status === "Cancelled") {
+                            row.innerHTML = `
+                                <td>Dr. ${doctorName}</td>
+                                <td>${patientName}</td>
+                                <td>${safeDate} - ${safeTime}</td>
+                                <td>${safeStatus}</td>
+                                <td>
+                                  <button class="btn-delete" data-id="${safeId}">Delete</button>
+                                </td>
+                            `;
+                            tbody.appendChild(row);
+
+                            allRenderedAppointments.push({
+                              html: row.innerHTML,
+                              status: app.status,
+                              doctorName: doctorName || '',
+                              patientName: patientName || '',
+                              reason: app.reason || '',
+                              date: app.date || '',
+                              time: app.time || ''
+                            });
+                        }
+                        });
+                        break;
+                    default:
+                        tbody.innerHTML = sanitize("<tr><td colspan='5'>Unauthorized access.</td></tr>");
+                        return;
                     }
+                  
+                    // Attach button listeners
+                    tbodyConfirmed.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                      const id = sanitize(e.target.dataset.id);
+                      const role = sanitize(e.target.dataset.role);
+                      if (role === 'patient') {
+                        window.location.href = `edit-appointment-patient.html?role=${role}&id=${id}`;
+                      } else if (role === 'doctor') {
+                        window.location.href = `edit-appointment-doctor.html?role=${role}&id=${id}`;
+                      } else {
+                        console.warn(`Unknown role: ${role}`);
+                      }
                     });
-                    break;
-                case 'admin':
-                    appointments.forEach(app => {
-                    const row = document.createElement('tr');
-                    const doctorName = doctorMap[app.doctorId] || 'Unknown';
-                    const patientName = patientMap[app.patientId] || 'Unknown';
-                    const safeDate = sanitize(app.date || '-');
-                    const safeTime = sanitize(app.time || '-');
-                    const safeStatus = sanitize(app.status || 'Pending');
-                    const safeId = sanitize(app.appointmentId);
-                    if (app.status === "Confirmed") {
-                      row.innerHTML = `
-                          <td>Dr. ${doctorName}</td>
-                          <td>${patientName}</td>
-                          <td>${safeDate} - ${safeTime}</td>
-                          <td>${safeStatus}</td>
-                          <td>
-                            <button class="btn-cancel" data-id="${safeId}">Cancel</button>
-                          </td>
-                      `;
-                      tbodyConfirmed.appendChild(row);
-
-                      allRenderedCofirmedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: patientName || '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
-                        });
-                    } else if (app.status === "Completed") {
-                        row.innerHTML = `
-                            <td>Dr. ${doctorName}</td>
-                            <td>${patientName}</td>
-                            <td>${safeDate} - ${safeTime}</td>
-                            <td>${safeStatus}</td>
-                            <td>
-                              <button class="btn-delete" data-id="${safeId}">Delete</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-
-                        allRenderedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: patientName || '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
-                        });
-                    } else if (app.status === "Cancelled") {
-                        row.innerHTML = `
-                            <td>Dr. ${doctorName}</td>
-                            <td>${patientName}</td>
-                            <td>${safeDate} - ${safeTime}</td>
-                            <td>${safeStatus}</td>
-                            <td>
-                              <button class="btn-delete" data-id="${safeId}">Delete</button>
-                            </td>
-                        `;
-                        tbody.appendChild(row);
-
-                        allRenderedAppointments.push({
-                          html: row.innerHTML,
-                          status: app.status,
-                          doctorName: doctorName || '',
-                          patientName: patientName || '',
-                          reason: app.reason || '',
-                          date: app.date || '',
-                          time: app.time || ''
-                        });
-                    }
                     });
-                    break;
-                default:
-                    tbody.innerHTML = sanitize("<tr><td colspan='5'>Unauthorized access.</td></tr>");
-                    return;
-                }
-               
-                // Attach button listeners
-                tbodyConfirmed.querySelectorAll('.btn-edit').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                  const id = sanitize(e.target.dataset.id);
-                  const role = sanitize(e.target.dataset.role);
-                  if (role === 'patient') {
-                    window.location.href = `edit-appointment-patient.html?role=${role}&id=${id}`;
-                  } else if (role === 'doctor') {
-                    window.location.href = `edit-appointment-doctor.html?role=${role}&id=${id}`;
-                  } else {
-                    console.warn(`Unknown role: ${role}`);
-                  }
-                });
-                });
-                tbody.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = sanitize(e.target.dataset.id);
-                    deleteAppointment(id);
-                });
-                });
-                tbodyConfirmed.querySelectorAll('.btn-cancel').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const id = sanitize(e.target.dataset.id);
-                    cancelAppointment(id);
-                });
-                });
+                    tbody.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = sanitize(e.target.dataset.id);
+                        deleteAppointment(id);
+                    });
+                    });
+                    tbodyConfirmed.querySelectorAll('.btn-cancel').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const id = sanitize(e.target.dataset.id);
+                        cancelAppointment(id);
+                    });
+                    });
+                    // Add click handler for Mark Completed buttons
+                    tbodyConfirmed.querySelectorAll('.complete-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                      const id = e.target.dataset.id;
+                      try {
+                        const db = await openClinicDB();
+                        const tx = db.transaction('appointments', 'readwrite');
+                        const store = tx.objectStore('appointments');
+                        const request = store.get(id);
+
+                        request.onsuccess = async () => {
+                          const appointment = request.result;
+                          if (appointment && appointment.status === "Confirmed") {
+                            appointment.status = "Completed";
+                            appointment.completedAt = new Date().toISOString(); // optional
+
+                            const updateReq = store.put(appointment);
+                            updateReq.onsuccess = () => {
+                              console.log(`Appointment ${id} marked as Completed`);
+                              // Refresh the entire table
+                              loadAppointments();
+                            
+                            };
+
+                            
+                            updateReq.onerror = () => {
+                              alert('Error updating appointment.');
+                            };
+                            //  Rebind cancel and complete buttons after render
+                            tbodyConfirmed.querySelectorAll('.btn-cancel').forEach(btn => {
+                              btn.addEventListener('click', (e) => {
+                                const id = sanitize(e.target.dataset.id);
+                                cancelAppointment(id);
+                              });
+                            });
+
+                            tbodyConfirmed.querySelectorAll('.complete-btn').forEach(btn => {
+                              btn.addEventListener('click', async (e) => {
+                                // ...mark completed code...
+                              });
+                            });
+
+                          }
+                        };
+                        
+                        request.onerror = () => {
+                          alert('Error fetching appointment.');
+                        };
+                      } catch (err) {
+                        console.error("Mark completed failed:", err);
+                        alert('Error marking appointment as completed.');
+                      }
+                    });
+                  });
+
+                };
+                request.onerror = function() {
+                    console.error('Failed to load appointments:', request.error);
+                    tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading appointments.</td></tr>");
+                };
             };
-            request.onerror = function() {
-                console.error('Failed to load appointments:', request.error);
-                tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading appointments.</td></tr>");
+            patientsReq.onerror = function() {
+            console.error('Failed to load patients:', patientsReq.error);
+            tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading patients data.</td></tr>");
             };
         };
-        patientsReq.onerror = function() {
-        console.error('Failed to load patients:', patientsReq.error);
-        tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading patients data.</td></tr>");
+        doctorsReq.onerror = function() {
+          console.error('Failed to load doctors:', doctorsReq.error);
+          tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading doctors data.</td></tr>");
         };
-    };
-    doctorsReq.onerror = function() {
-      console.error('Failed to load doctors:', doctorsReq.error);
-      tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading doctors data.</td></tr>");
-    };
-  } catch (err) {
-    console.error('Error opening DB:', err);
-    tbody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
-  }
+      } catch (err) {
+        console.error('Error opening DB:', err);
+        tbody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
+      }
+      document.dispatchEvent(new Event('appointmentsRendered'));
 }
 async function populateDoctorDropdown() {
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });

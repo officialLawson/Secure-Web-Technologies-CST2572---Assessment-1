@@ -7,9 +7,23 @@
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/table.css">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#1e40af">
 </head>
+<style>
+    .complete-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    margin-left: 4px;
+    }
+
+    .complete-btn:hover {
+    background-color: #0056b3;
+    }
+</style>
 <body>
     <div class="container">
         <!-- Sidebar -->
@@ -237,7 +251,7 @@
     <div id="complete-modal" class="modal-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="complete-modal-title">
         <div class="modal-content" role="document" style="max-width:420px;">
             <h3 id="complete-modal-title">Mark appointment as completed?</h3>
-            <p style="color:var(--text-muted); margin-top:8px; margin-bottom:18px;">This will mark the appointment as completed. This action is idempotent.</p>
+            <p id="complete-modal-message" style="color:var(--text-muted); margin-top:8px; margin-bottom:18px;">This will mark the appointment as completed. This action is idempotent.</p>
             <div class="modal-actions" style="justify-content:center;">
             <button id="cancel-complete" class="btn-secondary btn" type="button">Cancel</button>
             <button id="confirm-complete" class="btn-primary btn" type="button">Mark Completed</button>
@@ -290,15 +304,6 @@
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then((reg) => console.log('SW registered:', reg.scope))
-                .catch((err) => console.log('SW registration failed:', err));
-            });
-        }
     </script>
 </body>
 </html>
