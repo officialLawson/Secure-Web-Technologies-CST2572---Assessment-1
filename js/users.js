@@ -727,8 +727,6 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
 
             const doctors = decryptedDoctors;
 
-            console.log(doctors);
-
             const existSameEmail = doctors.find(d => d.email === userEmail);
             if (existSameEmail) {
                 const error = document.getElementById("userEmail-form-error");
@@ -846,7 +844,7 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
                                 const usersReq = usersStore.add(newDoctorUser);
 
                                 usersReq.onsuccess = async function () {
-                                    await logCurrentUserActivity("createUser", newId, `Admin with ID ${user.linkedId} created a doctor`);
+                                    await logCurrentUserActivity("createUser", user.linkedId, `Admin with ID ${user.linkedId} created a doctor`);
                                     console.log(`✅ Added doctor.`);
                                     window.location.href = `users-admin.html`;
                                 };
@@ -1348,69 +1346,81 @@ document.addEventListener('click', (e) => {
     document.getElementById('deleteModal').classList.remove('hidden');
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmDeleteBtn = document.getElementById("confirmDelete");
+  const cancelDeleteBtn = document.getElementById("cancelDelete");
+  const deleteModal = document.getElementById("deleteModal");
 
-document.getElementById('confirmDelete').addEventListener('click', async () => {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+      const user = JSON.parse(localStorage.getItem("currentUser"));
 
-  if (userToDelete !== null) {
+      if (userToDelete !== null) {
+        try {
+          const db = await openClinicDB();
+          const tx = db.transaction("users", "readwrite");
+          const store = tx.objectStore("users");
+          const request = store.delete(userToDelete);
 
-    try {
-      const db = await openClinicDB();
-      const tx = db.transaction('users', 'readwrite');
-      const store = tx.objectStore('users');
-      const request = store.delete(userToDelete); 
-
-      request.onsuccess = async function() {
-
-        if (userToDeleteRole !== null ) {
-
-            if (userToDeleteRole === 'patient') {
+          request.onsuccess = async function () {
+            if (userToDeleteRole !== null) {
+              if (userToDeleteRole === "patient") {
                 await deleteLinkedRecords("medicalRecord", "patientId", userToDeleteId);
                 await deleteLinkedRecords("appointments", "patientId", userToDeleteId);
                 await deleteLinkedRecords("notifications", "recipientId", userToDeleteId);
                 await deleteLinkedRecords("activityLogs", "userId", userToDeleteId);
                 await deleteItem("patients", userToDeleteId);
 
-                await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a patient`);
-                fetchAllUserData();
-                document.getElementById('deleteModal').classList.add('hidden');
-                userToDelete = null;
-            } else if (userToDeleteRole === 'doctor') {
-                await deleteLinkedRecords("appointments", "doctorId", parseInt(userToDeleteId));
-                await deleteLinkedRecords("notifications", "recipientId", parseInt(userToDeleteId));
-                await deleteLinkedRecords("activityLogs", "userId", parseInt(userToDeleteId));
-                await deleteItem("doctors", parseInt(userToDeleteId));
+                await logCurrentUserActivity(
+                  "deleteUser",
+                  userToDeleteId,
+                  `Admin with ID ${user.linkedId} deleted a patient`
+                );
+              } else if (userToDeleteRole === "doctor") {
+                const doctorId = parseInt(userToDeleteId);
+                await deleteLinkedRecords("appointments", "doctorId", doctorId);
+                await deleteLinkedRecords("notifications", "recipientId", doctorId);
+                await deleteLinkedRecords("activityLogs", "userId", doctorId);
+                await deleteItem("doctors", doctorId);
 
-                await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a doctor`);
-                fetchAllUserData();
-                document.getElementById('deleteModal').classList.add('hidden');
-                userToDelete = null;
+                await logCurrentUserActivity(
+                  "deleteUser",
+                  userToDeleteId,
+                  `Admin with ID ${user.linkedId} deleted a doctor`
+                );
+              }
+
+              fetchAllUserData();
+              if (deleteModal) deleteModal.classList.add("hidden");
+              userToDelete = null;
             }
+          };
+
+          request.onerror = function () {
+            alert("Error deleting user.");
+            userToDelete = null;
+          };
+        } catch (err) {
+          console.error("DB error:", err);
+          userToDelete = null;
         }
-
-      };
-
-      request.onerror = function() {
-        alert('Error deleting user.');
-        userToDelete = null;
-      };
-    } catch (err) {
-      console.error('DB error:', err);
-      userToDelete = null;
-    }
+      }
+    });
   }
-});
 
-// Handle "Cancel"
-document.getElementById('cancelDelete').addEventListener('click', () => {
-  document.getElementById('deleteModal').classList.add('hidden');
-  userToDelete = null;
-});
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener("click", () => {
+      if (deleteModal) deleteModal.classList.add("hidden");
+      userToDelete = null;
+    });
+  }
 
-// Close modal if clicking outside
-document.getElementById('deleteModal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    e.currentTarget.classList.add('hidden');
-    userToDelete = null;
+  if (deleteModal) {
+    deleteModal.addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) {
+        deleteModal.classList.add("hidden");
+        userToDelete = null;
+      }
+    });
   }
 });

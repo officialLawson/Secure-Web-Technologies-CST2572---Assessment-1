@@ -720,59 +720,66 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function cancelAppointment(id) {
+async function cancelAppointment(id) {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
   appointmentToCancel = id;
+  await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `User with ID ${user.linkedId} cancelled an appointment`);
   document.getElementById('cancelModal').classList.remove('hidden');
 }
-// Handle "Yes, Cancel" in modal
-document.getElementById('confirmCancel').addEventListener('click', async () => {
-  console.log('cancelling...');
-  if (appointmentToCancel) {
-    try {
-      const db = await openClinicDB();
-      const tx = db.transaction('appointments', 'readwrite');
-      const store = tx.objectStore('appointments');
-      const request = store.getAll();
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmCancelBtn = document.getElementById("confirmCancel");
+  const cancelCancelBtn = document.getElementById("cancelCancel");
+  const cancelModal = document.getElementById("cancelModal");
 
-      request.onsuccess = function() {
-        const appointments = request.result || [];
+  if (confirmCancelBtn) {
+    confirmCancelBtn.addEventListener("click", async () => {
+      if (appointmentToCancel) {
+        try {
+          const db = await openClinicDB();
+          const tx = db.transaction("appointments", "readwrite");
+          const store = tx.objectStore("appointments");
+          const request = store.getAll();
 
-        const appointment = appointments.find(app => app.appointmentId === appointmentToCancel) || [];
+          request.onsuccess = function () {
+            const appointments = request.result || [];
+            const appointment = appointments.find(app => app.appointmentId === appointmentToCancel);
 
-        if (appointment) {
-          appointment.status = "Cancelled"; // or whatever new status you want
-        }
+            if (appointment) {
+              appointment.status = "Cancelled";
+              const updateReq = store.put(appointment);
 
-        const updateReq = store.put(appointment); // put replaces the record with the same key
+              updateReq.onsuccess = () => {
+                console.log("✅ Appointment status updated.");
+                loadAppointments();
+                if (cancelModal) cancelModal.classList.add("hidden");
+                appointmentToCancel = null;
+              };
 
-        updateReq.onsuccess = () => {
-          console.log("✅ Appointment status updated.");
-          loadAppointments(); // Refresh the table
-          document.getElementById('cancelModal').classList.add('hidden');
+              updateReq.onerror = () => {
+                console.error("❌ Failed to update appointment:", updateReq.error);
+              };
+            }
+          };
+
+          request.onerror = () => {
+            alert("Error loading appointments.");
+            appointmentToCancel = null;
+          };
+        } catch (err) {
+          console.error("Cancel failed:", err);
+          alert("Error cancelling appointment.");
           appointmentToCancel = null;
-        };
-
-        updateReq.onerror = () => {
-          console.error("❌ Failed to update appointment:", updateReq.error);
-        };
-        
-      };
-      request.onerror = () => {
-        alert('Error deleting appointment.');
-        appointmentToCancel = null;
-      };
-    } catch (err) {
-      console.error("Cancel failed:", err);
-      alert('Error deleting appointment.');
-      appointmentToCancel = null;
-    }
+        }
+      }
+    });
   }
-});
 
-// Handle "Cancel"
-document.getElementById('cancelCancel').addEventListener('click', () => {
-  document.getElementById('cancelModal').classList.add('hidden');
-  userToCancel = null;
+  if (cancelCancelBtn) {
+    cancelCancelBtn.addEventListener("click", () => {
+      if (cancelModal) cancelModal.classList.add("hidden");
+      userToCancel = null;
+    });
+  }
 });
 
 async function addAppointment(event, doctorId, patientId, reason, date, time) {
