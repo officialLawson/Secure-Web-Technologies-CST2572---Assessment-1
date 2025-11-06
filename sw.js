@@ -8,8 +8,16 @@ const urlsToCache = [
   '/html/view-medical-record.html',
   '/html/appointments-patient.html',
   '/html/profile-view-patient.html',
+  '/html/appointments-doctor.html',
+  '/html/dashboard-doctor.html',
+  '/html/medical-records-doctor.html',
+  '/html/medicines-doctor.html',
+  '/html/view-medical-record-doctor.html',
+  '/html/profile-view-doctor.html',
   '/html/login.html',
   '/html/register.html',
+  '/html/home.html',
+  
 
   // --- CSS ---
   '/css/dashboard.css',
@@ -23,6 +31,11 @@ const urlsToCache = [
   '/js/D-Lmode.js',
   '/js/notification.js',
   'https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js',
+  '/js/medicines.js',
+  '/js/profile.js',
+  '/js/calendar.js',
+  '/js/dashboard.js',
+  '/js/login.js',
 
   // --- Images ---
   '/images/logo.png',
@@ -81,7 +94,7 @@ self.addEventListener('fetch', (event) => {
           .catch(() => {
             // Fallback for critical pages
             if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match('/html/dashboard-patient.html');
+              return caches.match('/html/login.html');
             }
           });
       })

@@ -2,7 +2,7 @@
   "name": "MedTrack Clinic",
   "short_name": "MedTrack",
   "description": "Secure patient and medical records management system.",
-  "start_url": "/html/dashboard-patient.html",
+  "start_url": "/html/login.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1e40af",

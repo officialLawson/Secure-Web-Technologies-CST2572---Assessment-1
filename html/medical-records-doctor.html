@@ -7,6 +7,8 @@
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/table.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1e40af">
 </head>
 <body>
     <div class="container">
@@ -234,6 +236,15 @@
                 link.href = `add-medical-record.html?patientId=${patientId}`;
                 }
             });
+    </script> 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then((reg) => console.log('SW registered:', reg.scope))
+                .catch((err) => console.log('SW registration failed:', err));
+            });
+        }
     </script>
 </body>
 </html>
