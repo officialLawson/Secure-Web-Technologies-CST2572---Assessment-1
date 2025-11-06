@@ -177,15 +177,26 @@ async function loadSingleRecordView() {
         if (prescriptions.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4">No prescriptions</td></tr>';
         } else {
+            const allMeds = await clinicDB.getAllItems('medicines');
+            const medicineMap = {};
+            allMeds.forEach(m => {
+                if (m.id !== undefined) {
+                    medicineMap[String(m.id)] = m;
+                }
+            });
+
             for (const p of prescriptions) {
-                const med = await clinicDB.getItem('medicines', p.medicineId);
-                const drugName = med?.Drug ? sanitize(med.Drug) : '—';
+                const med = medicineMap[String(p.medicineId)];
+                const drugName = med?.Drug 
+                    ? DOMPurify.sanitize(med.Drug) 
+                    : `<em style="color: #ff6b6b;">[Deleted Medicine]</em>`;
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${drugName}</td>
-                    <td>${sanitize(p.dosage || '-')}</td>
-                    <td>${sanitize(p.duration || '-')}</td>
-                    <td>${sanitize(p.instructions || '-')}</td>
+                    <td>${DOMPurify.sanitize(p.dosage || '-')}</td>
+                    <td>${DOMPurify.sanitize(p.duration || '-')}</td>
+                    <td>${DOMPurify.sanitize(p.instructions || '-')}</td>
                 `;
                 tbody.appendChild(tr);
             }
