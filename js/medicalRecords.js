@@ -1,9 +1,118 @@
-// medicalrecord.js - FULL COMPLETE VERSION
-// Handles:
-// - Patient's own record list
-// - Doctor's view of a patient's record list (with Request Access)
-// - Doctor's single record view (with Edit button for owner)
-// - All decryption, medicine resolution, sanitization
+// Search Feature
+let allRenderedMedicalRecords = []; // holds structured records for search
+let allRenderedDoctorViewRecords = []; // for search
+
+function renderMedicalRecords(data) {
+  const tbody = document.getElementById("medicalRecordsBody");
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
+  tbody.innerHTML = "";
+
+  if (!data.length) {
+    tbody.innerHTML = "<tr><td colspan='5'>No matching records found.</td></tr>";
+    return;
+  }
+
+  data.forEach(rec => {
+    const safeDoctor = sanitize(rec.doctorName);
+    const safeDiagnosis = sanitize(rec.diagnosis);
+    const safeTreatment = sanitize(rec.treatment);
+    const safeDateTime = sanitize(rec.dateTime);
+    const safeId = sanitize(rec.recordId);
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${safeDoctor}</td>
+      <td>${safeDiagnosis}</td>
+      <td>${safeTreatment}</td>
+      <td>${safeDateTime}</td>
+      <td><button class="btn-view" data-id="${safeId}">View</button></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function renderDoctorViewRecords(data) {
+  const tbody = document.getElementById("medicalRecordsBody");
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
+  tbody.innerHTML = "";
+
+  if (!data.length) {
+    tbody.innerHTML = "<tr><td colspan='5'>No matching records found.</td></tr>";
+    return;
+  }
+
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+
+  data.forEach(rec => {
+    const safeDoctor = sanitize(rec.doctorName);
+    const safeDiagnosis = sanitize(rec.diagnosis);
+    const safeTreatment = sanitize(rec.treatment);
+    const safeDateTime = sanitize(rec.dateTime);
+    const safeId = sanitize(rec.recordId);
+    const safeSelfName = sanitize(rec.selfName);
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${safeDoctor}</td>
+      <td>${safeDiagnosis}</td>
+      <td>${safeTreatment}</td>
+      <td>${safeDateTime}</td>
+      <td>
+        ${rec.isOwner
+          ? `<button class="btn-view-doctor" data-id="${safeId}">View</button>`
+          : `<button class="btn-view-request" data-id="${safeId}" data-ownerid="${rec.doctorId}" data-myname="${safeSelfName}">Request Access</button>`
+        }
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchRecordsInput = document.getElementById("searchMedicalRecords");
+  if (searchRecordsInput) {
+    searchRecordsInput.addEventListener("input", function () {
+      const query = this.value.toLowerCase().trim();
+
+      if (query === "") {
+        renderMedicalRecords(allRenderedMedicalRecords);
+        return;
+      }
+
+      const filtered = allRenderedMedicalRecords.filter(rec =>
+        (rec.doctorName || "").toLowerCase().includes(query) ||
+        (rec.diagnosis || "").toLowerCase().includes(query) ||
+        (rec.treatment || "").toLowerCase().includes(query) ||
+        String(rec.dateTime).toLowerCase().includes(query)
+      );
+
+      renderMedicalRecords(filtered);
+    });
+  }
+
+  const searchDoctorViewInput = document.getElementById("searchDoctorViewRecords");
+  if (searchDoctorViewInput) {
+    searchDoctorViewInput.addEventListener("input", function () {
+      const query = this.value.toLowerCase().trim();
+
+      if (query === "") {
+        renderDoctorViewRecords(allRenderedDoctorViewRecords);
+        return;
+      }
+
+      const filtered = allRenderedDoctorViewRecords.filter(rec =>
+        (rec.doctorName || "").toLowerCase().includes(query) ||
+        (rec.diagnosis || "").toLowerCase().includes(query) ||
+        (rec.treatment || "").toLowerCase().includes(query) ||
+        String(rec.dateTime).toLowerCase().includes(query)
+      );
+
+      renderDoctorViewRecords(filtered);
+    });
+    }
+});
 
 let recordToView = null;
 
@@ -37,19 +146,30 @@ async function fetchPatientRecords() {
             return;
         }
 
-        myRecords.forEach(rec => {
-            const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
-            const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
+        allRenderedMedicalRecords = []; // reset before loading
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${sanitize(doctorName)}</td>
-                <td>${sanitize(rec.diagnosis || '-')}</td>
-                <td>${sanitize(rec.treatment || '-')}</td>
-                <td>${sanitize(rec.dateTime || '-')}</td>
-                <td><button class="btn-view" data-id="${sanitize(rec.recordId)}">View</button></td>
-            `;
-            tbody.appendChild(row);
+        myRecords.forEach(rec => {
+        const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
+        const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
+
+        // Store structured data for search
+        allRenderedMedicalRecords.push({
+            doctorName,
+            diagnosis: rec.diagnosis || '-',
+            treatment: rec.treatment || '-',
+            dateTime: rec.dateTime || '-',
+            recordId: rec.recordId
+        });
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${sanitize(doctorName)}</td>
+            <td>${sanitize(rec.diagnosis || '-')}</td>
+            <td>${sanitize(rec.treatment || '-')}</td>
+            <td>${sanitize(rec.dateTime || '-')}</td>
+            <td><button class="btn-view" data-id="${sanitize(rec.recordId)}">View</button></td>
+        `;
+        tbody.appendChild(row);
         });
 
     } catch (err) {
@@ -100,10 +220,24 @@ async function fetchPatientRecordsforDoctor(patientId) {
             return;
         }
 
+        allRenderedDoctorViewRecords = []; // reset before loading
+
         patientRecords.forEach(rec => {
             const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
             const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
             const isOwner = user.linkedId == rec.doctorId;
+
+            // Store structured data for search
+            allRenderedDoctorViewRecords.push({
+                doctorName,
+                diagnosis: rec.diagnosis || '-',
+                treatment: rec.treatment || '-',
+                dateTime: rec.dateTime || '-',
+                recordId: rec.recordId,
+                isOwner,
+                doctorId: rec.doctorId,
+                selfName
+            });
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -112,10 +246,10 @@ async function fetchPatientRecordsforDoctor(patientId) {
                 <td>${sanitize(rec.treatment || '-')}</td>
                 <td>${sanitize(rec.dateTime || '-')}</td>
                 <td>
-                    ${isOwner
-                        ? `<button class="btn-view-doctor" data-id="${rec.recordId}">View</button>`
-                        : `<button class="btn-view-request" data-id="${rec.recordId}" data-ownerid="${rec.doctorId}" data-myname="${sanitize(selfName)}">Request Access</button>`
-                    }
+                ${isOwner
+                    ? `<button class="btn-view-doctor" data-id="${rec.recordId}">View</button>`
+                    : `<button class="btn-view-request" data-id="${rec.recordId}" data-ownerid="${rec.doctorId}" data-myname="${sanitize(selfName)}">Request Access</button>`
+                }
                 </td>
             `;
             tbody.appendChild(row);

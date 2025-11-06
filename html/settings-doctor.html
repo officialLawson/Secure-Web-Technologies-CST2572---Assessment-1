@@ -188,7 +188,7 @@
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
-                            <button class="btn-export-data submit-btn" style="width: 100%;">Export All Data</button>
+                            <button class="btn-export-data submit-btn" id="btnExportData" style="width: 100%;">Export All Data</button>
                         </div>
                         <div class="form-group">
                             <button id="deleteAccountBtn" class="btn-delete-account" style="width: 100%; background: var(--text-negative);">
@@ -240,6 +240,10 @@
     <script src="../js/sidebar.js"></script>
     <script src="../js/form.js"></script>
     <script src="../js/settings.js"></script>
+    <script src="../js/activityLogs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+    <script src="../js/exportData.js"></script>
     <script>
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         if (userRole !== 'doctor') {
@@ -260,6 +264,12 @@
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });
+
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (!currentUser || currentUser.role?.toLowerCase() !== 'doctor') {
+            window.location.href = '../html/login.html';
+            return;
+        }
 
     </script>
 </body>

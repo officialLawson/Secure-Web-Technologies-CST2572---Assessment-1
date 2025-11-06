@@ -49,7 +49,7 @@ async function logCurrentUserActivity(action, target, details) {
         userRole: user.role.toLowerCase(),
         action,
         target,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toLocaleString(),
         details
     };
 

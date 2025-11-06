@@ -231,6 +231,18 @@
         </div>
     </div>
 
+    <!--Complete modal-->
+    <div id="complete-modal" class="modal-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="complete-modal-title">
+        <div class="modal-content" role="document" style="max-width:420px;">
+            <h3 id="complete-modal-title">Mark appointment as completed?</h3>
+            <p style="color:var(--text-muted); margin-top:8px; margin-bottom:18px;">This will mark the appointment as completed. This action is idempotent.</p>
+            <div class="modal-actions" style="justify-content:center;">
+            <button id="cancel-complete" class="btn-secondary btn" type="button">Cancel</button>
+            <button id="confirm-complete" class="btn-primary btn" type="button">Mark Completed</button>
+            </div>
+        </div>
+    </div>
+
      <!-- Delete Modal -->
     <div id="deleteModal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -250,10 +262,16 @@
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
+    <script src="../js/appointmentsComplete.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAppointments();
+        });
+    </script>
     <script>
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         if (userRole !== 'doctor') {
-            window.location.href = `appointments-${userRole}.html`;
+            window.location.href = `dashboard-${userRole}.html`;
         } 
 
         const profileButton = document.getElementById('profileButton')
