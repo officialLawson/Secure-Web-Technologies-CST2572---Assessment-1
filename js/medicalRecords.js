@@ -1,490 +1,312 @@
+// medicalrecord.js - FULL COMPLETE VERSION
+// Handles:
+// - Patient's own record list
+// - Doctor's view of a patient's record list (with Request Access)
+// - Doctor's single record view (with Edit button for owner)
+// - All decryption, medicine resolution, sanitization
+
+let recordToView = null;
+
+// ======================
+// 1. PATIENT: List own records
+// ======================
 async function fetchPatientRecords() {
     const tbody = document.getElementById("medicalRecordsBody");
-    if (!tbody) return '';
+    if (!tbody) return;
+
     const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     tbody.innerHTML = sanitize('<tr><td colspan="5">Loading medical records...</td></tr>');
+
     try {
-        const db = await openClinicDB();
+        await clinicDB.openClinicDB();
         const user = JSON.parse(localStorage.getItem('currentUser'));
-        const doctorTx = db.transaction('doctors', 'readonly');
-        const doctorStore = doctorTx.objectStore('doctors');
-        const doctorsReq = doctorStore.getAll();
-        doctorsReq.onsuccess = async function() {
-            const encryptedDoctors = doctorsReq.result || [];
-            const decryptedDoctors = await Promise.all(
-                encryptedDoctors.map(p => decryptDoctorInfo(p))
-            );
-            const tx = db.transaction('medicalRecord', 'readonly');
-            const store = tx.objectStore('medicalRecord');
-            const request = store.getAll();
-           
-            request.onsuccess = async function() {
-                const encryptedMedicalRecords = request.result || [];
-                const decryptedMedicalRecords = await Promise.all(
-                    encryptedMedicalRecords.map(p => decryptMedicalRecord(p))
-                );
-                const medicalrecords = decryptedMedicalRecords.filter(med => med.patientId === user.linkedId) || [];
-                tbody.innerHTML = '';
-                if (!medicalrecords || medicalrecords.length === 0) {
-                    tbody.innerHTML = sanitize("<tr><td colspan='5'>No medical records found.</td></tr>");
-                    return;
-                }
-                medicalrecords.forEach(med => {
-                const row = document.createElement('tr');
-                const currentUserData = decryptedDoctors.filter(d => d.id === med.doctorId) || [];
-                const doctor = currentUserData[0];
-                let doctorFullName = 'Unknown';
-                if (doctor) {
-                    doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
-                }
-                const safeDoctor = sanitize(doctorFullName);
-                const safeDiagnosis = sanitize(med.diagnosis || '-');
-                const safeTreatment = sanitize(med.treatment || '-');
-                const safeDate = sanitize(med.dateTime || '-');
-                const safeId = sanitize(med.recordId);
-                row.innerHTML = `
-                        <td>${safeDoctor}</td>
-                        <td>${safeDiagnosis}</td>
-                        <td>${safeTreatment}</td>
-                        <td>${safeDate}</td>
-                        <td>
-                        <button class="btn-view" data-id="${safeId}">View</button>
-                        </td>
-                    `;
-                tbody.appendChild(row);
-                });
-            };
-           
-            request.onerror = function() {
-                console.error('Failed to load medical records:', request.error);
-            };
-        };
+
+        const [encryptedDoctors, encryptedRecords] = await Promise.all([
+            clinicDB.getAllItems('doctors'),
+            clinicDB.getAllItems('medicalRecord')
+        ]);
+
+        const decryptedDoctors = await Promise.all(encryptedDoctors.map(d => clinicDB.decryptDoctorInfo(d)));
+        const decryptedRecords = await Promise.all(encryptedRecords.map(r => clinicDB.decryptMedicalRecord(r)));
+
+        const myRecords = decryptedRecords.filter(r => r.patientId === user.linkedId);
+
+        tbody.innerHTML = '';
+        if (myRecords.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5">No medical records found.</td></tr>';
+            return;
+        }
+
+        myRecords.forEach(rec => {
+            const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
+            const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sanitize(doctorName)}</td>
+                <td>${sanitize(rec.diagnosis || '-')}</td>
+                <td>${sanitize(rec.treatment || '-')}</td>
+                <td>${sanitize(rec.dateTime || '-')}</td>
+                <td><button class="btn-view" data-id="${sanitize(rec.recordId)}">View</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+
     } catch (err) {
-        console.error('Error opening DB:', err);
-        tbody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
+        console.error('fetchPatientRecords error:', err);
+        tbody.innerHTML = '<tr><td colspan="5">Error loading records.</td></tr>';
     }
 }
+
+// ======================
+// 2. DOCTOR: List patient's records (with Request Access)
+// ======================
 async function fetchPatientRecordsforDoctor(patientId) {
     const tbody = document.getElementById("medicalRecordsBody");
     const patientNameDisplay = document.getElementById("patientNameDisplay");
-    if (!tbody) return '';
+    if (!tbody) return;
+
     const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-    tbody.innerHTML = sanitize('<tr><td colspan="5">Loading medical records...</td></tr>');
+    tbody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
+
     try {
-        const db = await openClinicDB();
+        await clinicDB.openClinicDB();
         const user = JSON.parse(localStorage.getItem('currentUser'));
-        const doctorTx = db.transaction('doctors', 'readonly');
-        const doctorStore = doctorTx.objectStore('doctors');
-        const doctorsReq = doctorStore.getAll();
-        doctorsReq.onsuccess = async function() {
-            const encryptedDoctors = doctorsReq.result || [];
-            const decryptedDoctors = await Promise.all(
-                encryptedDoctors.map(p => decryptDoctorInfo(p))
-            );
 
-            const user = JSON.parse(localStorage.getItem('currentUser'));
+        const [doctors, patients, records] = await Promise.all([
+            clinicDB.getAllItems('doctors'),
+            clinicDB.getAllItems('patients'),
+            clinicDB.getAllItems('medicalRecord')
+        ]);
 
-            const selfDetail = decryptedDoctors.find(d => d.id === user.linkedId) || [];
-            const selfName = `Dr ${selfDetail.first_name} ${selfDetail.last_name}` || 'Unknown';
-            const safeSelfName = sanitize(selfName);
+        const decryptedDoctors = await Promise.all(doctors.map(d => clinicDB.decryptDoctorInfo(d)));
+        const decryptedPatients = await Promise.all(patients.map(p => clinicDB.decryptPatientInfo(p)));
+        const decryptedRecords = await Promise.all(records.map(r => clinicDB.decryptMedicalRecord(r)));
 
-            const patientTx = db.transaction('patients', 'readonly');
-            const patientStore = patientTx.objectStore('patients');
-            const patientsReq = patientStore.getAll();
-            patientsReq.onsuccess = async function () {
-                const encryptedPatients = patientsReq.result || [];
-                const decryptedPatients = await Promise.all(
-                    encryptedPatients.map(p => decryptPatientInfo(p))
-                );
-                const currentUserData = decryptedPatients.filter(d => d.NHS === patientId);
-                const patient = currentUserData[0];
-                const patientName = `${patient.Title} ${patient.First} ${patient.Last}` || 'Unknown Patient';
-                const safePatientName = sanitize(patientName);
-                patientNameDisplay.innerText = safePatientName;
-                const tx = db.transaction('medicalRecord', 'readonly');
-                const store = tx.objectStore('medicalRecord');
-                const request = store.getAll();
-               
-                request.onsuccess = async function() {
-                    const encryptedMedicalRecords = request.result || [];
-                    const decryptedMedicalRecords = await Promise.all(
-                        encryptedMedicalRecords.map(p => decryptMedicalRecord(p))
-                    );
-                    const medicalrecords = decryptedMedicalRecords.filter(med => med.patientId === patientId) || [];
-                    tbody.innerHTML = '';
-                    if (!medicalrecords || medicalrecords.length === 0) {
-                        tbody.innerHTML = sanitize("<tr><td colspan='5'>No medical records found.</td></tr>");
-                        return;
+        // Patient name header
+        const patient = decryptedPatients.find(p => p.NHS === patientId);
+        const patientName = patient ? `${patient.Title} ${patient.First} ${patient.Last}` : 'Unknown Patient';
+        if (patientNameDisplay) patientNameDisplay.textContent = sanitize(patientName);
+
+        // Current doctor's name (for request button)
+        const selfDoctor = decryptedDoctors.find(d => d.id === user.linkedId);
+        const selfName = selfDoctor ? `Dr ${selfDoctor.first_name} ${selfDoctor.last_name}` : 'Unknown';
+
+        const patientRecords = decryptedRecords.filter(r => r.patientId === patientId);
+
+        tbody.innerHTML = '';
+        if (patientRecords.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5">No medical records found.</td></tr>';
+            return;
+        }
+
+        patientRecords.forEach(rec => {
+            const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
+            const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
+            const isOwner = user.linkedId == rec.doctorId;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${sanitize(doctorName)}</td>
+                <td>${sanitize(rec.diagnosis || '-')}</td>
+                <td>${sanitize(rec.treatment || '-')}</td>
+                <td>${sanitize(rec.dateTime || '-')}</td>
+                <td>
+                    ${isOwner
+                        ? `<button class="btn-view-doctor" data-id="${rec.recordId}">View</button>`
+                        : `<button class="btn-view-request" data-id="${rec.recordId}" data-ownerid="${rec.doctorId}" data-myname="${sanitize(selfName)}">Request Access</button>`
                     }
-                    medicalrecords.forEach(med => {
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
 
-                    const row = document.createElement('tr');
-                    const currentUserData = decryptedDoctors.filter(d => d.id === med.doctorId) || [];
-
-                    const doctor = currentUserData[0];
-
-                    const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
-                    const safeDoctor = sanitize(doctorFullName);
-                    const safeDoctorId = sanitize(med.doctorId);
-                    const safeDiagnosis = sanitize(med.diagnosis || '-');
-                    const safeTreatment = sanitize(med.treatment || '-');
-                    const safeDate = sanitize(med.dateTime || '-');
-                    const safeId = sanitize(med.recordId);
-                    let safeButton;
-                    if (med.accessedBy && med.accessedBy.includes(user.linkedId)) {
-                        safeButton = `<button class="btn-view-doctor" data-id="${safeId}">View</button>`;
-                    } else {
-                        safeButton = `<button class="btn-view-request" data-id="${safeId}" data-ownerid="${safeDoctorId}" data-myname="${safeSelfName}">Request Access</button>`;
-                    }
-                    row.innerHTML = `
-                            <td>${safeDoctor}</td>
-                            <td>${safeDiagnosis}</td>
-                            <td>${safeTreatment}</td>
-                            <td>${safeDate}</td>
-                            <td>
-                            ${safeButton}
-                            </td>
-                        `;
-                    tbody.appendChild(row);
-                    });
-                };
-               
-            };
-            patientsReq.onerror = function() {
-                console.error('Failed to load patients info:', patientsReq.error);
-            };
-        };
-        doctorsReq.onerror = function() {
-            console.error('Failed to load doctors info:', doctorsReq.error);
-        };
     } catch (err) {
-        console.error('Error opening DB:', err);
-        tbody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
+        console.error('fetchPatientRecordsforDoctor error:', err);
+        tbody.innerHTML = '<tr><td colspan="5">Error loading records.</td></tr>';
     }
 }
-let recordToView = null
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('btn-view')) {
-    e.preventDefault();
-    const safeId = DOMPurify.sanitize(e.target.dataset.id);
-    recordToView = safeId;
-    window.location.href = `view-medical-record.html?recordId=${recordToView}`;
-  }
-});
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('btn-view-doctor')) {
-    e.preventDefault();
-    const safeId = DOMPurify.sanitize(e.target.dataset.id);
-    const patientId = new URLSearchParams(window.location.search).get('patientId');
-    
-    if (!patientId) {
-      alert('Patient ID is missing.');
-      return;
-    }
 
-    window.location.href = `view-medical-record-doctor.html?recordId=${safeId}&patientId=${patientId}`;
-  }
-});
-async function viewMedicalRecord(medicalrecordId) {
-    const recordId = medicalrecordId;
-    const recordDoctorName = document.getElementById("recordDoctorName");
-    const recordDate = document.getElementById("recordDate");
-    const recordDiagnosis = document.getElementById("recordDiagnosis");
-    const recordTreatment = document.getElementById("recordTreatment");
-    const prescriptionsBody = document.getElementById("prescriptionsBody");
-    const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+// ======================
+// 3. DOCTOR: Load single record view (with Edit button)
+// ======================
+async function loadSingleRecordView() {
+    const tbody = document.getElementById('prescriptionsBody');
+    const recordDoctorName = document.getElementById('recordDoctorName');
+    const recordDate = document.getElementById('recordDate');
+    const recordDiagnosis = document.getElementById('recordDiagnosis');
+    const recordTreatment = document.getElementById('recordTreatment');
+    const editBtn = document.getElementById('editRecordBtn');
+
+    if (!tbody || !recordDoctorName) return;
+
+    const sanitize = (s) => DOMPurify.sanitize(String(s), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
     try {
-        const db = await openClinicDB();
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        const doctorTx = db.transaction('doctors', 'readonly');
-        const doctorStore = doctorTx.objectStore('doctors');
-        const doctorsReq = doctorStore.getAll();
-        doctorsReq.onsuccess = async function() {
-            const encryptedDoctors = doctorsReq.result || [];
-            const decryptedDoctors = await Promise.all(
-                encryptedDoctors.map(p => decryptDoctorInfo(p))
-            );
-            const tx = db.transaction('medicalRecord', 'readonly');
-            const store = tx.objectStore('medicalRecord');
-            const request = store.getAll();
-           
-            request.onsuccess = async function() {
-                const encryptedMedicalRecords = request.result || [];
-                const decryptedMedicalRecords = await Promise.all(
-                    encryptedMedicalRecords.map(p => decryptMedicalRecord(p))
-                );
-                const medicalrecords = decryptedMedicalRecords.filter(med => med.recordId === recordId) || [];
-                const medicalrecord = medicalrecords[0];
-                
-                // Check if medical record exists
-                if (!medicalrecord) {
-                    console.error('Medical record not found');
-                    recordDoctorName.innerText = 'N/A';
-                    recordDate.innerText = 'N/A';
-                    recordDiagnosis.innerText = 'Record not found';
-                    recordTreatment.innerText = 'N/A';
-                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Medical record not found.</td></tr>");
-                    return;
+        await clinicDB.openClinicDB();
+
+        const params = new URLSearchParams(location.search);
+        const recordId = params.get('recordId');
+        const patientId = params.get('patientId');
+
+        if (!recordId || !patientId) {
+            alert('Missing record or patient');
+            return;
+        }
+
+        const rec = await clinicDB.getMedicalRecordById(recordId);
+        if (!rec) {
+            alert('Record not found');
+            return;
+        }
+
+        // Doctor name
+        const doctor = await clinicDB.getItem('doctors', rec.doctorId);
+        recordDoctorName.textContent = doctor
+            ? sanitize(`${doctor.first_name} ${doctor.last_name}`)
+            : 'Unknown';
+
+        // Basic fields
+        recordDate.textContent = sanitize(rec.dateTime || '-');
+        recordDiagnosis.textContent = sanitize(rec.diagnosis || '-');
+        recordTreatment.textContent = sanitize(rec.treatment || '-');
+
+        // Prescriptions
+        tbody.innerHTML = '';
+        const prescriptions = rec.prescriptions || [];
+        if (prescriptions.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">No prescriptions</td></tr>';
+        } else {
+            const allMeds = await clinicDB.getAllItems('medicines');
+            const medicineMap = {};
+            allMeds.forEach(m => {
+                if (m.id !== undefined) {
+                    medicineMap[String(m.id)] = m;
                 }
-                
-                // Debug logging
-                console.log('Medical record doctorId:', medicalrecord.doctorId, typeof medicalrecord.doctorId);
-                console.log('Available doctors:', decryptedDoctors.map(d => ({ id: d.id, type: typeof d.id, name: `${d.first_name} ${d.last_name}` })));
-                
-                // Try both strict and loose comparison
-                const currentUserData = decryptedDoctors.filter(d => d.id == medicalrecord.doctorId) || [];
-                const doctor = currentUserData[0];
-                
-                // Check if doctor exists, provide fallback
-                let doctorFullName = 'Unknown Doctor';
-                if (doctor && doctor.first_name && doctor.last_name) {
-                    doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
-                }
-                
-                const safeDoctor = sanitize(doctorFullName);
-                const safeDate = sanitize(medicalrecord.dateTime || 'N/A');
-                const safeDiagnosis = sanitize(medicalrecord.diagnosis || 'N/A');
-                const safeTreatment = sanitize(medicalrecord.treatment || 'N/A');
-                
-                recordDoctorName.innerText = safeDoctor;
-                recordDate.innerText = safeDate;
-                recordDiagnosis.innerText = safeDiagnosis;
-                recordTreatment.innerText = safeTreatment;
-                prescriptionsBody.innerHTML = '';
-                const recordPrescriptions = medicalrecord.prescriptions || [];
-           
-                if (!recordPrescriptions || recordPrescriptions.length === 0) {
-                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>No prescriptions found.</td></tr>");
-                    return;
-                }
-                const medicineTx = db.transaction('medicines', 'readonly');
-                const medicineStore = medicineTx.objectStore('medicines');
-                const medReq = medicineStore.getAll();
-               
-                medReq.onsuccess = async function() {
-                    const medicines = medReq.result || [];
-                    recordPrescriptions.forEach(pre => {
-                        const row = document.createElement('tr');
-                        const medicine = medicines.find(m => m.id == pre.medicineId);
-                        const safeDrug = sanitize(medicine?.Drug || 'Unknown (ID: ' + pre.medicineId + ')');
-                        const safeDosage = sanitize(pre.dosage || '-');
-                        const safeDuration = sanitize(pre.duration || '-');
-                        const safeInstructions = sanitize(pre.instructions || '-');
-                        row.innerHTML = `
-                            <td>${safeDrug}</td>
-                            <td>${safeDosage}</td>
-                            <td>${safeDuration}</td>
-                            <td>${safeInstructions}</td>
-                        `;
-                        prescriptionsBody.appendChild(row);
-                    });
-                };
-                medReq.onerror = function() {
-                    console.error('Failed to load medicine info:', medReq.error);
-                };
+            });
+
+            for (const p of prescriptions) {
+                const med = medicineMap[String(p.medicineId)];
+                const drugName = med?.Drug 
+                    ? DOMPurify.sanitize(med.Drug) 
+                    : `<em style="color: #ff6b6b;">[Deleted Medicine]</em>`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${drugName}</td>
+                    <td>${DOMPurify.sanitize(p.dosage || '-')}</td>
+                    <td>${DOMPurify.sanitize(p.duration || '-')}</td>
+                    <td>${DOMPurify.sanitize(p.instructions || '-')}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Edit button
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (editBtn && user.role === 'doctor' && user.linkedId == rec.doctorId) {
+            editBtn.style.display = 'inline-block';
+            editBtn.onclick = () => {
+                location.href = `edit-medical-record.html?recordId=${recordId}&patientId=${patientId}`;
             };
-           
-            request.onerror = function() {
-                console.error('Failed to load medical records:', request.error);
-            };
-        };
-        doctorsReq.onerror = function() {
-            console.error('Failed to load doctors info:', doctorsReq.error);
-        };
+        } else if (editBtn) {
+            editBtn.style.display = 'none';
+        }
+
     } catch (err) {
-        console.error('Error opening DB:', err);
-        prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Error connecting to database.</td></tr>");
+        console.error('loadSingleRecordView error:', err);
+        alert('Failed to load record');
     }
 }
-async function viewMedicalRecordforDoctors(medicalrecordId) {
-    const recordId = medicalrecordId;
-    const recordDoctorName = document.getElementById("recordDoctorName");
-    const recordDate = document.getElementById("recordDate");
-    const recordDiagnosis = document.getElementById("recordDiagnosis");
-    const recordTreatment = document.getElementById("recordTreatment");
-    const prescriptionsBody = document.getElementById("prescriptionsBody");
-    const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-    try {
-        const db = await openClinicDB();
-        const user = JSON.parse(localStorage.getItem('currentUser'));
-        const doctorTx = db.transaction('doctors', 'readonly');
-        const doctorStore = doctorTx.objectStore('doctors');
-        const doctorsReq = doctorStore.getAll();
-        doctorsReq.onsuccess = async function() {
-            const encryptedDoctors = doctorsReq.result || [];
-            const decryptedDoctors = await Promise.all(
-                encryptedDoctors.map(p => decryptDoctorInfo(p))
-            );
-            const tx = db.transaction('medicalRecord', 'readonly');
-            const store = tx.objectStore('medicalRecord');
-            const request = store.getAll();
-           
-            request.onsuccess = async function() {
-                const encryptedMedicalRecords = request.result || [];
-                const decryptedMedicalRecords = await Promise.all(
-                    encryptedMedicalRecords.map(p => decryptMedicalRecord(p))
-                );
-                const medicalrecords = decryptedMedicalRecords.filter(med => med.recordId === recordId) || [];
-                const medicalrecord = medicalrecords[0];
-                
 
-                const editBtn = document.getElementById('editRecordBtn');
-                if (editBtn && recordId) {
-                    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-                    const isOwner = currentUser && currentUser.role === 'doctor' && currentUser.linkedId == medicalrecord.doctorId;
-
-                    if (isOwner) {
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const patientId = urlParams.get('patientId');
-
-                        if (!patientId) {
-                            console.warn("patientId missing in URL");
-                            editBtn.style.display = 'none';
-                        } else {
-                            editBtn.style.display = 'inline-block';
-                            editBtn.onclick = () => {
-                                window.location.href = `edit-medical-record.html?recordId=${encodeURIComponent(recordId)}&patientId=${encodeURIComponent(patientId)}`;
-                            };
-                        }
-                    } else {
-                        editBtn.style.display = 'none';
-                    }
-                }
-                // Check if medical record exists
-                if (!medicalrecord) {
-                    console.error('Medical record not found');
-                    recordDoctorName.innerText = 'N/A';
-                    recordDate.innerText = 'N/A';
-                    recordDiagnosis.innerText = 'Record not found';
-                    recordTreatment.innerText = 'N/A';
-                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Medical record not found.</td></tr>");
-                    return;
-                }
-                
-                const currentUserData = decryptedDoctors.filter(d => d.id === medicalrecord.doctorId) || [];
-                const doctor = currentUserData[0];
-                
-                // Check if doctor exists, provide fallback
-                let doctorFullName = 'Unknown Doctor';
-                if (doctor && doctor.first_name && doctor.last_name) {
-                    doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
-                }
-                
-                console.log(doctorFullName);
-                console.log(medicalrecord.dateTime);
-                const safeDoctor = sanitize(doctorFullName);
-                const safeDate = sanitize(medicalrecord.dateTime || 'N/A');
-                const safeDiagnosis = sanitize(medicalrecord.diagnosis || 'N/A');
-                const safeTreatment = sanitize(medicalrecord.treatment || 'N/A');
-                
-                recordDoctorName.innerText = safeDoctor;
-                recordDate.innerText = safeDate;
-                recordDiagnosis.innerText = safeDiagnosis;
-                recordTreatment.innerText = safeTreatment;
-                prescriptionsBody.innerHTML = '';
-                const recordPrescriptions = medicalrecord.prescriptions || [];
-           
-                if (!recordPrescriptions || recordPrescriptions.length === 0) {
-                    prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>No prescriptions found.</td></tr>");
-                    return;
-                }
-                const medicineTx = db.transaction('medicines', 'readonly');
-                const medicineStore = medicineTx.objectStore('medicines');
-                const medReq = medicineStore.getAll();
-               
-                medReq.onsuccess = async function() {
-                    const medicines = medReq.result || [];
-                    recordPrescriptions.forEach(pre => {
-                    const row = document.createElement('tr');
-                    const medicineList = medicines.filter(m => m.id === pre.medicineId ) || [];
-                    const medicine = medicineList[0];
-                    const safeDrug = sanitize(medicine?.Drug || 'Unknown');
-                    const safeDosage = sanitize(pre.dosage || '-');
-                    const safeDuration = sanitize(pre.duration || '-');
-                    const safeInstructions = sanitize(pre.instructions || '-');
-                    row.innerHTML = `
-                            <td>${safeDrug}</td>
-                            <td>${safeDosage}</td>
-                            <td>${safeDuration}</td>
-                            <td>${safeInstructions}</td>
-                        `;
-                    prescriptionsBody.appendChild(row);
-                    });
-                };
-                medReq.onerror = function() {
-                    console.error('Failed to load medicine info:', medReq.error);
-                };
-            };
-           
-            request.onerror = function() {
-                console.error('Failed to load medical records:', request.error);
-            };
-        };
-        doctorsReq.onerror = function() {
-            console.error('Failed to load doctors info:', doctorsReq.error);
-        };
-    } catch (err) {
-        console.error('Error opening DB:', err);
-        prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Error connecting to database.</td></tr>");
-    }
-}
-document.addEventListener('DOMContentLoaded', () => {
-    fetchPatientRecords();
-});
-document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
+// ======================
+// 4. SMART DOMContentLoaded
+// ======================
+document.addEventListener('DOMContentLoaded', async () => {
+    const params = new URLSearchParams(location.search);
     const recordId = params.get('recordId');
-    if (recordId) {
-        viewMedicalRecord(recordId);
-    }
-});
-document.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
     const patientId = params.get('patientId');
-    if (patientId) {
-        fetchPatientRecordsforDoctor(patientId);
+
+    if (recordId && patientId) {
+        // Doctor viewing a specific record
+        await loadSingleRecordView();
+    } else if (patientId) {
+        // Doctor viewing patient's list
+        await fetchPatientRecordsforDoctor(patientId);
+    } else {
+        // Patient viewing own list
+        await fetchPatientRecords();
     }
 });
-window.clinicDB = {
-    viewMedicalRecord,
-    viewMedicalRecordforDoctors
-};
 
-// Request Access
+// ======================
+// 5. Click handlers
+// ======================
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn-view')) {
+        const id = DOMPurify.sanitize(e.target.dataset.id);
+        if (id) {
+            window.location.href = `view-medical-record.html?recordId=${id}`;
+        }
+    }
 
+    if (e.target.classList.contains('btn-view-doctor')) {
+        const id = DOMPurify.sanitize(e.target.dataset.id);
+        const patientId = new URLSearchParams(window.location.search).get('patientId');
+        if (id && patientId) {
+            window.location.href = `view-medical-record-doctor.html?recordId=${id}&patientId=${patientId}`;
+        }
+    }
+});
+
+// ======================
+// 6. Request Access Button
+// ======================
 document.addEventListener("click", async (e) => {
-  if (e.target.classList.contains("btn-view-request")) {
-    const button = e.target;
-    const recordId = DOMPurify.sanitize(button.dataset.id);
-    const recordDoctorId = DOMPurify.sanitize(button.dataset.ownerid);
-    const requestingDoctorFullName = DOMPurify.sanitize(button.dataset.myname);
-    const requestingDoctorId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
+    if (e.target.classList.contains("btn-view-request")) {
+        const button = e.target;
+        const recordId = DOMPurify.sanitize(button.dataset.id);
+        const recordDoctorId = DOMPurify.sanitize(button.dataset.ownerid);
+        const requestingDoctorFullName = DOMPurify.sanitize(button.dataset.myname);
+        const requestingDoctorId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
 
-    if (recordId && requestingDoctorFullName) {
-      try {
-        const message = `${requestingDoctorFullName} has requested access to record ${recordId} [requester:${requestingDoctorId}]`;
-        await createNotificationForUser(
-          "Access Request Received",
-          message,
-          parseInt(recordDoctorId),
-          "doctor"
-        );
+        if (!recordId || !requestingDoctorFullName) return;
 
-        await logCurrentUserActivity(
-          "requestAccess",
-          parseInt(recordId),
-          `Doctor with ID ${parseInt(requestingDoctorId)} requested access to medical record with ID ${recordId} from doctor with ID ${recordDoctorId}`
-        );
+        try {
+            const message = `${requestingDoctorFullName} has requested access to record ${recordId} [requester:${requestingDoctorId}]`;
+            await createNotificationForUser(
+                "Access Request Received",
+                message,
+                parseInt(recordDoctorId),
+                "doctor"
+            );
 
-        // ✅ Update button text and disable it
-        button.textContent = "Request Sent";
-        button.disabled = true;
-        button.classList.add("request-sent"); // Optional: style it differently
+            await logCurrentUserActivity(
+                "requestAccess",
+                parseInt(recordId),
+                `Doctor ${requestingDoctorId} requested access to record ${recordId} from doctor ${recordDoctorId}`
+            );
 
-      } catch (err) {
-        console.error("❌ Failed to send access request:", err);
-        alert("Failed to send request. Please try again.");
-      }
+            button.textContent = "Request Sent";
+            button.disabled = true;
+            button.classList.add("request-sent");
+
+        } catch (err) {
+            console.error("Failed to send access request:", err);
+            alert("Failed to send request.");
+        }
     }
-  }
 });
+
+// ======================
+// 7. Expose for debugging (optional)
+// ======================
+window.clinicDB = window.clinicDB || {};
+window.clinicDB.decryptDoctorInfo = decryptDoctorInfo;
+window.clinicDB.decryptPatientInfo = decryptPatientInfo;
+window.clinicDB.decryptMedicalRecord = decryptMedicalRecord;
+window.clinicDB.medicalRecords = {
+    fetchPatientRecords,
+    fetchPatientRecordsforDoctor,
+    loadSingleRecordView
+};

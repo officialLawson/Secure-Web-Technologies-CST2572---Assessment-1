@@ -1,271 +1,224 @@
-let currentRecord = null;
-let originalPrescriptions = [];
+/* ==============================
+   editmedicalrecord.js
+   – works with encrypted payload
+   – uses clinicDB.getMedicalRecordById()
+   – uses clinicDB.updateMedicalRecord()
+   – populates medicine <select> from medicines store
+   ============================== */
 
-// DOM Elements
-const form = document.getElementById('editRecordForm');
-const diagnosisInput = document.getElementById('userDiagnosis');
-const treatmentInput = document.getElementById('userTreatment');
+let currentRecord = null;
+
+// DOM elements -------------------------------------------------
+const form               = document.getElementById('editRecordForm');
+const diagnosisInput     = document.getElementById('userDiagnosis');
+const treatmentInput     = document.getElementById('userTreatment');
 const prescriptionsContainer = document.getElementById('prescriptions-container');
 const addPrescriptionBtn = document.querySelector('.btn-add-prescription');
-const saveBtn = document.getElementById('editRecordBtn');
-const submitBtn = form.querySelector('.submit-btn');
-const recordIdInput = document.getElementById('recordId');
-const patientIdInput = document.getElementById('patientId');
+const saveBtn            = document.getElementById('editRecordBtn');
+const submitBtn          = form.querySelector('.submit-btn');
+const recordIdInput      = document.getElementById('recordId');
+const patientIdInput     = document.getElementById('patientId');
 
-// Initialize
+// ----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
     await initializeEditPage();
 });
 
-/**
- * Main initialization
- */
+/* --------------------------------------------------------------
+   1. Initialise page – load record, check ownership, fill form
+   -------------------------------------------------------------- */
 async function initializeEditPage() {
     try {
-        // 1. Check DB
-        if (!window.clinicDB?.openClinicDB) {
-            throw new Error('clinicDB not loaded');
-        }
-
+        // 1. DB ready?
+        if (!window.clinicDB?.openClinicDB) throw new Error('clinicDB not loaded');
         await clinicDB.openClinicDB();
 
-        // 2. Get URL params
+        // 2. URL params
         const urlParams = new URLSearchParams(window.location.search);
-        const recordId = urlParams.get('recordId');
+        const recordId  = urlParams.get('recordId');
         const patientId = urlParams.get('patientId');
-
         if (!recordId || !patientId) {
-            alert('Missing record ID or patient ID. Please go back and try again.');
-            window.history.back();
-            return;
+            alert('Missing recordId or patientId');
+            history.back(); return;
         }
-
-        recordIdInput.value = recordId;
+        recordIdInput.value  = recordId;
         patientIdInput.value = patientId;
 
-        // 3. Load record
+        // 3. Load + decrypt record
         currentRecord = await clinicDB.getMedicalRecordById(recordId);
         if (!currentRecord) {
-            alert('Medical record not found.');
-            window.history.back();
-            return;
+            alert('Record not found');
+            history.back(); return;
         }
 
-        // 4. Check ownership (only doctor who created it)
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (currentUser.role !== 'doctor' || currentUser.linkedId !== currentRecord.doctorId) {
-            alert('You can only edit your own records.');
-            window.history.back();
-            return;
+        // 4. Ownership check
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (user.role !== 'doctor' || user.linkedId !== currentRecord.doctorId) {
+            alert('You can only edit your own records');
+            history.back(); return;
         }
 
-        // 5. Populate form
+        // 5. Fill the form
         populateForm(currentRecord);
 
         // 6. Show Save button
         saveBtn.style.display = 'inline-block';
         saveBtn.onclick = () => form.requestSubmit();
 
-        // 7. Setup form submit
+        // 7. Submit handler
         form.addEventListener('submit', handleSubmit);
-
-    } catch (err) {
-        console.error('Init error:', err);
-        alert('Failed to load record: ' + err.message);
+    } catch (e) {
+        console.error(e);
+        alert('Init error: ' + e.message);
     }
 }
 
-/**
- * Fill form with record data
- */
-function populateForm(record) {
-    diagnosisInput.value = DOMPurify.sanitize(record.diagnosis || '');
-    treatmentInput.value = DOMPurify.sanitize(record.treatment || '');
+/* --------------------------------------------------------------
+   2. Populate diagnosis / treatment + prescription rows
+   -------------------------------------------------------------- */
+function populateForm(rec) {
+    diagnosisInput.value = DOMPurify.sanitize(rec.diagnosis || '');
+    treatmentInput.value = DOMPurify.sanitize(rec.treatment || '');
 
-    // Clear and repopulate prescriptions
     prescriptionsContainer.innerHTML = '';
-    originalPrescriptions = (record.prescriptions || []).map(p => ({ ...p }));
-
-    if (originalPrescriptions.length === 0) {
-        addPrescription(); // add one empty row
-    } else {
-        originalPrescriptions.forEach(prescription => addPrescription(prescription));
-    }
+    const pres = rec.prescriptions || [];
+    if (pres.length === 0) addPrescription();               // at least one row
+    else pres.forEach(p => addPrescription(p));
 }
 
-/**
- * Add a prescription row (empty or pre-filled)
- */
+/* --------------------------------------------------------------
+   3. Add a prescription row (empty or pre-filled)
+   -------------------------------------------------------------- */
 function addPrescription(prescription = null) {
     const index = prescriptionsContainer.children.length;
-
-    const row = document.createElement('div');
+    const row   = document.createElement('div');
     row.className = 'prescription-row';
     row.innerHTML = `
-        <div class="form-grid" style="grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 0.5rem; align-items: end;">
+        <div class="form-grid" style="grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.5rem;align-items:end;">
             <div class="form-group">
                 <select class="medicine-select" required>
                     <option value="">Select Medicine</option>
                 </select>
             </div>
             <div class="form-group">
-                <input type="text" placeholder="Dosage" class="dosage-input" value="${prescription?.dosage || ''}" required>
+                <input type="text" class="dosage-input" placeholder="Dosage" value="${prescription?.dosage||''}" required>
             </div>
             <div class="form-group">
-                <input type="text" placeholder="Duration" class="duration-input" value="${prescription?.duration || ''}" required>
+                <input type="text" class="duration-input" placeholder="Duration" value="${prescription?.duration||''}" required>
             </div>
             <div class="form-group">
-                <input type="text" placeholder="Instructions" class="instructions-input" value="${prescription?.instructions || ''}" required>
+                <input type="text" class="instructions-input" placeholder="Instructions" value="${prescription?.instructions||''}">
             </div>
             <button type="button" class="btn-remove-prescription" title="Remove">Remove</button>
-        </div>
-    `;
-
+        </div>`;
     prescriptionsContainer.appendChild(row);
 
-    // Populate medicine dropdown
     const select = row.querySelector('.medicine-select');
     populateMedicineSelect(select, prescription?.medicineId);
 
-    // Remove button
     row.querySelector('.btn-remove-prescription').onclick = () => {
-        if (prescriptionsContainer.children.length > 1) {
-            row.remove();
-        } else {
-            alert('At least one prescription is required.');
-        }
+        if (prescriptionsContainer.children.length > 1) row.remove();
+        else alert('At least one prescription required.');
     };
 }
-
-// Add prescription button
 addPrescriptionBtn.onclick = () => addPrescription();
 
-/**
- * Populate medicine dropdown
- */
-async function populateMedicineSelect(selectElement, selectedId = null) {
+/* --------------------------------------------------------------
+   4. Fill medicine <select>
+   -------------------------------------------------------------- */
+async function populateMedicineSelect(selectEl, selectedId = null) {
     try {
-        const medicines = await clinicDB.getAllItems('medicines');
-        medicines.forEach(med => {
-            const opt = document.createElement('option');
-            opt.value = med.id;
-            opt.textContent = `${med.Drug} (${med.Dosage})`;
-            if (med.id == selectedId) opt.selected = true;
-            selectElement.appendChild(opt);
+        const meds = await clinicDB.getAllItems('medicines');
+        meds.forEach(m => {
+            const opt = new Option(`${m.Drug} (${m.Dosage})`, m.id);
+            if (m.id == selectedId) opt.selected = true;
+            selectEl.appendChild(opt);
         });
-    } catch (err) {
-        console.warn('Failed to load medicines:', err);
-        selectElement.innerHTML = '<option value="">Error loading</option>';
+    } catch (e) {
+        console.warn(e);
+        selectEl.innerHTML = '<option>Error loading</option>';
     }
 }
 
-/**
- * Collect form data
- */
+/* --------------------------------------------------------------
+   5. Collect form data (ready for DB)
+   -------------------------------------------------------------- */
 function collectFormData() {
-    const prescriptions = Array.from(prescriptionsContainer.querySelectorAll('.prescription-row')).map(row => {
-        const select = row.querySelector('.medicine-select');
-        const medicineId = select.value;
-        const dosage = row.querySelector('.dosage-input').value.trim();
-        const duration = row.querySelector('.duration-input').value.trim();
-        const instructions = row.querySelector('.instructions-input').value.trim();
-
-        return { medicineId: parseInt(medicineId), dosage, duration, instructions };
-    });
+    const rows = prescriptionsContainer.querySelectorAll('.prescription-row');
+    const prescriptions = Array.from(rows).map(r => ({
+        medicineId:   parseInt(r.querySelector('.medicine-select').value),
+        dosage:       r.querySelector('.dosage-input').value.trim(),
+        duration:     r.querySelector('.duration-input').value.trim(),
+        instructions: r.querySelector('.instructions-input').value.trim()
+    }));
 
     return {
-        recordId: recordIdInput.value,
+        recordId:  recordIdInput.value,
         patientId: patientIdInput.value,
-        doctorId: currentRecord.doctorId,
-        dateTime: currentRecord.dateTime,
+        doctorId:  currentRecord.doctorId,
+        dateTime:  currentRecord.dateTime,
         diagnosis: diagnosisInput.value.trim(),
         treatment: treatmentInput.value.trim(),
         prescriptions
     };
 }
 
-/**
- * Form submit handler
- */
+/* --------------------------------------------------------------
+   6. Submit → encrypt → update DB
+   -------------------------------------------------------------- */
 async function handleSubmit(e) {
     e.preventDefault();
 
-    // Basic validation
-    if (!diagnosisInput.value.trim()) {
-        showError('userDiagnosis', 'Diagnosis is required.');
-        return;
-    }
-    if (!treatmentInput.value.trim()) {
-        showError('userTreatment', 'Treatment is required.');
-        return;
-    }
+    // ---- basic validation ----
+    if (!diagnosisInput.value.trim()) return showError(diagnosisInput, 'Diagnosis required');
+    if (!treatmentInput.value.trim()) return showError(treatmentInput, 'Treatment required');
 
-    const prescriptions = Array.from(prescriptionsContainer.querySelectorAll('.prescription-row'));
-    for (const row of prescriptions) {
-        const select = row.querySelector('.medicine-select');
-        const dosage = row.querySelector('.dosage-input').value.trim();
-        const duration = row.querySelector('.duration-input').value.trim();
-        const instructions = row.querySelector('.instructions-input').value.trim();
-
-        if (!select.value) {
-            showError(select, 'Select a medicine.');
-            return;
-        }
-        if (!dosage || !duration || !instructions) {
-            alert('All prescription fields are required.');
-            return;
-        }
+    const rows = prescriptionsContainer.querySelectorAll('.prescription-row');
+    for (const r of rows) {
+        const sel = r.querySelector('.medicine-select');
+        if (!sel.value) return showError(sel, 'Select a medicine');
+        if (!r.querySelector('.dosage-input').value.trim())   return showError(r.querySelector('.dosage-input'),   'Dosage required');
+        if (!r.querySelector('.duration-input').value.trim()) return showError(r.querySelector('.duration-input'), 'Duration required');
     }
 
-    // Disable buttons
-    submitBtn.disabled = true;
-    saveBtn.disabled = true;
-    submitBtn.textContent = 'Saving...';
+    // ---- UI lock ----
+    submitBtn.disabled = saveBtn.disabled = true;
+    submitBtn.textContent = 'Saving…';
 
     try {
-        const updatedRecord = collectFormData();
-
-        // Save to IndexedDB
-        await clinicDB.updateMedicalRecord(updatedRecord);
-
-
-        // Success
-        alert('Medical record updated successfully!');
-        window.location.href = `view-medical-record-doctor.html?recordId=${updatedRecord.recordId}&patientId=${updatedRecord.patientId}`;
-
+        const updated = collectFormData();
+        await clinicDB.updateMedicalRecord(updated);          // encrypts inside
+        alert('Record updated');
+        location.href = `view-medical-record-doctor.html?patientId=${updated.patientId}&recordId=${updated.recordId}`;
     } catch (err) {
-        console.error('Save error:', err);
-        alert('Failed to save: ' + err.message);
+        console.error(err);
+        alert('Save failed: ' + err.message);
     } finally {
-        submitBtn.disabled = false;
-        saveBtn.disabled = false;
+        submitBtn.disabled = saveBtn.disabled = false;
         submitBtn.textContent = 'Update Record';
     }
 }
 
-/**
- * Show inline error
- */
-function showError(element, message) {
-    let errorEl;
-    if (typeof element === 'string') {
-        errorEl = document.getElementById(element + '-form-error');
-    } else {
-        errorEl = element.parentElement.querySelector('.error-message') || document.createElement('p');
-        errorEl.className = 'error-message';
-        element.parentElement.appendChild(errorEl);
+/* --------------------------------------------------------------
+   7. Tiny inline error helper
+   -------------------------------------------------------------- */
+function showError(el, msg) {
+    let err = el.parentElement.querySelector('.error-message');
+    if (!err) {
+        err = document.createElement('p');
+        err.className = 'error-message';
+        el.parentElement.appendChild(err);
     }
-    errorEl.textContent = message;
-    errorEl.style.display = 'block';
-    setTimeout(() => errorEl.style.display = 'none', 5000);
+    err.textContent = msg;
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 5000);
 }
 
-// Auto-populate medicines on load (in case of slow load)
+/* --------------------------------------------------------------
+   8. Auto-re-populate selects if they are empty (slow load)
+   -------------------------------------------------------------- */
 setTimeout(async () => {
-    const selects = document.querySelectorAll('.medicine-select');
-    for (const select of selects) {
-        if (select.children.length <= 1) {
-            await populateMedicineSelect(select, select.value);
-        }
-    }
-}, 1000);
+    document.querySelectorAll('.medicine-select').forEach(async s => {
+        if (s.children.length <= 1) await populateMedicineSelect(s);
+    });
+}, 1200);

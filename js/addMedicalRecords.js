@@ -22,17 +22,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 let prescriptionCount = 0;
 
-function addPrescription() {
+async function addPrescription() {
   prescriptionCount++;
   const container = document.getElementById('prescriptions-container');
   const entry = document.createElement('div');
   entry.className = 'prescription-entry';
+
+  // Fetch medicines for dropdown
+  let medicines = [];
+  try {
+    const db = await clinicDB.openClinicDB();
+    const tx = db.transaction('medicines', 'readonly');
+    const store = tx.objectStore('medicines');
+    medicines = await new Promise((resolve, reject) => {
+      const req = store.getAll();
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (err) {
+    console.error('Failed to load medicines:', err);
+  }
+
+  const options = medicines.map(med => 
+    `<option value="${med.id}">${DOMPurify.sanitize(med.Drug)}</option>`
+  ).join('');
+
   entry.innerHTML = `
     <div class="prescription-header">
       <span class="prescription-title">Prescription ${prescriptionCount}</span>
     </div>
-    <label for="medicineName_${prescriptionCount}">Medicine Name</label>
-    <input type="text" id="medicineName_${prescriptionCount}" name="medicineName_${prescriptionCount}" placeholder="e.g., Amoxicillin" required>
+    <label for="medicineId_${prescriptionCount}">Medicine Name</label>
+    <select id="medicineId_${prescriptionCount}" name="medicineId_${prescriptionCount}" required>
+      <option value="" disabled selected>Select a medicine</option>
+      ${options}
+    </select>
     <label for="dosage_${prescriptionCount}">Dosage</label>
     <input type="text" id="dosage_${prescriptionCount}" name="dosage_${prescriptionCount}" placeholder="e.g., 500mg" required>
     <label for="duration_${prescriptionCount}">Duration</label>
@@ -72,13 +95,14 @@ async function handleAddMedicalRecord(event) {
 
   const prescriptionInputs = [];
   document.querySelectorAll('.prescription-entry').forEach(entry => {
-    const name = entry.querySelector(`[name^="medicineName_"]`).value.trim();
+    const select = entry.querySelector(`select[name^="medicineId_"]`);
+    const medicineId = select?.value;
     const dosage = entry.querySelector(`[name^="dosage_"]`).value.trim();
     const duration = entry.querySelector(`[name^="duration_"]`).value.trim();
     const instructions = entry.querySelector(`[name^="instructions_"]`).value.trim();
 
-    if (name && dosage && duration) {
-      prescriptionInputs.push({ name, dosage, duration, instructions });
+    if (medicineId && dosage && duration) {
+      prescriptionInputs.push({ medicineId, dosage, duration, instructions });
     }
   });
 
@@ -117,25 +141,12 @@ async function handleAddMedicalRecord(event) {
     req.onerror = () => reject(req.error);
   });
 
-  const prescriptions = [];
-  for (const p of prescriptionInputs) {
-    // Fixed: Use "Drug" field
-    const med = allMeds.find(m =>
-      m.Drug?.toLowerCase() === p.name.toLowerCase()
-    );
-
-    if (!med) {
-      console.warn(`Medicine not found: "${p.name}". Please add it in Medicines first.`);
-      return;
-    }
-
-    prescriptions.push({
-      medicineId: med.id,
-      dosage: p.dosage,
-      duration: p.duration,
-      instructions: p.instructions
-    });
-  }
+  const prescriptions = prescriptionInputs.map(p => ({
+    medicineId: p.medicineId,
+    dosage: p.dosage,
+    duration: p.duration,
+    instructions: p.instructions
+  }));
 
   const recordId = `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 

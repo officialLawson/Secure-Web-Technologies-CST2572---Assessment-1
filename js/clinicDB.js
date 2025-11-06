@@ -386,6 +386,25 @@ function getRecordsByPatientId(patientId) {
   });
 }
 
+async function getMedicalRecordById(recordId) {
+  const record = await getItem('medicalRecord', recordId);
+  if (record) {
+    return await decryptMedicalRecord(record);
+  }
+  return null;
+}
+
+async function updateMedicalRecord(updated) {
+  const { recordId, patientId, doctorId, dateTime, diagnosis, treatment, prescriptions } = updated;
+  const sensitive = { diagnosis, treatment };
+  const payload = await encryptData(JSON.stringify(sensitive));
+  const stored = {
+    recordId, patientId, doctorId, dateTime,
+    prescriptions, payload
+  };
+  return updateItem('medicalRecord', stored);
+}
+
 //see all appointments or patients they’re handling (for doctor)
 function getAppointmentsByDoctorId(doctorId) {
   return new Promise((resolve, reject) => {
@@ -1106,6 +1125,8 @@ window.clinicDB = {
   loadPatientDashboard,
   loadAdminDashboard,
   addMedicalRecord,
+  getMedicalRecordById,
+  updateMedicalRecord,
   encryptData,
   decryptData,
   closeDB,
