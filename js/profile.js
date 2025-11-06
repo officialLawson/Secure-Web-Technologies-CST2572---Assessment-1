@@ -1,17 +1,27 @@
 async function getUserInfo() {
-    const userFullName = document.getElementById("userFullName");
-    const userRoleMain = document.getElementById("userRoleMain");
-    const userEmail = document.getElementById("userEmail");
-    const userAddressMain = document.getElementById("userAddressMain");
-    const userFirstName = document.getElementById("userFirstName");
-    const userLastName = document.getElementById("userLastName");
-    const userTelephone = document.getElementById("userTelephone");
-    const userRole = document.getElementById("userRole");
-    const userDOB = document.getElementById("userDOB");
-    const userId = document.getElementById("userId");
-    const userAddress = document.getElementById("userAddress");
-    const userGender = document.getElementById("userGender");
-    const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+    // === SAFE ELEMENT GETTERS ===
+    const els = {
+        userFullName: document.getElementById("userFullName"),
+        userRoleMain: document.getElementById("userRoleMain"),
+        userEmail: document.getElementById("userEmail"),
+        userAddressMain: document.getElementById("userAddressMain"),
+        userFirstName: document.getElementById("userFirstName"),
+        userLastName: document.getElementById("userLastName"),
+        userTelephone: document.getElementById("userTelephone"),
+        userRole: document.getElementById("userRole"),
+        userDOB: document.getElementById("userDOB"),
+        userId: document.getElementById("userId"),
+        userAddress: document.getElementById("userAddress"),
+        userGender: document.getElementById("userGender")
+    };
+
+    const sanitize = (dirty) => DOMPurify.sanitize(String(dirty || ''), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
+    // === HELPER: Only set text if element exists ===
+    const setText = (el, text) => {
+        if (el) el.innerText = sanitize(text);
+    };
+
     try {
         const db = await openClinicDB();
         const user = JSON.parse(localStorage.getItem('currentUser'));
@@ -23,33 +33,42 @@ async function getUserInfo() {
                 const doctorsReq = doctorStore.getAll();
                 doctorsReq.onsuccess = async function() {
                     const encryptedDoctors = doctorsReq.result || [];
-                    // Decrypt all patients in parallel
+                    // Decrypt all doctors in parallel
                     const decryptedDoctors = await Promise.all(
                         encryptedDoctors.map(p => decryptDoctorInfo(p))
                     );
                     const currentUserData = decryptedDoctors.filter(d => d.id === user.linkedId) || [];
                     const doctor = currentUserData[0];
-                    const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
+
+                    // Normalize field names
+                    doctor.First = doctor.first_name || doctor.First || '';
+                    doctor.Last = doctor.last_name || doctor.Last || '';
+                    doctor.Email = doctor.email || doctor.Email || '';
+                    doctor.Gender = doctor.gender || doctor.Gender || '';
+
+                    const doctorFullName = `Dr ${doctor.First} ${doctor.Last}`;
                     const doctorRole = (user.role.charAt(0).toUpperCase() + user.role.slice(1));
-                    const doctorFirstName = doctor.first_name;
-                    const doctorLastName = doctor.last_name;
-                    const doctorEmail = doctor.email;
+                    const doctorFirstName = doctor.First;
+                    const doctorLastName = doctor.Last;
+                    const doctorEmail = doctor.Email;
                     const doctorAddress = doctor.Address;
                     const doctorTelephone = doctor.Telephone;
-                    const doctorGender = doctor.gender;
-                    userFullName.innerText = sanitize(doctorFullName);
-                    userEmail.innerText = sanitize(doctorEmail);
-                    userAddressMain.innerText = sanitize(doctorAddress);
-                    userAddress.innerText = sanitize(doctorAddress);
-                    userGender.innerText = sanitize(doctorGender);
-                    userFirstName.innerText = sanitize(doctorFirstName);
-                    userLastName.innerText = sanitize(doctorLastName);
-                    userTelephone.innerText = sanitize(doctorTelephone);
-                    userRoleMain.innerText = sanitize(doctorRole);
-                    userRole.innerText = sanitize(doctorRole);
+                    const doctorGender = doctor.gender || doctor.Gender || 'Not specified';
+
+                    setText(els.userFullName, doctorFullName);
+                    setText(els.userEmail, doctorEmail);
+                    setText(els.userAddressMain, doctorAddress);
+                    setText(els.userAddress, doctorAddress);
+                    setText(els.userFirstName, doctorFirstName);
+                    setText(els.userLastName, doctorLastName);
+                    setText(els.userTelephone, doctorTelephone);
+                    setText(els.userGender, doctorGender);
+                    setText(els.userRoleMain, doctorRole);
+                    setText(els.userRole, doctorRole);
+                    setText(els.userId, `Staff ID: ${doctor.StaffID || doctor.id || ''}`);
                 };
                 doctorsReq.onerror = function() {
-                    console.error('Failed to load doctors info:', request.error);
+                    console.error('Failed to load doctors info:', doctorsReq.error);
                 };
                 break;
             case 'patient':
@@ -80,21 +99,22 @@ async function getUserInfo() {
                     const patientNHS = patient.NHS;
                     const patientGender = patient.Gender;
                     const patientRole = (user.role.charAt(0).toUpperCase() + user.role.slice(1));
-                    userFullName.innerText = sanitize(patientFullName);
-                    userDOB.innerText = sanitize(patientDOB);
-                    userEmail.innerText = sanitize(patientEmail);
-                    userAddressMain.innerText = sanitize(patientAddress);
-                    userAddress.innerText = sanitize(patientAddress);
-                    userId.innerText = sanitize(patientNHS);
-                    userGender.innerText = sanitize(patientGender);
-                    userFirstName.innerText = sanitize(patientFirstName);
-                    userLastName.innerText = sanitize(patientLastName);
-                    userTelephone.innerText = sanitize(patientTelephone);
-                    userRoleMain.innerText = sanitize(patientRole);
-                    userRole.innerText = sanitize(patientRole);
+
+                    setText(els.userFullName, patientFullName);
+                    setText(els.userDOB, patientDOB);
+                    setText(els.userEmail, patientEmail);
+                    setText(els.userAddressMain, patientAddress);
+                    setText(els.userAddress, patientAddress);
+                    setText(els.userId, patientNHS);
+                    setText(els.userGender, patientGender);
+                    setText(els.userFirstName, patientFirstName);
+                    setText(els.userLastName, patientLastName);
+                    setText(els.userTelephone, patientTelephone);
+                    setText(els.userRoleMain, patientRole);
+                    setText(els.userRole, patientRole);
                     };
                 patientsReq.onerror = function(event) {
-                    console.error('Failed to load patients info:', request.error);
+                    console.error('Failed to load patients info:', patientsReq.error);
                 };
                 break;
         }

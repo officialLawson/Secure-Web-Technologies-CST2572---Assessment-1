@@ -26,7 +26,7 @@
   };
 
   // -----------------------------------------------------------------
-  // 1. DOCTOR – FIXED: Fetch from IndexedDB and decrypt
+  // 1. DOCTOR 
   // -----------------------------------------------------------------
   const docTrigger = document.querySelector('#doctorSelect .custom-select__trigger');
   const docText = docTrigger?.querySelector('.trigger-text');

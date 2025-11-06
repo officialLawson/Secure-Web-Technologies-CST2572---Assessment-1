@@ -48,10 +48,8 @@
         <!-- ==================== MAIN CONTENT ==================== -->
         <main id="mainContent" class="main-content" role="main">
             <header class="header">
-                <!-- Mobile Menu Toggle -->
                 <button id="mobile-toggle" class="toggle-btn" aria-label="Open menu">Menu</button>
 
-                <!-- Sidebar Collapse (Desktop) -->
                 <div class="left-controls">
                     <button id="collapse-toggle" class="sidebar-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
                         <svg class="sidebar-icon" width="16" height="12" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
@@ -60,9 +58,7 @@
                     </button>
                 </div>
 
-                <!-- Right Header Icons -->
                 <div class="right-icons">
-                    <!-- Theme Toggle -->
                     <button id="theme-switch">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3">
                             <path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80Zm440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/>
@@ -87,7 +83,6 @@
                         <div id="notificationsList" class="panel-body"></div>
                     </div>
 
-                    <!-- User Profile Dropdown Trigger -->
                     <button id="profileButton" class="user-btn" aria-label="User menu">
                         <svg class="dashboard-icon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
                             <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
@@ -95,7 +90,7 @@
                     </button>
                 </div>
 
-                <!-- Profile Dropdown Menu -->
+                <!-- Profile Dropdown -->
                 <div id="profileModal" class="profile-modal">
                     <ul class="profile-modal-actions">
                         <li><a href="profile-view-doctor.html">
@@ -150,10 +145,6 @@
                         <div class="form-group">
                             <label for="address">Address</label>
                             <input type="text" id="address" class="readonly" readonly />
-                        </div>
-                        <div class="form-group">
-                            <label for="dob">Date of Birth</label>
-                            <input type="text" id="dob" class="readonly" readonly placeholder="DD/MM/YYYY" />
                         </div>
                     </div>
                     <div class="form-actions">
@@ -252,7 +243,7 @@
     <script>
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         if (userRole !== 'doctor') {
-            window.location.href = `appointments-${userRole}.html`;
+            window.location.href = `dashboard-${userRole}.html`;
         } 
 
         const profileButton = document.getElementById('profileButton')
@@ -270,13 +261,6 @@
             profileModal.style.display = 'none';
         });
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-        if (!currentUser || currentUser.role?.toLowerCase() !== 'doctor') {
-            alert('Access denied. Redirecting to login...');
-            window.location.href = '../html/login.html';
-            return;
-        }
-        const patientNHS = currentUser.linkedId;
     </script>
 </body>
 </html>

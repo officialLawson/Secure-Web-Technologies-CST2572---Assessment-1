@@ -34,14 +34,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* ==================== 2. DOM ELEMENTS ==================== */
     const els = {
         fullName: document.getElementById('fullName'),
-        email   : document.getElementById('email'),
-        phone   : document.getElementById('phone'),
-        address : document.getElementById('address'),
-        dob     : document.getElementById('dob'),
-        editBtn : document.getElementById('editBtn'),
-        saveBtn : document.getElementById('saveBtn'),
+        email: document.getElementById('email'),
+        phone: document.getElementById('phone'),
+        address: document.getElementById('address'),
+        dob: document.getElementById('dob'),
+        editBtn: document.getElementById('editBtn'),
+        saveBtn: document.getElementById('saveBtn'),
         cancelBtn: document.getElementById('cancelBtn'),
-        msgBox  : document.getElementById('msgBox')
+        msgBox: document.getElementById('msgBox')
     };
 
     let originalData = {};
@@ -57,8 +57,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             let record;
             if (isPatient) {
                 record = await clinicDB.getItem('patients', userId);
+                if (record) {
+                    record = await clinicDB.decryptPatientInfo(record); // Added decryption
+                }
             } else if (isDoctor) {
                 record = await clinicDB.getItem('doctors', userId);
+                if (record) {
+                    record = await clinicDB.decryptDoctorInfo(record); // Added decryption
+                    record.First = record.first_name || record.First || '';
+                    record.Last = record.last_name || record.Last || '';
+                    record.Email = record.email || record.Email || '';
+                    record.Telephone = record.Telephone || record.Phone || '';
+                    record.Address = record.Address || '';
+                }
             }
 
             if (!record) {
@@ -69,7 +80,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             originalData = { ...record };
 
             // Sanitize before inserting into DOM
-            const safeFullName = sanitize(`${record.First || ''} ${record.Last || ''}`);
+            let fullNameStr;
+            if (isDoctor) {
+                fullNameStr = `Dr ${record.First || ''} ${record.Last || ''}`.trim();
+            } else {
+                fullNameStr = `${record.Title || ''} ${record.First || ''} ${record.Last || ''}`.trim();
+            }
+            const safeFullName = sanitize(fullNameStr);
             const safeEmail    = sanitize(record.Email || '');
             const safePhone    = sanitize(record.Telephone || record.Phone || '');
             const safeAddress  = sanitize(record.Address || '');
@@ -79,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             els.email.value    = safeEmail;
             els.phone.value    = safePhone;
             els.address.value  = safeAddress;
-            els.dob.value      = safeDOB;
+            if (els.dob) els.dob.value = safeDOB;
 
         } catch (err) {
             console.error('Failed to load user data:', err);
@@ -90,9 +107,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* ==================== 5. UI HELPERS ==================== */
     function enableEdit() {
         document.querySelectorAll('#accountForm input').forEach(input => {
+            if (input && input.id !== 'dob' || isPatient) {
             input.readOnly = false;
             input.classList.remove('readonly');
             input.classList.add('edit-mode');
+            }
         });
         els.editBtn.style.display = 'none';
         els.saveBtn.style.display = 'inline-block';
@@ -101,9 +120,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     function disableEdit() {
         document.querySelectorAll('#accountForm input').forEach(input => {
+            if (input) {
             input.readOnly = true;
             input.classList.add('readonly');
             input.classList.remove('edit-mode');
+            }
         });
         els.editBtn.style.display = 'inline-block';
         els.saveBtn.style.display = 'none';
@@ -132,7 +153,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         els.email.value    = safeEmail;
         els.phone.value    = safePhone;
         els.address.value  = safeAddress;
-        els.dob.value      = safeDOB;
+        if (els.dob) els.dob.value = safeDOB;
 
         disableEdit();
         showMsg('Changes cancelled.');
@@ -144,13 +165,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         const rawEmail = els.email.value;
         const rawPhone = els.phone.value;
         const rawAddress = els.address.value;
-        const rawDOB = els.dob.value;
+        const rawDOB = els.dob ? els.dob.value : '';
 
         const name = sanitize(rawName);
         const email = sanitize(rawEmail);
         const phone = sanitize(rawPhone);
         const address = sanitize(rawAddress);
-        const dob = sanitize(rawDOB);
+        const dob = els.dob ? sanitize(rawDOB) : '';
 
         const nameParts = name.split(/\s+/).filter(Boolean);
         if (nameParts.length < 2) {
@@ -164,30 +185,60 @@ document.addEventListener('DOMContentLoaded', async () => {
             showMsg('Please enter a valid email address.', 'error');
             return;
         }
-        if (!/^\+?[\d\s\-$$  $$]{10,}$/.test(phone)) {
+        if (!/^\+?[\d\s\-]{10,}$/.test(phone)) {
             showMsg('Please enter a valid phone number.', 'error');
+            return;
+        }
+        if (isPatient && !dob) {
+            showMsg('Please enter your date of birth.', 'error');
             return;
         }
 
         try {
-            const updated = {
-                ...(isPatient ? { NHS: userId } : { StaffID: userId }),
+            // PRESERVE ALL NON-SENSITIVE FIELDS (never encrypted)
+            const preserved = {
                 id: originalData.id,
-                title: originalData.title || '',
-                First: first,
+                Title: originalData.Title || '',
+                Gender: originalData.Gender || '',
+                NHS: isPatient ? userId : undefined,
+                StaffID: isDoctor ? userId : undefined,
+            };
+
+            // BUILD FINAL UPDATED RECORD - with correct field casing for doctors
+            const updated = {
+                ...preserved,
+                First: first, 
                 Last: last,
                 Email: email,
                 Telephone: phone,
                 Address: address,
-                DOB: dob,
-                ...(isDoctor ? { Specialization: originalData.Specialization || '' } : {})
+                ...(isPatient ? {
+                    DOB: dob,
+                    NHS: userId
+                } : {}),
+                ...(isDoctor ? {
+                    first_name: first,
+                    last_name: last,
+                    email: email,
+                    Specialization: originalData.Specialization || '',
+                    StaffID: userId
+                } : {})
             };
 
-            const encrypted = await clinicDB.encryptPatientInfo(updated);
+            // Encrypt & save
+            let encrypted;
+            if (isPatient) {
+                encrypted = await clinicDB.encryptPatientInfo(updated);
+            } else if (isDoctor) {
+                encrypted = await clinicDB.encryptDoctorInfo(updated);
+            }
+
             const storeName = isPatient ? 'patients' : 'doctors';
             await clinicDB.updateItem(storeName, encrypted);
 
-            originalData = { ...updated };
+            // Update originalData so Cancel works + future edits preserve everything
+            originalData = { ...originalData, ...updated };
+
             disableEdit();
             showMsg('Account updated successfully!', 'success');
         } catch (err) {
