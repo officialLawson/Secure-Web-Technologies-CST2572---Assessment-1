@@ -88,10 +88,13 @@ async function handleAddMedicalRecord(event) {
   const diagnosis = document.getElementById('userDiagnosis').value.trim();
   const treatment = document.getElementById('userTreatment').value.trim();
 
+  const error = document.getElementById('details-form-error');
   if (!diagnosis || !treatment) {
-    alert('Please fill in Diagnosis and Treatment.');
+    error.innerText = DOMPurify.sanitize('Please fill in Diagnosis and Treatment.');
     return;
   }
+
+  error.innerText = '';
 
   const prescriptionInputs = [];
   document.querySelectorAll('.prescription-entry').forEach(entry => {
@@ -106,10 +109,13 @@ async function handleAddMedicalRecord(event) {
     }
   });
 
+  const errorPrep = document.getElementById('prescriptions-form-error');
   if (prescriptionInputs.length === 0) {
-    console.log('Please add at least one prescription.');
+    errorPrep.innerText = DOMPurify.sanitize('Please add at least one prescription.');
     return;
   }
+  errorPrep.innerText = '';
+
 
   const urlParams = new URLSearchParams(window.location.search);
   const patientId = urlParams.get('patientId');

@@ -284,13 +284,13 @@ async function loadSingleRecordView() {
         const patientId = params.get('patientId');
 
         if (!recordId || !patientId) {
-            alert('Missing record or patient');
+            console.warn('Missing record or patient');
             return;
         }
 
         const rec = await clinicDB.getMedicalRecordById(recordId);
         if (!rec) {
-            alert('Record not found');
+            console.warn('Record not found');
             return;
         }
 
@@ -321,7 +321,7 @@ async function loadSingleRecordView() {
 
             for (const p of prescriptions) {
                 const med = medicineMap[String(p.medicineId)];
-                const drugName = med?.Drug 
+                const drugName = med?.Drug
                     ? DOMPurify.sanitize(med.Drug) 
                     : `<em style="color: #ff6b6b;">[Deleted Medicine]</em>`;
 
@@ -349,7 +349,7 @@ async function loadSingleRecordView() {
 
     } catch (err) {
         console.error('loadSingleRecordView error:', err);
-        alert('Failed to load record');
+        console.warn('Failed to load record');
     }
 }
 
@@ -427,7 +427,7 @@ document.addEventListener("click", async (e) => {
 
         } catch (err) {
             console.error("Failed to send access request:", err);
-            alert("Failed to send request.");
+            console.warn("Failed to send request.");
         }
     }
 });

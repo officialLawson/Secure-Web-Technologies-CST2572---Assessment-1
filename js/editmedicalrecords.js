@@ -38,7 +38,7 @@ async function initializeEditPage() {
         const recordId  = urlParams.get('recordId');
         const patientId = urlParams.get('patientId');
         if (!recordId || !patientId) {
-            alert('Missing recordId or patientId');
+            console.error('Missing recordId or patientId');
             history.back(); return;
         }
         recordIdInput.value  = recordId;
@@ -47,7 +47,7 @@ async function initializeEditPage() {
         // 3. Load + decrypt record
         currentRecord = await clinicDB.getMedicalRecordById(recordId);
         if (!currentRecord) {
-            alert('Record not found');
+            console.error('Record not found');
             history.back(); return;
         }
 
@@ -68,8 +68,7 @@ async function initializeEditPage() {
         // 7. Submit handler
         form.addEventListener('submit', handleSubmit);
     } catch (e) {
-        console.error(e);
-        alert('Init error: ' + e.message);
+        console.error('Init error: ' + e.message);
     }
 }
 
@@ -118,7 +117,10 @@ function addPrescription(prescription = null) {
 
     row.querySelector('.btn-remove-prescription').onclick = () => {
         if (prescriptionsContainer.children.length > 1) row.remove();
-        else alert('At least one prescription required.');
+        else {
+            const error = document.getElementById('prescriptions-form-error');
+            error.innerText = 'At least one prescription required.';
+        }    
     };
 }
 addPrescriptionBtn.onclick = () => addPrescription();
@@ -130,7 +132,7 @@ async function populateMedicineSelect(selectEl, selectedId = null) {
     try {
         const meds = await clinicDB.getAllItems('medicines');
         meds.forEach(m => {
-            const opt = new Option(`${m.Drug} (${m.Dosage})`, m.id);
+            const opt = new Option(`${m.Drug}`, m.id);
             if (m.id == selectedId) opt.selected = true;
             selectEl.appendChild(opt);
         });
@@ -188,11 +190,12 @@ async function handleSubmit(e) {
     try {
         const updated = collectFormData();
         await clinicDB.updateMedicalRecord(updated);          // encrypts inside
-        alert('Record updated');
+        await logCurrentUserActivity("editMedicalRecord", updated.recordId, `Doctor with ID ${updated.doctorId} edited a medical record`)
+        await createNotificationForUser("Medical Record Updated", `A doctor with ID ${updated.doctorId} updated medical record: ${updated.recordId}`, updated.patientId, 'patient')
+        console.log('Record updated');
         location.href = `view-medical-record-doctor.html?patientId=${updated.patientId}&recordId=${updated.recordId}`;
     } catch (err) {
-        console.error(err);
-        alert('Save failed: ' + err.message);
+        console.error('Save failed: ' + err.message);
     } finally {
         submitBtn.disabled = saveBtn.disabled = false;
         submitBtn.textContent = 'Update Record';
