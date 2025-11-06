@@ -26,6 +26,8 @@ function normalizeTimeHHMM(str) {
   return `${hour}:${minute}`;
 }
 
+let appointmentToCancel = null;
+
 
 // Search Feature
 function renderConfirmedAppointments(data) {
@@ -322,8 +324,7 @@ async function loadAppointments() {
                     tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
                      
                       return;
-                    }
-                   
+                    }                   
                     appointmentsPatient.forEach(app => {
                       const row = document.createElement('tr');
                       const doctorName = doctorMap[app.doctorId] || 'Unknown';
@@ -611,7 +612,6 @@ document.getElementById('cancelDelete').addEventListener('click', () => {
   userToDelete = null;
 });
 
-let appointmentToCancel = null;
 function cancelAppointment(id) {
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   appointmentToCancel = sanitize(id);
@@ -784,7 +784,7 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
           patientId,
           reason,
           date,
-          fixedTime,
+          time: fixedTime,
           status: 'Confirmed',
         };
         const addReq = store.add(newAppointment);
@@ -810,6 +810,7 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
 }
 
 function handleAddAppointment(event) {
+  if (event) event.preventDefault();
   const doctorId = document.getElementById('doctorName').value;
   const patientId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
   const reason = document.getElementById('appointmentReason').value;
