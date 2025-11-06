@@ -1,3 +1,120 @@
+// Search Feature
+let allRenderedUsers = []; // holds display-ready user data
+let allRenderedPatients = []; // holds structured patient data for search
+
+function renderUsers(data) {
+  const tbody = document.getElementById("usersBody");
+  const userRole = JSON.parse(localStorage.getItem("currentUser")).role.toLowerCase();
+  tbody.innerHTML = "";
+
+  if (!data.length) {
+    tbody.innerHTML = "<tr><td colspan='5'>No matching users found.</td></tr>";
+    return;
+  }
+
+  data.forEach(user => {
+    const row = document.createElement("tr");
+    const safeName = DOMPurify.sanitize(user.name);
+    const safeRole = DOMPurify.sanitize(user.role.charAt(0).toUpperCase() + user.role.slice(1));
+    const safeGender = DOMPurify.sanitize(user.gender);
+    const safeEmail = DOMPurify.sanitize(user.email);
+    const safeId = DOMPurify.sanitize(user.linkedId);
+    const safeUsername = DOMPurify.sanitize(user.username);
+
+    row.innerHTML = `
+      <td>${safeName}</td>
+      <td>${safeRole}</td>
+      <td>${safeGender}</td>
+      <td>${safeEmail}</td>
+      <td class="actions">
+        <a href="edit-user.html">
+          <button class="btn-edit" data-id="${safeId}" data-role="${user.role}">Edit</button>
+        </a>
+        <button class="btn-delete" data-username="${safeUsername}" data-role="${user.role}" data-id="${safeId}">Delete</button>
+      </td>
+    `;
+
+    tbody.appendChild(row);
+  });
+}
+
+function renderPatients(data) {
+  const tbody = document.getElementById("patientsBody");
+  tbody.innerHTML = "";
+
+  if (!data.length) {
+    tbody.innerHTML = "<tr><td colspan='4'>No matching patients found.</td></tr>";
+    return;
+  }
+
+  data.forEach(patient => {
+    const row = document.createElement("tr");
+    const safeName = DOMPurify.sanitize(patient.name);
+    const safeGender = DOMPurify.sanitize(patient.gender);
+    const safeDob = DOMPurify.sanitize(patient.dob);
+    const safeEmail = DOMPurify.sanitize(patient.email);
+
+    row.innerHTML = `
+      <td>${safeName}</td>
+      <td>${safeGender}</td>
+      <td>${safeDob}</td>
+      <td>${safeEmail}</td>
+    `;
+
+    row.style.cursor = 'pointer';
+    row.addEventListener('click', () => {
+      window.location.href = `medical-records-doctor.html?patientId=${patient.linkedId}`;
+    });
+
+    tbody.appendChild(row);
+  });
+}
+document.addEventListener("DOMContentLoaded", () => {
+
+    const searchUsersInput = document.getElementById("searchUsers");
+    if (searchUsersInput) {
+    searchUsersInput.addEventListener("input", function () {
+        const query = this.value.toLowerCase().trim();
+
+        if (query === "") {
+            renderUsers(allRenderedUsers);
+            return;
+        }
+
+        const filtered = allRenderedUsers.filter(user =>
+            user.name.toLowerCase().includes(query) ||
+            user.role.toLowerCase().includes(query) ||
+            user.gender.toLowerCase().includes(query) ||
+            user.email.toLowerCase().includes(query) ||
+            user.username.toLowerCase().includes(query)
+        );
+
+        renderUsers(filtered);
+        });
+    }
+
+    const searchPatientsInput = document.getElementById("searchPatients");
+    if (searchPatientsInput) {
+    searchPatientsInput.addEventListener("input", function () {
+        const query = this.value.toLowerCase().trim();
+
+        if (query === "") {
+        renderPatients(allRenderedPatients);
+        return;
+        }
+
+        const filtered = allRenderedPatients.filter(p =>
+        (p.name || "").toLowerCase().includes(query) ||
+        (p.gender || "").toLowerCase().includes(query) ||
+        (p.dob || "").toLowerCase().includes(query) ||
+        (p.email || "").toLowerCase().includes(query)
+        );
+
+        renderPatients(filtered);
+    });
+    }
+});
+
 async function fetchAllUserData() {
     const tbody = document.getElementById('usersBody');
     if (!tbody) return console.warn('Table body #usersBody not found.');
@@ -65,11 +182,21 @@ async function fetchAllUserData() {
                                 <td>${gender}</td>
                                 <td>${email}</td>
                                 <td class="actions">
-                                    <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}" data-role="doctor">Edit</button></a>
-                                    <button class="btn-delete" data-username="${u.username}" data-role="doctor" data-id="${u.linkedId}">Delete</button>
+                                <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}" data-role="doctor">Edit</button></a>
+                                <button class="btn-delete" data-username="${u.username}" data-role="doctor" data-id="${u.linkedId}">Delete</button>
                                 </td>
                             </tr>
                             `;
+
+                            allRenderedUsers.push({
+                            name: doctorName,
+                            role,
+                            gender,
+                            email,
+                            username: u.username,
+                            html: row.innerHTML
+                            });
+
                         } else if (role === 'patient') {
                             const currentUserData = decryptedPatients.filter(d => d.NHS === u.linkedId);
                             const patient = currentUserData[0];
@@ -78,25 +205,30 @@ async function fetchAllUserData() {
                             const email = patient.Email || 'N/A';
 
                             row.innerHTML = `
-                                <tr>
-                                    <td>${patientName}</td>
-                                    <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
-                                    <td>${gender}</td>
-                                    <td>${email}</td>
-                                    <td class="actions">
-                                        <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}" data-role="patient">Edit</button></a>
-                                        <button class="btn-delete" data-username="${u.username}" data-role="patient" data-id="${u.linkedId}">Delete</button>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td>${patientName}</td>
+                                <td>${role.charAt(0).toUpperCase() + role.slice(1)}</td>
+                                <td>${gender}</td>
+                                <td>${email}</td>
+                                <td class="actions">
+                                <a href="edit-user.html"><button class="btn-edit" data-id="${u.linkedId}" data-role="patient">Edit</button></a>
+                                <button class="btn-delete" data-username="${u.username}" data-role="patient" data-id="${u.linkedId}">Delete</button>
+                                </td>
+                            </tr>
                             `;
-                        } else {
-                            // Skip unknown roles but log
-                            console.warn(`Unknown user role: ${u.role}`);
-                            return;
+
+                            allRenderedUsers.push({
+                            name: patientName,
+                            role,
+                            gender,
+                            email,
+                            username: u.username,
+                            html: row.innerHTML
+                            });
                         }
 
                         tbody.appendChild(row);
-                    });
+                        });
                 };
                 
                 usersReq.onerror = function() {
@@ -121,6 +253,7 @@ async function fetchAllUserData() {
 
 
 async function fetchAllPatientData() {
+    allRenderedPatients = []; // reset before loading
     const tbody = document.getElementById('patientsBody');
     if (!tbody) return console.warn('Table body #patientsBody not found.');
     tbody.innerHTML = '<tr><td colspan="5">Loading patients...</td></tr>';
@@ -164,25 +297,33 @@ async function fetchAllPatientData() {
                     const patient = currentUserData[0];
                     const patientName = `${patient.Title} ${patient.First} ${patient.Last}` || 'Unknown Patient';
                     const gender = patient.Gender || 'N/A';
-                    const dob = patient.DOB || 'N/A'; // Assuming your field is called "DOB"
+                    const dob = patient.DOB || 'N/A';
                     const email = patient.Email || 'N/A';
-                    
-                    row.innerHTML = `
-                        <td>${patientName}</td>
-                        <td>${gender}</td>
-                        <td>${dob}</td>
-                        <td>${email}</td>
-                    `;
 
-                    // Add a click event to make the row behave like a link
-                    row.style.cursor = 'pointer';
-                    row.addEventListener('click', () => {
-                        window.location.href = `medical-records-doctor.html?patientId=${u.linkedId}`; // Adjust URL as needed
+                    // Store structured data for search
+                    allRenderedPatients.push({
+                        name: patientName,
+                        gender,
+                        dob,
+                        email,
+                        linkedId: u.linkedId
                     });
 
+                    // Render row
+                    row.innerHTML = `
+                        <td>${DOMPurify.sanitize(patientName)}</td>
+                        <td>${DOMPurify.sanitize(gender)}</td>
+                        <td>${DOMPurify.sanitize(dob)}</td>
+                        <td>${DOMPurify.sanitize(email)}</td>
+                    `;
+
+                    row.style.cursor = 'pointer';
+                    row.addEventListener('click', () => {
+                        window.location.href = `medical-records-doctor.html?patientId=${u.linkedId}`;
+                    });
 
                     tbody.appendChild(row);
-                });
+                    });
 
             };
                 

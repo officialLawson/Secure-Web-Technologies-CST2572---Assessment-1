@@ -1,3 +1,58 @@
+// Search Feature
+let allRenderedMedicines = []; // holds structured medicine data for search
+
+function renderMedicines(data) {
+  const tbody = document.getElementById("medicinesBody");
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+
+  tbody.innerHTML = "";
+
+  if (!data.length) {
+    tbody.innerHTML = "<tr><td colspan='3'>No matching medicines found.</td></tr>";
+    return;
+  }
+
+  data.forEach(med => {
+    const safeId = sanitize(med.id);
+    const safeDrug = sanitize(med.drug);
+    const safeRole = sanitize(med.role);
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${safeId}</td>
+      <td>${safeDrug}</td>
+      <td class="actions">
+        <button class="btn-edit" data-id="${safeId}" data-role="${safeRole}">Edit</button>
+        <button class="btn-delete" data-id="${safeId}">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const searchMedicinesInput = document.getElementById("searchMedicines");
+  if (searchMedicinesInput) {
+    searchMedicinesInput.addEventListener("input", function () {
+      const query = this.value.toLowerCase().trim();
+
+      if (query === "") {
+        renderMedicines(allRenderedMedicines);
+        return;
+      }
+
+      const filtered = allRenderedMedicines.filter(med =>
+        String(med.id).toLowerCase().includes(query) ||
+        (med.drug || "").toLowerCase().includes(query) ||
+        (med.role || "").toLowerCase().includes(query)
+      );
+
+      renderMedicines(filtered);
+    });
+  }
+});
+
 // Load all medicines and populate the table
 async function loadMedicines() {
     const tbody = document.getElementById('medicinesBody');
@@ -16,22 +71,33 @@ async function loadMedicines() {
                 tbody.innerHTML = sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
                 return;
             }
-            // Populate Table
-            medicines.forEach((med, index) => {
-                const row = document.createElement('tr');
-                const safeId = sanitize(med.id);
-                const safeDrug = sanitize(med.Drug || 'Unknown');
-                const safeRole = sanitize(user.role.toLowerCase());
-                row.innerHTML = `
-                    <td>${safeId}</td>
-                    <td>${safeDrug}</td>
-                    <td class="actions">
-                    <button class="btn-edit" data-id="${safeId}" data-role="${safeRole}">Edit</button>
-                    <button class="btn-delete" data-id="${safeId}">Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(row);
-                });
+            
+            tbody.innerHTML = '';
+            allRenderedMedicines = []; // reset before loading
+
+            medicines.forEach((med) => {
+              const safeId = sanitize(med.id);
+              const safeDrug = sanitize(med.Drug || 'Unknown');
+              const safeRole = sanitize(user.role.toLowerCase());
+
+              // Store structured data
+              allRenderedMedicines.push({
+                id: med.id,
+                drug: med.Drug || 'Unknown',
+                role: user.role.toLowerCase()
+              });
+
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${safeId}</td>
+                <td>${safeDrug}</td>
+                <td class="actions">
+                  <button class="btn-edit" data-id="${safeId}" data-role="${safeRole}">Edit</button>
+                  <button class="btn-delete" data-id="${safeId}">Delete</button>
+                </td>
+              `;
+              tbody.appendChild(row);
+            });
         };
         medicinesReq.onerror = function() {
             console.error('Failed to load doctors:', medicinesReq.error);
