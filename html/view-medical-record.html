@@ -242,6 +242,11 @@
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            clinicDB.medicalRecords.loadSingleRecordView();
+        });
+
     </script>
 </body>
 </html>
