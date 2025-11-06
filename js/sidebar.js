@@ -102,7 +102,7 @@
             } catch (err) {
                 console.error("❌ Sign out failed:", err);
                 if (signOutModal) {
-                    signOutModal.classList.add('hidden'); // Close modal on error
+                    signOutModal.classList.add('hidden');
                 }
             }
         });
