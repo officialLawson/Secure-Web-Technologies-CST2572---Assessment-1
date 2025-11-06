@@ -275,6 +275,21 @@
   cursor: pointer;
   margin-left: 4px;
 }
+
+.complete-btn {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 4px;
+  font-weight: 400;
+  }
+
+  .complete-btn:hover {
+  background-color: var(--accent-hover);
+  }
 .btn-view:hover { background: var(--accent-hover); }
 .btn-view-doctor:hover { background: var(--accent-hover); }
 .btn-view-request:hover { background: var(--btn-delete-hover); }
