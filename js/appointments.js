@@ -158,38 +158,46 @@ function renderCancelledAppointments(data) {
 let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
 let allRenderedAppointments = []; // holds sanitized, display-ready rows
 
-document.getElementById("searchConfirmed").addEventListener("input", function () {
-  const query = this.value.toLowerCase().trim();
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmedInput = document.getElementById("searchConfirmed");
+  if (confirmedInput) {
+    confirmedInput.addEventListener("input", function () {
+      const query = this.value.toLowerCase().trim();
 
-  const filtered = query === ""
-    ? allRenderedCofirmedAppointments
-    : allRenderedCofirmedAppointments.filter(app =>
-        app.doctorName.toLowerCase().includes(query) ||
-        app.patientName.toLowerCase().includes(query) ||
-        app.status.toLowerCase().includes(query) ||
-        app.reason.toLowerCase().includes(query) ||
-        app.date.toLowerCase().includes(query) ||
-        app.time.toLowerCase().includes(query)
-      );
+      const filtered = query === ""
+        ? allRenderedCofirmedAppointments
+        : allRenderedCofirmedAppointments.filter(app =>
+            (app.doctorName || "").toLowerCase().includes(query) ||
+            (app.patientName || "").toLowerCase().includes(query) ||
+            (app.status || "").toLowerCase().includes(query) ||
+            (app.reason || "").toLowerCase().includes(query) ||
+            (app.date || "").toLowerCase().includes(query) ||
+            (app.time || "").toLowerCase().includes(query)
+          );
 
-  renderConfirmedAppointments(filtered);
-});
+      renderConfirmedAppointments(filtered);
+    });
+  }
 
-document.getElementById("searchCancelled").addEventListener("input", function () {
-  const query = this.value.toLowerCase().trim();
+  const cancelledInput = document.getElementById("searchCancelled");
+  if (cancelledInput) {
+    cancelledInput.addEventListener("input", function () {
+      const query = this.value.toLowerCase().trim();
 
-  const filtered = query === ""
-    ? allRenderedAppointments
-    : allRenderedAppointments.filter(app =>
-        app.doctorName.toLowerCase().includes(query) ||
-        app.patientName.toLowerCase().includes(query) ||
-        app.status.toLowerCase().includes(query) ||
-        app.reason.toLowerCase().includes(query) ||
-        app.date.toLowerCase().includes(query) ||
-        app.time.toLowerCase().includes(query)
-      );
+      const filtered = query === ""
+        ? allRenderedAppointments
+        : allRenderedAppointments.filter(app =>
+            (app.doctorName || "").toLowerCase().includes(query) ||
+            (app.patientName || "").toLowerCase().includes(query) ||
+            (app.status || "").toLowerCase().includes(query) ||
+            (app.reason || "").toLowerCase().includes(query) ||
+            (app.date || "").toLowerCase().includes(query) ||
+            (app.time || "").toLowerCase().includes(query)
+          );
 
-  renderCancelledAppointments(filtered);
+      renderCancelledAppointments(filtered);
+    });
+  }
 });
 
 // Appointments Management
@@ -661,90 +669,93 @@ function deleteAppointment(id) {
   appointmentToDelete = sanitize(id);
   document.getElementById('deleteModal').classList.remove('hidden');
 }
-// Handle "Yes, Delete" in modal
-document.getElementById('confirmDelete').addEventListener('click', async () => {
-  const user = JSON.parse(localStorage.getItem('currentUser'));
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmDeleteBtn = document.getElementById("confirmDelete");
+  const cancelDeleteBtn = document.getElementById("cancelDelete");
+  const deleteModal = document.getElementById("deleteModal");
 
-  if (appointmentToDelete) {
-    try {
-      const db = await openClinicDB();
-      const tx = db.transaction('appointments', 'readwrite');
-      const store = tx.objectStore('appointments');
-      store.delete(appointmentToDelete);
-      tx.oncomplete = async function() {
-        if (user.role.toLowerCase() === 'patient') {
-            await logCurrentUserActivity("deleteAppointment", appointmentToCancel, `Patient with NHS ${user.linkedId} deleted an appointment`);
-            loadAppointments(); // Refresh the table
-            document.getElementById('deleteModal').classList.add('hidden');
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+
+      if (appointmentToDelete) {
+        try {
+          const db = await openClinicDB();
+          const tx = db.transaction("appointments", "readwrite");
+          const store = tx.objectStore("appointments");
+          store.delete(appointmentToDelete);
+
+          tx.oncomplete = async function () {
+            const role = user.role.toLowerCase();
+            const logId = role === "patient" ? appointmentToCancel : appointmentToDelete;
+            const logMsg = role === "patient"
+              ? `Patient with NHS ${user.linkedId} deleted an appointment`
+              : `Doctor with ID ${user.linkedId} deleted an appointment`;
+
+            await logCurrentUserActivity("deleteAppointment", logId, logMsg);
+            loadAppointments();
+            if (deleteModal) deleteModal.classList.add("hidden");
             appointmentToDelete = null;
-          } else if (user.role.toLowerCase() === 'doctor') {
-            await logCurrentUserActivity("deleteAppointment", appointmentToDelete, `Doctor with ID ${user.linkedId} deleted an appointment`);
-            loadAppointments(); // Refresh the table
-            document.getElementById('deleteModal').classList.add('hidden');
+          };
+
+          tx.onerror = () => {
+            alert("Error deleting appointment.");
             appointmentToDelete = null;
-          }
-      };
-      tx.onerror = () => {
-        alert('Error deleting appointment.');
-        appointmentToDelete = null;
-      };
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert('Error deleting appointment.');
-      appointmentToDelete = null;
-    }
+          };
+        } catch (err) {
+          console.error("Delete failed:", err);
+          alert("Error deleting appointment.");
+          appointmentToDelete = null;
+        }
+      }
+    });
+  }
+
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener("click", () => {
+      if (deleteModal) deleteModal.classList.add("hidden");
+      userToDelete = null;
+    });
   }
 });
-// Handle "Cancel"
-document.getElementById('cancelDelete').addEventListener('click', () => {
-  document.getElementById('deleteModal').classList.add('hidden');
-  userToDelete = null;
-});
+
 
 function cancelAppointment(id) {
-  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-  appointmentToCancel = sanitize(id);
+  appointmentToCancel = id;
   document.getElementById('cancelModal').classList.remove('hidden');
 }
 // Handle "Yes, Cancel" in modal
 document.getElementById('confirmCancel').addEventListener('click', async () => {
-  const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+  console.log('cancelling...');
   if (appointmentToCancel) {
     try {
       const db = await openClinicDB();
       const tx = db.transaction('appointments', 'readwrite');
       const store = tx.objectStore('appointments');
       const request = store.getAll();
+
       request.onsuccess = function() {
         const appointments = request.result || [];
+
         const appointment = appointments.find(app => app.appointmentId === appointmentToCancel) || [];
+
         if (appointment) {
           appointment.status = "Cancelled"; // or whatever new status you want
         }
+
         const updateReq = store.put(appointment); // put replaces the record with the same key
-        updateReq.onsuccess = async function() {
-          if (userRole === 'patient') {
-            await createNotification("Appointment Cancelled", "Your appointment is cancelled.");
-            await createNotificationForUser("Appoinment Cancelled", "A patient has cancelled an appointment", appointment.doctorId, "doctor");
-            await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Patient with NHS ${appointment.patientId} cancelled an appointment`);
-            console.log("Appointment cancelled.");
-            loadAppointments(); // Refresh the table
-            document.getElementById('cancelModal').classList.add('hidden');
-            appointmentToCancel = null;
-          } else if (userRole === 'doctor') {
-            await createNotification("Appoinment Cancelled", "Your appointment is cancelled.");
-            await createNotificationForUser("Appointment Cancelled", "A doctor has cancelled an appointment", appointment.patientId, "patient");
-            await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Doctor with ID ${appointment.doctorId} cancelled an appointment`);
-            console.log("Appointment cancelled.");
-            loadAppointments(); // Refresh the table
-            document.getElementById('cancelModal').classList.add('hidden');
-            appointmentToCancel = null;
-          }
+
+        updateReq.onsuccess = () => {
+          console.log("✅ Appointment status updated.");
+          loadAppointments(); // Refresh the table
+          document.getElementById('cancelModal').classList.add('hidden');
+          appointmentToCancel = null;
         };
+
         updateReq.onerror = () => {
-          console.error("Failed to update appointment:", updateReq.error);
+          console.error("❌ Failed to update appointment:", updateReq.error);
         };
-       
+        
       };
       request.onerror = () => {
         alert('Error deleting appointment.');

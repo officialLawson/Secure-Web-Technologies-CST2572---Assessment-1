@@ -8,8 +8,6 @@
   <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../css/login.css" />
   <link rel="icon" type="image/png" href="../images/logo.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#1e40af">
   <script src="../js/clinicDB.js" defer></script>
   <script src="../js/fetchImportData.js" defer></script>
   <script src="../js/importLoginData.js" defer></script>
@@ -136,15 +134,6 @@
   </div>
     
   <script src="../js/activityLogs.js"></script>
-  <script>
-      if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-              .then((reg) => console.log('SW registered:', reg.scope))
-              .catch((err) => console.log('SW registration failed:', err));
-          });
-      }
-  </script>
 
 </body>
 </html>
