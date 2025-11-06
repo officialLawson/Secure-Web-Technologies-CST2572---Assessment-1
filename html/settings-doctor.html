@@ -7,8 +7,6 @@
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
     <link rel="stylesheet" href="../css/form.css">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#1e40af">
 </head>
 <body>
     <div class="container">
@@ -243,7 +241,7 @@
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/form.js"></script>
-    <script src="../js/settings.js"></script>
+    <script src="../js/settingdoctor.js"></script>
     <script src="../js/activityLogs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
@@ -274,15 +272,6 @@
             window.location.href = 'login.html';
         }
 
-    </script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then((reg) => console.log('SW registered:', reg.scope))
-                .catch((err) => console.log('SW registration failed:', err));
-            });
-        }
     </script>
 </body>
 </html>

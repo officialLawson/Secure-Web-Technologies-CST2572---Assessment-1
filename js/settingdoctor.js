@@ -1,4 +1,4 @@
-/* settings.js – Universal Settings (Patient & Doctor) – XSS-PROTECTED with DOMPurify */
+// settingsdoctor.js – Settings for Doctor – XSS-PROTECTED with DOMPurify
 
 document.addEventListener('DOMContentLoaded', async () => {
     /* ==================== 1. AUTH & ROLE CHECK ==================== */
@@ -10,20 +10,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const role = currentUser.role.toLowerCase();
-    const isPatient = role === 'patient';
     const isDoctor = role === 'doctor';
 
-    if (!isPatient && !isDoctor) {
+    if (!isDoctor) {
         window.location.href = '../html/login.html';
         return;
     }
 
     const currentPage = location.pathname.split('/').pop();
-    if (isPatient && currentPage !== 'settings-patient.html') {
-        window.location.href = 'settings-patient.html';
-        return;
-    }
-    if (isDoctor && currentPage !== 'settings-doctor.html') {
+    if (currentPage !== 'settings-doctor.html') {
         window.location.href = 'settings-doctor.html';
         return;
     }
@@ -36,7 +31,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         email: document.getElementById('email'),
         phone: document.getElementById('phone'),
         address: document.getElementById('address'),
-        dob: document.getElementById('dob'),
         editBtn: document.getElementById('editBtn'),
         saveBtn: document.getElementById('saveBtn'),
         cancelBtn: document.getElementById('cancelBtn'),
@@ -53,49 +47,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             await clinicDB.openClinicDB();
 
-            let record;
-            if (isPatient) {
-                record = await clinicDB.getItem('patients', userId);
-                if (record) {
-                    record = await clinicDB.decryptPatientInfo(record); // Added decryption
-                }
-            } else if (isDoctor) {
-                record = await clinicDB.getItem('doctors', userId);
-                if (record) {
-                    record = await clinicDB.decryptDoctorInfo(record); // Added decryption
-                    record.First = record.first_name || record.First || '';
-                    record.Last = record.last_name || record.Last || '';
-                    record.Email = record.email || record.Email || '';
-                    record.Telephone = record.Telephone || record.Phone || '';
-                    record.Address = record.Address || '';
-                }
+            let record = await clinicDB.getItem('doctors', userId);
+            if (record) {
+                record = await clinicDB.decryptDoctorInfo(record); // Added decryption
+                record.First = record.first_name || record.First || '';
+                record.Last = record.last_name || record.Last || '';
+                record.Email = record.email || record.Email || '';
+                record.Telephone = record.Telephone || record.Phone || '';
+                record.Address = record.Address || '';
             }
 
             if (!record) {
-                showMsg(`No ${role} record found.`, 'error');
+                showMsg(`No doctor record found.`, 'error');
                 return;
             }
 
             originalData = { ...record };
 
             // Sanitize before inserting into DOM
-            let fullNameStr;
-            if (isDoctor) {
-                fullNameStr = `Dr ${record.First || ''} ${record.Last || ''}`.trim();
-            } else {
-                fullNameStr = `${record.Title || ''} ${record.First || ''} ${record.Last || ''}`.trim();
-            }
+            const fullNameStr = `Dr ${record.First || ''} ${record.Last || ''}`.trim();
             const safeFullName = sanitize(fullNameStr);
             const safeEmail    = sanitize(record.Email || '');
             const safePhone    = sanitize(record.Telephone || record.Phone || '');
             const safeAddress  = sanitize(record.Address || '');
-            const safeDOB      = sanitize(record.DOB || record.DateOfBirth || '');
 
             els.fullName.value = safeFullName;
             els.email.value    = safeEmail;
             els.phone.value    = safePhone;
             els.address.value  = safeAddress;
-            if (els.dob) els.dob.value = safeDOB;
 
         } catch (err) {
             console.error('Failed to load user data:', err);
@@ -106,11 +85,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* ==================== 5. UI HELPERS ==================== */
     function enableEdit() {
         document.querySelectorAll('#accountForm input').forEach(input => {
-            if (input && input.id !== 'dob' || isPatient) {
             input.readOnly = false;
             input.classList.remove('readonly');
             input.classList.add('edit-mode');
-            }
         });
         els.editBtn.style.display = 'none';
         els.saveBtn.style.display = 'inline-block';
@@ -146,13 +123,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const safeEmail    = sanitize(originalData.Email || '');
         const safePhone    = sanitize(originalData.Telephone || originalData.Phone || '');
         const safeAddress  = sanitize(originalData.Address || '');
-        const safeDOB      = sanitize(originalData.DOB || originalData.DateOfBirth || '');
 
         els.fullName.value = safeFullName;
         els.email.value    = safeEmail;
         els.phone.value    = safePhone;
         els.address.value  = safeAddress;
-        if (els.dob) els.dob.value = safeDOB;
 
         disableEdit();
         showMsg('Changes cancelled.');
@@ -164,13 +139,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const rawEmail = els.email.value;
         const rawPhone = els.phone.value;
         const rawAddress = els.address.value;
-        const rawDOB = els.dob ? els.dob.value : '';
 
         const name = sanitize(rawName);
         const email = sanitize(rawEmail);
         const phone = sanitize(rawPhone);
         const address = sanitize(rawAddress);
-        const dob = els.dob ? sanitize(rawDOB) : '';
 
         const nameParts = name.split(/\s+/).filter(Boolean);
         if (nameParts.length < 2) {
@@ -188,19 +161,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             showMsg('Please enter a valid phone number.', 'error');
             return;
         }
-        if (isPatient && !dob) {
-            showMsg('Please enter your date of birth.', 'error');
-            return;
-        }
 
         try {
             // PRESERVE ALL NON-SENSITIVE FIELDS (never encrypted)
             const preserved = {
                 id: originalData.id,
-                Title: originalData.Title || '',
                 Gender: originalData.Gender || '',
-                NHS: isPatient ? userId : undefined,
-                StaffID: isDoctor ? userId : undefined,
+                StaffID: userId,
             };
 
             // BUILD FINAL UPDATED RECORD - with correct field casing for doctors
@@ -211,29 +178,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 Email: email,
                 Telephone: phone,
                 Address: address,
-                ...(isPatient ? {
-                    DOB: dob,
-                    NHS: userId
-                } : {}),
-                ...(isDoctor ? {
-                    first_name: first,
-                    last_name: last,
-                    email: email,
-                    Specialization: originalData.Specialization || '',
-                    StaffID: userId
-                } : {})
+                first_name: first,
+                last_name: last,
+                email: email,
+                Specialization: originalData.Specialization || '',
+                StaffID: userId
             };
 
             // Encrypt & save
-            let encrypted;
-            if (isPatient) {
-                encrypted = await clinicDB.encryptPatientInfo(updated);
-            } else if (isDoctor) {
-                encrypted = await clinicDB.encryptDoctorInfo(updated);
-            }
-
-            const storeName = isPatient ? 'patients' : 'doctors';
-            await clinicDB.updateItem(storeName, encrypted);
+            const encrypted = await clinicDB.encryptDoctorInfo(updated);
+            await clinicDB.updateItem('doctors', encrypted);
 
             // Update originalData so Cancel works + future edits preserve everything
             originalData = { ...originalData, ...updated };
