@@ -572,7 +572,7 @@ async function addMedicalRecord(record) {
   if (!record || !record.recordId) throw new Error("record.recordId required");
 
   // Build the stored object: keep indexes (recordId, patientId, doctorId, date) in plain text
-  const { recordId, patientId, doctorId, dateTime, prescriptions } = record;
+  const { recordId, patientId, doctorId, dateTime, prescriptions, accessedBy } = record;
   const sensitive = {
     diagnosis: record.diagnosis || "",
     treatment: record.treatment || "",
@@ -586,6 +586,7 @@ async function addMedicalRecord(record) {
     doctorId,
     dateTime,
     prescriptions,
+    accessedBy,
     payload: encryptedPayload
   };
 
@@ -826,7 +827,8 @@ async function importFetchedDataToDB(filteredData) {
         dateTime: r.dateTime || r.DateTime || null,
         diagnosis: r.diagnosis || r.Diagnosis || "",
         treatment: r.treatment || r.Treatment || "",
-        prescriptions: r.prescriptions || []
+        prescriptions: r.prescriptions || [],
+        accessedBy: r.accessedBy || []
       };
       await addMedicalRecord(toAdd);
       results.medicalRecord++;

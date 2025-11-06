@@ -543,8 +543,8 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
         const addReq = store.add(newAppointment);
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         addReq.onsuccess = async function() {
-          await createNotification("Appointment Confirmed", "Your appointment is confirmed.");
-          await createNotificationForUser("Appoinment Confirmed", "A patient has booked an appointment", doctorId, "doctor");
+          await createNotification("New appointment scheduled", "Your appointment is confirmed.");
+          await createNotificationForUser("New appointment scheduled", "A patient has scheduled an appointment", doctorId, "doctor");
           await logCurrentUserActivity("bookAppointment", appointmentId, `Patient with NHS ${patientId} booked an appointment`);
           console.log(`Added appointment: ${reason} (id: ${newAppointment.appointmentId})`);
           window.location.href = `appointments-${userRole}.html`; // Redirect after adding

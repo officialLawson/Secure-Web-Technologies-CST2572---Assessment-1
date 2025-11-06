@@ -246,7 +246,7 @@
     <script>
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         if (userRole !== 'doctor') {
-            window.location.href = `appointments-${userRole}.html`;
+            window.location.href = `dashboard-${userRole}.html`;
         } 
 
         const profileButton = document.getElementById('profileButton')

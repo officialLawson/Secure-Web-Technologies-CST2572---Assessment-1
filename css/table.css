@@ -245,6 +245,10 @@
   border-radius: 4px;
   cursor: pointer;
 }
+.request-sent {
+  background-color: var(--btn-edit-hover);
+  cursor: not-allowed;
+}
 .btn-edit {
   background: var(--text-positive);
   color: white;
@@ -274,6 +278,7 @@
 .btn-view:hover { background: var(--accent-hover); }
 .btn-view-doctor:hover { background: var(--accent-hover); }
 .btn-view-request:hover { background: var(--btn-delete-hover); }
+.request-sent:hover { background: var(--btn-edit-hover); }
 .btn-edit:hover { background: var(--btn-edit-hover); }
 .btn-delete:hover { background: var(--btn-delete-hover); }
 .btn-cancel:hover { background: var(--btn-delete-hover); }

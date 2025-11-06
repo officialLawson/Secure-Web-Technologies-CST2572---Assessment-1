@@ -37,6 +37,7 @@
 
   --accent: #007bff;
   --accent-hover: #0056b3;
+  --btn-delete-hover: #d32f2f;  
 
   --shadow-card-hover: rgba(0,0,0,0.08);
   --shadow-btn: rgba(0,0,0,0.1);
@@ -76,6 +77,7 @@
 
   --accent: #60a5fa;
   --accent-hover: #3b82f6;
+  --btn-delete-hover: #f87171;
 
   --shadow-card-hover: rgba(0,0,0,0.3);
   --shadow-btn: rgba(0,0,0,0.3);
@@ -1122,8 +1124,8 @@ body {
 }
 .notification-item .icon { flex-shrink:0; width:20px; height:20px; color:var(--text-muted); }
 .notification-item .title { font-weight:600; color:var(--text-primary); margin-bottom:.25rem; }
-.notification-item .message { font-size:.875rem; color:var(--text-muted); line-height:1.4; }
-.notification-item .time { font-size:.75rem; color:var(--text-muted); margin-top:.25rem; text-align:right; width:100%; }
+.notification-item .message { font-size:.875rem; color:var(--text-muted); line-height:1.4; margin-bottom:1rem; }
+.notification-item .time { font-size:.75rem; color:var(--text-muted); margin-top:.25rem; text-align:right; width:100%;  color: var(--text-link-hover);}
 
 /* Empty state */
 .empty-state { padding:2rem; text-align:center; color:var(--text-muted); font-style:italic; }
@@ -1150,6 +1152,48 @@ body {
   .notification-panel { width:calc(100vw - 40px); left:20px; right:auto; }
 }
 
+.layout-set {
+  display: flex;
+  flex-direction: row;
+  vertical-align: middle;
+  align-items: center;
+}
+
+.vertical-line-notif {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px dashed var(--border-mid);
+  height: 100px;
+  margin: 0 15px;
+  margin-top: 5px;
+}
+
+.button-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-accept {
+  background: var(--accent);
+  color: var(--text-primary);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.btn-accept:hover { background: var(--accent-hover); color: white;}
+.btn-decline {
+  background: var(--text-negative);
+  color: var(--text-primary);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 4px;
+}
+.btn-decline:hover { background: var(--btn-delete-hover); color: white;}
 
 
 /* -------------------------------------------------

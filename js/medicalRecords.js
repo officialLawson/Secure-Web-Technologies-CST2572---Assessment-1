@@ -81,6 +81,13 @@ async function fetchPatientRecordsforDoctor(patientId) {
             const decryptedDoctors = await Promise.all(
                 encryptedDoctors.map(p => decryptDoctorInfo(p))
             );
+
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+
+            const selfDetail = decryptedDoctors.find(d => d.id === user.linkedId) || [];
+            const selfName = `Dr ${selfDetail.first_name} ${selfDetail.last_name}` || 'Unknown';
+            const safeSelfName = sanitize(selfName);
+
             const patientTx = db.transaction('patients', 'readonly');
             const patientStore = patientTx.objectStore('patients');
             const patientsReq = patientStore.getAll();
@@ -110,20 +117,24 @@ async function fetchPatientRecordsforDoctor(patientId) {
                         return;
                     }
                     medicalrecords.forEach(med => {
+
                     const row = document.createElement('tr');
                     const currentUserData = decryptedDoctors.filter(d => d.id === med.doctorId) || [];
+
                     const doctor = currentUserData[0];
+
                     const doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;
                     const safeDoctor = sanitize(doctorFullName);
+                    const safeDoctorId = sanitize(med.doctorId);
                     const safeDiagnosis = sanitize(med.diagnosis || '-');
                     const safeTreatment = sanitize(med.treatment || '-');
                     const safeDate = sanitize(med.dateTime || '-');
                     const safeId = sanitize(med.recordId);
                     let safeButton;
-                    if (user.linkedId === med.doctorId ) {
+                    if (med.accessedBy && med.accessedBy.includes(user.linkedId)) {
                         safeButton = `<button class="btn-view-doctor" data-id="${safeId}">View</button>`;
                     } else {
-                        safeButton = `<button class="btn-view-request" data-id="${safeId}">Request Access</button>`;
+                        safeButton = `<button class="btn-view-request" data-id="${safeId}" data-ownerid="${safeDoctorId}" data-myname="${safeSelfName}">Request Access</button>`;
                     }
                     row.innerHTML = `
                             <td>${safeDoctor}</td>
@@ -409,3 +420,42 @@ window.clinicDB = {
     viewMedicalRecord,
     viewMedicalRecordforDoctors
 };
+
+// Request Access
+
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("btn-view-request")) {
+    const button = e.target;
+    const recordId = DOMPurify.sanitize(button.dataset.id);
+    const recordDoctorId = DOMPurify.sanitize(button.dataset.ownerid);
+    const requestingDoctorFullName = DOMPurify.sanitize(button.dataset.myname);
+    const requestingDoctorId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
+
+    if (recordId && requestingDoctorFullName) {
+      try {
+        const message = `${requestingDoctorFullName} has requested access to record ${recordId} [requester:${requestingDoctorId}]`;
+        await createNotificationForUser(
+          "Access Request Received",
+          message,
+          parseInt(recordDoctorId),
+          "doctor"
+        );
+
+        await logCurrentUserActivity(
+          "requestAccess",
+          parseInt(recordId),
+          `Doctor with ID ${parseInt(requestingDoctorId)} requested access to medical record with ID ${recordId} from doctor with ID ${recordDoctorId}`
+        );
+
+        // ✅ Update button text and disable it
+        button.textContent = "Request Sent";
+        button.disabled = true;
+        button.classList.add("request-sent"); // Optional: style it differently
+
+      } catch (err) {
+        console.error("❌ Failed to send access request:", err);
+        alert("Failed to send request. Please try again.");
+      }
+    }
+  }
+});

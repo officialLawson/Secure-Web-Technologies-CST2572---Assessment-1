@@ -202,6 +202,8 @@ async function fetchAllPatientData() {
 }
 
 async function addPatient(event, userTitle, userFirstName, userLastName, userNHS, userDOB, userGender, userEmail, userTelephone, userAddress) {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
     // ✅ Prevent form submission reload
     if (event) event.preventDefault();
 
@@ -488,7 +490,8 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
                                 const usersStore = usersTx.objectStore('users');
                                 const usersReq = usersStore.add(newPatientUser);
 
-                                usersReq.onsuccess = function() {
+                                usersReq.onsuccess = async function() {
+                                    await logCurrentUserActivity("createUser", userNHS, `Admin with ID ${user.linkedId} created a patient`);
                                     console.log(`✅ Added patient.`);
                                     window.location.href = `users-admin.html`; // Redirect after adding
                                 };
@@ -538,6 +541,8 @@ function handleAddPatient(event) {
 }
 
 async function addDoctor(event, userFirstName, userLastName, userGender, userEmail, userTelephone, userAddress) {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
     if (event) event.preventDefault();
 
     // 🔍 Field validation (same structure as patient)
@@ -699,7 +704,8 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
                                 const usersStore = usersTx.objectStore('users');
                                 const usersReq = usersStore.add(newDoctorUser);
 
-                                usersReq.onsuccess = function () {
+                                usersReq.onsuccess = async function () {
+                                    await logCurrentUserActivity("createUser", newId, `Admin with ID ${user.linkedId} created a doctor`);
                                     console.log(`✅ Added doctor.`);
                                     window.location.href = `users-admin.html`;
                                 };
@@ -793,6 +799,8 @@ async function loadPatientForEdit(patientId) {
 }
 
 async function editPatient(patientId, updatedData) {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
     if (!userTitle) {
         const inputError = document.getElementById("userTitle");
         inputError.style.borderColor = "red";
@@ -950,7 +958,9 @@ async function editPatient(patientId, updatedData) {
 
             const updateReq = store.put(encryptedEditedPatient);
 
-            updateReq.onsuccess = function () {
+            updateReq.onsuccess = async function () {
+                await createNotificationForUser("Profile Updated", "Your profile details have been updated", patientId, "patient");
+                await logCurrentUserActivity("editUser", patientId, `Admin with ID ${user.linkedId} updated profile details`);
                 console.log("✅ Patient updated successfully.");
                 window.location.href = 'users-admin.html';
             };
@@ -1011,6 +1021,8 @@ async function loadDoctorForEdit(doctorId) {
 }
 
 async function editDoctor(doctorId, updatedData) {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
     // 🔍 Field validation (same structure as patient)
     const fields = [
         { value: userFirstName, id: "userFirstName", message: "Please enter a first name." },
@@ -1075,7 +1087,9 @@ async function editDoctor(doctorId, updatedData) {
 
             const updateReq = store.put(encryptedEditedDoctor);
 
-            updateReq.onsuccess = function () {
+            updateReq.onsuccess = async function () {
+                await createNotificationForUser("Profile Updated", "Your profile details have been updated", doctorId, "doctor");
+                await logCurrentUserActivity("editUser", doctorId, `Admin with ID ${user.linkedId} updated profile details`);
                 console.log("✅ Doctor updated successfully.");
                 window.location.href = 'users-admin.html';
             };
@@ -1195,6 +1209,8 @@ document.addEventListener('click', (e) => {
 });
 
 document.getElementById('confirmDelete').addEventListener('click', async () => {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+
   if (userToDelete !== null) {
 
     try {
@@ -1213,6 +1229,7 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
                 await deleteLinkedRecords("notifications", "recipientId", userToDeleteId);
                 await deleteItem("patients", userToDeleteId);
 
+                await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a patient`);
                 fetchAllUserData();
                 document.getElementById('deleteModal').classList.add('hidden');
                 userToDelete = null;
@@ -1221,6 +1238,7 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
                 await deleteLinkedRecords("notifications", "recipientId", parseInt(userToDeleteId));
                 await deleteItem("doctors", parseInt(userToDeleteId));
 
+                await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a doctor`);
                 fetchAllUserData();
                 document.getElementById('deleteModal').classList.add('hidden');
                 userToDelete = null;

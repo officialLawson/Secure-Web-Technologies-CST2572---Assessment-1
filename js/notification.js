@@ -55,7 +55,7 @@ async function loadNotificationsFromDB() {
       notifications = req.result || [];
       sortNotifications();
       renderNotifications();
-      updateBadge();
+      // updateBadge();
     };
   } catch(e){
     console.error(e);
@@ -66,7 +66,7 @@ async function loadNotificationsFromDB() {
       {id:3,title:"Access Requested",message:"Dr. Violante Rilton requested access.",time:"3 hours ago",read:false,type:"access"}
     ];
     renderNotifications();
-    updateBadge();
+    // updateBadge();
   }
 }
 /* ---- Creating ---- */
@@ -127,31 +127,91 @@ async function createNotificationForUser(title, message, recipientId, recipientR
 }
 /* ---- Rendering ---- */
 function renderNotifications() {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   notificationsList.innerHTML = '';
   if (!notifications.length) {
     notificationsList.innerHTML = sanitize(`<div class="empty-state"><p>No new notifications.</p></div>`);
     return;
   }
-  notifications.forEach(n => {
+
+  const userNotification = notifications.filter(notif => notif.recipientId === user.linkedId ) || [];
+  const userNotificationUnread = userNotification.filter(n => n.read === false);
+  const userNotificationNumber = userNotificationUnread.length
+
+  userNotificationUnread.forEach(n => {
     const item = document.createElement('div');
     item.className = `notification-item ${n.read?'':'unread'}`;
-    item.dataset.id = sanitize(n.id);
+    item.dataset.id = sanitize(n.notifId);
     const safeTitle = sanitize(n.title);
     const safeMessage = sanitize(n.message);
-    const safeTime = sanitize(n.time);
+    const safeTime = sanitize(n.date);
     item.innerHTML = `
-      <span class="icon">${getIcon(n.type)}</span>
-      <div class="content">
-        <div class="title">${safeTitle}</div>
-        <div class="message">${safeMessage}</div>
-        <div class="time">${safeTime}</div>
+      <div class="layout-set">
+        <div><span class="icon">${getIcon(n.type)}</span></div>
+        <span class="vertical-line-notif"></span>
+        <div class="content">
+          <div class="title">${safeTitle}</div>
+          <div class="message">${safeMessage}</div>
+          <div class="time">${safeTime}</div>
+        </div>
       </div>
     `;
+    if (safeTitle === 'Access Request Received') {
+      function extractIdsFromMessage(message) {
+        const recordMatch = message.match(/record (\w+)/);
+        const requesterMatch = message.match(/\[requester:(\w+)\]/);
+
+        
+        if ((recordMatch?.[1]) && (requesterMatch?.[1])) {
+          return {
+            recordId: recordMatch?.[1] || null,
+            requesterId: requesterMatch?.[1] || null
+          };
+        } else {
+          return null;
+        }
+      }
+
+      const meta = extractIdsFromMessage(safeMessage);
+      if (meta) {
+        const recordId = meta.recordId ;     // "REC123"
+        const requesterId = meta.requesterId ;  // "DOC456"
+        item.innerHTML = `
+          <div class="layout-set">
+            <div><span class="icon">${getIcon(n.type)}</span></div>
+            <span class="vertical-line-notif"></span>
+            <div class="content">
+              <div class="title">${safeTitle}</div>
+              <div class="message">${safeMessage}</div>
+              <div class="button-actions">
+                <button class='btn-accept btn-accept-request' data-notifid="${item.dataset.id}" data-recordid="${recordId}" data-requesterid="${requesterId}">Accept</button>
+                <button class='btn-decline'>Decline</button>
+              </div>
+              <div class="time">${safeTime}</div>
+            </div>
+          </div>
+        `;
+      } else {
+        item.innerHTML = `
+          <div class="layout-set">
+            <div><span class="icon">${getIcon(n.type)}</span></div>
+            <span class="vertical-line-notif"></span>
+            <div class="content">
+              <div class="title">${safeTitle}</div>
+              <div class="message">${safeMessage}</div>
+              <div class="time">${safeTime}</div>
+            </div>
+          </div>
+        `;
+      }
+
+      
+    }
     item.addEventListener('click', () => markAsRead(n.id));
     notificationsList.appendChild(item);
+    updateBadgeByNumber(userNotificationNumber);
   });
-  updateBadge();
 }
 /* ---- Icon helper ---- */
 function getIcon(type){
@@ -188,11 +248,52 @@ function markAsRead(id){
     renderNotifications();
   }
 }
+
+async function markNotifAsRead(id) {
+  try {
+    const db = await openClinicDB();
+    const tx = db.transaction('notifications','readwrite');
+    const store = tx.objectStore('notifications');
+    const request = store.getAll();
+
+    request.onsuccess = function() {
+      const notifications = request.result || [];
+
+      const notification = notifications.find(n => n.notifId === id) || [];
+
+      notification.read = true;
+
+      const updateReq = store.put(notification);
+
+      updateReq.onsuccess = async function () {
+        renderNotifications();
+      };
+
+      updateReq.onerror = function (e) {
+        console.error("❌ Failed to update appointment:", e.target.error);
+      };
+
+    };
+
+    request.onerror = function() {
+      console.error('Failed to load notifications:', patientsReq.error);
+    };
+  } catch (err) {
+    console.error("⚠️ Database error:", err);
+  }
+}
+
 /* ---- Badge ---- */
-function updateBadge(){
-  const unread = notifications.filter(n=>!n.read).length;
+// function updateBadge(){
+//   const unread = notifications.filter(n=>!n.read).length;
+//   const badge = document.querySelector('.notif-badge');
+//   badge.textContent = unread>9?'9+':unread;
+//   badge.style.display = unread?'flex':'none';
+// }
+function updateBadgeByNumber(n){
+  const unread = n;
   const badge = document.querySelector('.notif-badge');
-  badge.textContent = unread>9?'9+':unread;
+  badge.textContent = unread>9?`${n}`:unread;
   badge.style.display = unread?'flex':'none';
 }
 /* ---- Clear all ---- */
@@ -239,5 +340,50 @@ document.addEventListener('keydown', e=>{
     notifButton.setAttribute('aria-expanded','false');
   }
 });
+
+/* ---- Handle button ---- */
+document.addEventListener("click", async (e) => {
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  if (e.target.classList.contains("btn-accept-request")) {
+    const notifId = e.target.dataset.notifid;
+    console.log(notifId);
+    const recordId = e.target.dataset.recordid;
+    const requesterId = parseInt(e.target.dataset.requesterid);
+
+    try {
+      const db = await openClinicDB();
+      const tx = db.transaction("medicalRecord", "readwrite");
+      const store = tx.objectStore("medicalRecord");
+      const getReq = store.get(recordId);
+
+      getReq.onsuccess = async function () {
+        const record = getReq.result;
+        if (!record) {
+          console.error("❌ Record not found.");
+          return;
+        }
+
+        // ✅ Add requester to accessedBy
+        record.accessedBy = record.accessedBy || [];
+        if (!record.accessedBy.includes(requesterId)) {
+          record.accessedBy.push(requesterId);
+        }
+        const updateReq = store.put(record);
+        updateReq.onsuccess = async function() {
+          console.log("✅ Access granted and record updated.");
+          await createNotificationForUser("Access Request Accepted", `The doctor has accepted your request to access medical record ${recordId}`, requesterId, "doctor");
+          await logCurrentUserActivity("acceptAccess", recordId, `Doctor with ID ${parseInt(user.linkedId)} accepted access to medical record with ID ${recordId} from doctor with ID ${requesterId}`); // see below
+          await markNotifAsRead(notifId);
+        };
+        updateReq.onerror = (e) => {
+          console.error("❌ Failed to update record:", e.target.error);
+        };
+      };
+    } catch (err) {
+      console.error("⚠️ Error accessing DB:", err);
+    }
+  }
+});
+
 /* ---- Init ---- */
 loadNotificationsFromDB();
