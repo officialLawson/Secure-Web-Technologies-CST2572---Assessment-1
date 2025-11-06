@@ -253,6 +253,11 @@
     <script src="../js/sidebar.js"></script>
     <script src="../js/appointments.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAppointments();
+        });
+    </script>
+    <script>
         const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
         if (userRole !== 'patient') {
             window.location.href = `appointments-${userRole}.html`;

@@ -26,8 +26,158 @@ function normalizeTimeHHMM(str) {
   return `${hour}:${minute}`;
 }
 
+
+// Search Feature
+function renderConfirmedAppointments(data) {
+  const tbodyConfirmed = document.getElementById('appointmentsConfirmedBody');
+  tbodyConfirmed.innerHTML = "";
+
+  if (data.length === 0) {
+    tbodyConfirmed.innerHTML = "<tr><td colspan='5'>No matching confirmed appointments found.</td></tr>";
+    return;
+  }
+
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+
+  data.forEach(app => {
+    const row = document.createElement("tr");
+    const safeId = DOMPurify.sanitize(app.appointmentId);
+    const safeStatus = DOMPurify.sanitize(app.status);
+    const safeDateTime = DOMPurify.sanitize(`${app.date} - ${app.time}`);
+    const safeDoctor = DOMPurify.sanitize(app.doctorName);
+    const safePatient = DOMPurify.sanitize(app.patientName);
+    const safeReason = DOMPurify.sanitize(app.reason);
+    const safeRole = DOMPurify.sanitize(app.role);
+
+    if (userRole === 'doctor') {
+      row.innerHTML = `
+        <td>${safePatient}</td>
+        <td>${safeReason}</td>
+        <td>${safeDateTime}</td>
+        <td>${safeStatus}</td>
+        <td>
+          <button class="btn-edit" data-id="${safeId}" data-role="${safeRole}">Edit</button>
+          <button class="btn-cancel" data-id="${safeId}">Cancel</button>
+        </td>
+      `;
+    } else if (userRole === 'patient') {
+      row.innerHTML = `
+        <td>${safeDoctor}</td>
+        <td>${safeReason}</td>
+        <td>${safeDateTime}</td>
+        <td>${safeStatus}</td>
+        <td>
+          <button class="btn-edit" data-id="${safeId}" data-role="${safeRole}">Edit</button>
+          <button class="btn-cancel" data-id="${safeId}">Cancel</button>
+        </td>
+      `;
+    } else if (userRole === 'admin') {
+      row.innerHTML = `
+        <td>Dr. ${safeDoctor}</td>
+        <td>${safePatient}</td>
+        <td>${safeDateTime}</td>
+        <td>${safeStatus}</td>
+        <td>
+          <button class="btn-cancel" data-id="${safeId}">Cancel</button>
+        </td>
+      `;
+    }
+
+    tbodyConfirmed.appendChild(row);
+  });
+
+  attachAppointmentListeners();
+}
+
+function renderCancelledAppointments(data) {
+  const tbody = document.getElementById('appointmentsBody');
+  tbody.innerHTML = "";
+
+  if (data.length === 0) {
+    tbody.innerHTML = "<tr><td colspan='5'>No matching cancelled/completed appointments found.</td></tr>";
+    return;
+  }
+
+  const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+
+  data.forEach(app => {
+    const row = document.createElement("tr");
+    const safeId = DOMPurify.sanitize(app.appointmentId);
+    const safeStatus = DOMPurify.sanitize(app.status);
+    const safeDateTime = DOMPurify.sanitize(`${app.date} - ${app.time}`);
+    const safeDoctor = DOMPurify.sanitize(app.doctorName);
+    const safePatient = DOMPurify.sanitize(app.patientName);
+    const safeReason = DOMPurify.sanitize(app.reason);
+
+    if (userRole === 'doctor' || userRole === 'patient') {
+      row.innerHTML = `
+        <td>${userRole === 'doctor' ? safePatient : safeDoctor}</td>
+        <td>${safeReason}</td>
+        <td>${safeDateTime}</td>
+        <td>${safeStatus}</td>
+        <td>
+          <button class="btn-delete" data-id="${safeId}">Delete</button>
+        </td>
+      `;
+    } else if (userRole === 'admin') {
+      row.innerHTML = `
+        <td>Dr. ${safeDoctor}</td>
+        <td>${safePatient}</td>
+        <td>${safeDateTime}</td>
+        <td>${safeStatus}</td>
+        <td>
+          <button class="btn-delete" data-id="${safeId}">Delete</button>
+        </td>
+      `;
+    }
+
+    tbody.appendChild(row);
+  });
+
+  attachAppointmentListeners();
+}
+
+let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
+let allRenderedAppointments = []; // holds sanitized, display-ready rows
+
+document.getElementById("searchConfirmed").addEventListener("input", function () {
+  const query = this.value.toLowerCase().trim();
+
+  const filtered = query === ""
+    ? allRenderedCofirmedAppointments
+    : allRenderedCofirmedAppointments.filter(app =>
+        app.doctorName.toLowerCase().includes(query) ||
+        app.patientName.toLowerCase().includes(query) ||
+        app.status.toLowerCase().includes(query) ||
+        app.reason.toLowerCase().includes(query) ||
+        app.date.toLowerCase().includes(query) ||
+        app.time.toLowerCase().includes(query)
+      );
+
+  renderConfirmedAppointments(filtered);
+});
+
+document.getElementById("searchCancelled").addEventListener("input", function () {
+  const query = this.value.toLowerCase().trim();
+
+  const filtered = query === ""
+    ? allRenderedAppointments
+    : allRenderedAppointments.filter(app =>
+        app.doctorName.toLowerCase().includes(query) ||
+        app.patientName.toLowerCase().includes(query) ||
+        app.status.toLowerCase().includes(query) ||
+        app.reason.toLowerCase().includes(query) ||
+        app.date.toLowerCase().includes(query) ||
+        app.time.toLowerCase().includes(query)
+      );
+
+  renderCancelledAppointments(filtered);
+});
+
 // Appointments Management
 async function loadAppointments() {
+  allRenderedAppointments = []; // clear previous cache
+  allRenderedCofirmedAppointments = []; // clear previous cache
   const tbody = document.getElementById('appointmentsBody');
   const tbodyConfirmed = document.getElementById('appointmentsConfirmedBody');
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
@@ -83,6 +233,9 @@ async function loadAppointments() {
                     }
                     appointmentsDoctor.forEach(app => {
                     const row = document.createElement('tr');
+                    row.dataset.id = sanitize(app.appointmentId);
+                    row.dataset.date = sanitize(app.date);
+                    row.dataset.status = sanitize(app.status);
                     const doctorName = doctorMap[app.doctorId] || 'Unknown';
                     const patientName = patientMap[app.patientId] || 'Unknown';
                     const safeReason = sanitize(app.reason || 'Unknown');
@@ -101,7 +254,19 @@ async function loadAppointments() {
                             <button class="btn-cancel" data-id="${safeId}">Cancel</button>
                           </td>
                       `;
+
                       tbodyConfirmed.appendChild(row);
+
+                      allRenderedCofirmedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: patientName || '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
+
                     } else if (app.status === "Completed") {
                       row.innerHTML = `
                           <td>${patientName}</td>
@@ -112,7 +277,19 @@ async function loadAppointments() {
                             <button class="btn-delete" data-id="${safeId}">Delete</button>
                           </td>
                       `;
+                      
                       tbody.appendChild(row);
+
+                      allRenderedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: patientName || '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
+
                     } else if (app.status === "Cancelled") {
                       row.innerHTML = `
                           <td>${patientName}</td>
@@ -124,6 +301,16 @@ async function loadAppointments() {
                           </td>
                       `;
                       tbody.appendChild(row);
+
+                      allRenderedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: patientName || '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
                     }
                     });
                     break;
@@ -158,6 +345,16 @@ async function loadAppointments() {
                         `;
                        
                         tbodyConfirmed.appendChild(row);
+
+                        allRenderedCofirmedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
                       } else if (app.status === "Completed") {
                         row.innerHTML = `
                           <td>Dr. ${doctorName}</td>
@@ -169,6 +366,16 @@ async function loadAppointments() {
                           </td>
                         `;
                         tbody.appendChild(row);
+
+                        allRenderedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
                     } else if (app.status === "Cancelled") {
                         row.innerHTML = `
                           <td>Dr. ${doctorName}</td>
@@ -180,6 +387,16 @@ async function loadAppointments() {
                           </td>
                         `;
                       tbody.appendChild(row);
+
+                      allRenderedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
                     }
                     });
                     break;
@@ -203,6 +420,16 @@ async function loadAppointments() {
                           </td>
                       `;
                       tbodyConfirmed.appendChild(row);
+
+                      allRenderedCofirmedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: patientName || '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
                     } else if (app.status === "Completed") {
                         row.innerHTML = `
                             <td>Dr. ${doctorName}</td>
@@ -214,6 +441,16 @@ async function loadAppointments() {
                             </td>
                         `;
                         tbody.appendChild(row);
+
+                        allRenderedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: patientName || '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
                     } else if (app.status === "Cancelled") {
                         row.innerHTML = `
                             <td>Dr. ${doctorName}</td>
@@ -225,6 +462,16 @@ async function loadAppointments() {
                             </td>
                         `;
                         tbody.appendChild(row);
+
+                        allRenderedAppointments.push({
+                          html: row.innerHTML,
+                          status: app.status,
+                          doctorName: doctorName || '',
+                          patientName: patientName || '',
+                          reason: app.reason || '',
+                          date: app.date || '',
+                          time: app.time || ''
+                        });
                     }
                     });
                     break;
@@ -570,10 +817,7 @@ function handleAddAppointment(event) {
   const time = document.getElementById('appointmentTime').value;
   addAppointment(event, doctorId, patientId, reason, date, time);
 }
-// Load on page ready
-document.addEventListener('DOMContentLoaded', () => {
-  loadAppointments();
-});
+
 // Edit Appointment
 async function loadAppointmentForEdit(id) {
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
