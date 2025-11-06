@@ -175,8 +175,14 @@ document.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-view-doctor')) {
     e.preventDefault();
     const safeId = DOMPurify.sanitize(e.target.dataset.id);
-    recordToView = safeId;
-    window.location.href = `view-medical-record-doctor.html?recordId=${recordToView}`;
+    const patientId = new URLSearchParams(window.location.search).get('patientId');
+    
+    if (!patientId) {
+      alert('Patient ID is missing.');
+      return;
+    }
+
+    window.location.href = `view-medical-record-doctor.html?recordId=${safeId}&patientId=${patientId}`;
   }
 });
 async function viewMedicalRecord(medicalrecordId) {
@@ -321,6 +327,29 @@ async function viewMedicalRecordforDoctors(medicalrecordId) {
                 const medicalrecords = decryptedMedicalRecords.filter(med => med.recordId === recordId) || [];
                 const medicalrecord = medicalrecords[0];
                 
+
+                const editBtn = document.getElementById('editRecordBtn');
+                if (editBtn && recordId) {
+                    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                    const isOwner = currentUser && currentUser.role === 'doctor' && currentUser.linkedId == medicalrecord.doctorId;
+
+                    if (isOwner) {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const patientId = urlParams.get('patientId');
+
+                        if (!patientId) {
+                            console.warn("patientId missing in URL");
+                            editBtn.style.display = 'none';
+                        } else {
+                            editBtn.style.display = 'inline-block';
+                            editBtn.onclick = () => {
+                                window.location.href = `edit-medical-record.html?recordId=${encodeURIComponent(recordId)}&patientId=${encodeURIComponent(patientId)}`;
+                            };
+                        }
+                    } else {
+                        editBtn.style.display = 'none';
+                    }
+                }
                 // Check if medical record exists
                 if (!medicalrecord) {
                     console.error('Medical record not found');
