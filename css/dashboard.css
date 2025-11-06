@@ -647,6 +647,26 @@ body {
   z-index: 1000;
 }
 
+.display-info {
+  margin-bottom: 10px;
+
+}
+
+.username-display {
+  font-size: 1rem; /* text-theme-sm (assuming 'theme-sm' is equivalent to Tailwind's 'sm' font size, which is 14px or 0.875rem by default) */
+  display: inline; /* block */
+  font-weight: 500; /* font-medium */
+  color: var(--text-card-title); /* text-gray-700 */
+  margin-left: 10px;
+}
+
+.role-display {
+  font-size: 0.75rem; /* text-theme-xs (assuming theme-xs maps to 0.75rem or 12px) */
+  margin-top: 0.125rem; /* mt-0.5 (0.5 * 0.25rem = 0.125rem) */
+  display: inline; /* block */
+  color: #6b7280; /* text-gray-500 */
+}
+
 .profile-modal-actions {
   display: flex;
   flex-direction: column;
