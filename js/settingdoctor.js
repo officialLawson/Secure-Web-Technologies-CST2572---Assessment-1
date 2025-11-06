@@ -1,31 +1,14 @@
-// settingsdoctor.js – Settings for Doctor – XSS-PROTECTED with DOMPurify
+// settingdoctor.js – Ensure clean save (no extras)
 
 document.addEventListener('DOMContentLoaded', async () => {
-    /* ==================== 1. AUTH & ROLE CHECK ==================== */
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-    if (!currentUser || !currentUser.role || !currentUser.linkedId) {
-        alert('Access denied. Redirecting to login...');
-        window.location.href = '../html/login.html';
-        return;
-    }
-
-    const role = currentUser.role.toLowerCase();
-    const isDoctor = role === 'doctor';
-
-    if (!isDoctor) {
-        window.location.href = '../html/login.html';
-        return;
-    }
-
-    const currentPage = location.pathname.split('/').pop();
-    if (currentPage !== 'settings-doctor.html') {
-        window.location.href = 'settings-doctor.html';
+    if (!currentUser || currentUser.role?.toLowerCase() !== 'doctor') {
+        window.location.href = 'login.html';
         return;
     }
 
     const userId = currentUser.linkedId;
 
-    /* ==================== 2. DOM ELEMENTS ==================== */
     const els = {
         fullName: document.getElementById('fullName'),
         email: document.getElementById('email'),
@@ -39,55 +22,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let originalData = {};
 
-    /* ==================== 3. SANITIZE INPUT (DOMPurify) ==================== */
-    const sanitize = (input) => DOMPurify.sanitize(input.trim(), { ALLOWED_TAGS: [] }); // Text only
+    const sanitize = (input) => DOMPurify.sanitize(String(input || '').trim(), { ALLOWED_TAGS: [] });
 
-    /* ==================== 4. LOAD USER DATA (SAFE) ==================== */
     async function loadUserData() {
         try {
             await clinicDB.openClinicDB();
-
             let record = await clinicDB.getItem('doctors', userId);
             if (record) {
-                record = await clinicDB.decryptDoctorInfo(record); // Added decryption
-                record.First = record.first_name || record.First || '';
-                record.Last = record.last_name || record.Last || '';
-                record.Email = record.email || record.Email || '';
-                record.Telephone = record.Telephone || record.Phone || '';
-                record.Address = record.Address || '';
+                record = await clinicDB.decryptDoctorInfo(record);
+                // Extra cleanup here too
+                const extras = ['Title', 'NHS', 'Specialization', 'StaffID', 'first_name', 'last_name', 'email', 'gender'];
+                extras.forEach(key => delete record[key]);
             }
 
             if (!record) {
-                showMsg(`No doctor record found.`, 'error');
+                showMsg('Doctor not found.', 'error');
                 return;
             }
 
             originalData = { ...record };
 
-            // Sanitize before inserting into DOM
             const fullNameStr = `Dr ${record.First || ''} ${record.Last || ''}`.trim();
-            const safeFullName = sanitize(fullNameStr);
-            const safeEmail    = sanitize(record.Email || '');
-            const safePhone    = sanitize(record.Telephone || record.Phone || '');
-            const safeAddress  = sanitize(record.Address || '');
-
-            els.fullName.value = safeFullName;
-            els.email.value    = safeEmail;
-            els.phone.value    = safePhone;
-            els.address.value  = safeAddress;
+            els.fullName.value = sanitize(fullNameStr);
+            els.email.value = sanitize(record.Email || '');
+            els.phone.value = sanitize(record.Telephone || '');
+            els.address.value = sanitize(record.Address || '');
 
         } catch (err) {
-            console.error('Failed to load user data:', err);
-            showMsg('Failed to load your information.', 'error');
+            console.error(err);
+            showMsg('Failed to load data.', 'error');
         }
     }
 
-    /* ==================== 5. UI HELPERS ==================== */
+    function showMsg(text, type = 'success') {
+        els.msgBox.innerHTML = sanitize(text);
+        els.msgBox.className = `msg ${type}`;
+        setTimeout(() => els.msgBox.innerHTML = '', 5000);
+    }
+
     function enableEdit() {
-        document.querySelectorAll('#accountForm input').forEach(input => {
-            input.readOnly = false;
-            input.classList.remove('readonly');
-            input.classList.add('edit-mode');
+        ['fullName','email','phone','address'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.readOnly = false;
+                el.classList.add('edit-mode');
+            }
         });
         els.editBtn.style.display = 'none';
         els.saveBtn.style.display = 'inline-block';
@@ -95,11 +74,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function disableEdit() {
-        document.querySelectorAll('#accountForm input').forEach(input => {
-            if (input) {
-            input.readOnly = true;
-            input.classList.add('readonly');
-            input.classList.remove('edit-mode');
+        ['fullName','email','phone','address'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.readOnly = true;
+                el.classList.remove('edit-mode');
             }
         });
         els.editBtn.style.display = 'inline-block';
@@ -107,142 +86,96 @@ document.addEventListener('DOMContentLoaded', async () => {
         els.cancelBtn.style.display = 'none';
     }
 
-    function showMsg(text, type = 'success') {
-        // Sanitize message before display
-        const safeText = DOMPurify.sanitize(text, { ALLOWED_TAGS: ['strong', 'em'] });
-        els.msgBox.innerHTML = safeText;
-        els.msgBox.className = `msg ${type}`;
-        setTimeout(() => els.msgBox.innerHTML = '', 5000);
-    }
-
-    /* ==================== 6. EDIT / SAVE / CANCEL ==================== */
     els.editBtn.addEventListener('click', enableEdit);
 
     els.cancelBtn.addEventListener('click', () => {
-        const safeFullName = sanitize(`${originalData.First || ''} ${originalData.Last || ''}`);
-        const safeEmail    = sanitize(originalData.Email || '');
-        const safePhone    = sanitize(originalData.Telephone || originalData.Phone || '');
-        const safeAddress  = sanitize(originalData.Address || '');
-
-        els.fullName.value = safeFullName;
-        els.email.value    = safeEmail;
-        els.phone.value    = safePhone;
-        els.address.value  = safeAddress;
-
+        const fullNameStr = `Dr ${originalData.First || ''} ${originalData.Last || ''}`.trim();
+        els.fullName.value = sanitize(fullNameStr);
+        els.email.value = sanitize(originalData.Email || '');
+        els.phone.value = sanitize(originalData.Telephone || '');
+        els.address.value = sanitize(originalData.Address || '');
         disableEdit();
         showMsg('Changes cancelled.');
     });
 
     els.saveBtn.addEventListener('click', async () => {
-        // Sanitize all inputs
-        const rawName = els.fullName.value;
-        const rawEmail = els.email.value;
-        const rawPhone = els.phone.value;
-        const rawAddress = els.address.value;
+        const name = sanitize(els.fullName.value);
+        const email = sanitize(els.email.value);
+        const phone = sanitize(els.phone.value);
+        const address = sanitize(els.address.value);
 
-        const name = sanitize(rawName);
-        const email = sanitize(rawEmail);
-        const phone = sanitize(rawPhone);
-        const address = sanitize(rawAddress);
-
-        const nameParts = name.split(/\s+/).filter(Boolean);
+        const nameParts = name.replace(/^Dr\s*/i, '').trim().split(/\s+/);
         if (nameParts.length < 2) {
-            showMsg('Please enter both first and last name.', 'error');
+            showMsg('Enter first and last name.', 'error');
             return;
         }
-        const [first, ...lastParts] = nameParts;
-        const last = lastParts.join(' ');
+        const First = nameParts[0];
+        const Last = nameParts.slice(1).join(' ');
 
         if (!email.includes('@') || !email.includes('.')) {
-            showMsg('Please enter a valid email address.', 'error');
-            return;
-        }
-        if (!/^\+?[\d\s\-]{10,}$/.test(phone)) {
-            showMsg('Please enter a valid phone number.', 'error');
+            showMsg('Valid email required.', 'error');
             return;
         }
 
         try {
-            // PRESERVE ALL NON-SENSITIVE FIELDS (never encrypted)
-            const preserved = {
-                id: originalData.id,
-                Gender: originalData.Gender || '',
-                StaffID: userId,
-            };
-
-            // BUILD FINAL UPDATED RECORD - with correct field casing for doctors
             const updated = {
-                ...preserved,
-                First: first, 
-                Last: last,
+                id: originalData.id,
+                First,
+                Last,
                 Email: email,
-                Telephone: phone,
+                Gender: originalData.Gender || '',
                 Address: address,
-                first_name: first,
-                last_name: last,
-                email: email,
-                Specialization: originalData.Specialization || '',
-                StaffID: userId
+                Telephone: phone
             };
 
-            // Encrypt & save
+            // Explicitly remove any patient extras before encrypt
+            ['Title', 'NHS', 'DOB', 'Specialization', 'StaffID', 'first_name', 'last_name', 'email', 'gender'].forEach(key => delete updated[key]);
+
             const encrypted = await clinicDB.encryptDoctorInfo(updated);
             await clinicDB.updateItem('doctors', encrypted);
 
-            // Update originalData so Cancel works + future edits preserve everything
-            originalData = { ...originalData, ...updated };
+            // Reload fresh
+            const fresh = await clinicDB.getItem('doctors', userId);
+            originalData = await clinicDB.decryptDoctorInfo(fresh);
 
             disableEdit();
-            showMsg('Account updated successfully!', 'success');
+            showMsg('Updated successfully!', 'success');
         } catch (err) {
-            console.error('Save failed:', err);
-            showMsg('Failed to save changes. Please try again.', 'error');
+            console.error(err);
+            showMsg('Save failed.', 'error');
         }
     });
 
-    /* ==================== 7. PASSWORD CHANGE  ==================== */
-    document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
+    // Password change
+    document.getElementById('updatePasswordBtn')?.addEventListener('click', async () => {
         const current = document.getElementById('currentPassword').value;
         const newPass = document.getElementById('newPassword').value;
         const confirm = document.getElementById('confirmPassword').value;
 
-        if (!current || !newPass || newPass !== confirm) {
-            const error = document.getElementById('password-change-form-error');
-            error.innerText = sanitize('Please fill all fields and ensure passwords match.');
-            return;
-        }
-
-        if (newPass.length < 6) {
-            const error = document.getElementById('password-change-form-error');
-            error.innerText = sanitize('New password must be at least 6 characters.');
+        if (!current || !newPass || newPass !== confirm || newPass.length < 6) {
+            document.getElementById('password-change-form-error').innerText = sanitize('Check passwords.');
             return;
         }
 
         const loginCheck = await clinicDB.login(currentUser.username, current);
         if (!loginCheck.success) {
-            const error = document.getElementById('password-change-form-error');
-            error.innerText = sanitize('Current password is incorrect.');
+            document.getElementById('password-change-form-error').innerText = sanitize('Wrong current password.');
             return;
         }
 
         try {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
             const encryptedNew = await clinicDB.encryptData(newPass);
-            const userRecord = await clinicDB.getItem('users', currentUser.username);
-            userRecord.password = encryptedNew;
-            await clinicDB.updateItem('users', userRecord);
-            await logCurrentUserActivity('Password Change', user.linkedId, `User with ID ${user.linkedId} has changed their password`)
-            const error = document.getElementById('password-change-form-success');
-            error.innerText = sanitize('Password updated successfully!');
-            document.getElementById('currentPassword').value =
-            document.getElementById('newPassword').value =
+            const userRec = await clinicDB.getItem('users', currentUser.username);
+            userRec.password = encryptedNew;
+            await clinicDB.updateItem('users', userRec);
+            document.getElementById('password-change-form-success').innerText = sanitize('Password changed!');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
             document.getElementById('confirmPassword').value = '';
         } catch (err) {
-            console.error('Password update failed:', err);
-            alert('Failed to update password.');
+            alert('Password update failed.');
         }
     });
 
-    /* ==================== 8. INITIALIZE ==================== */
     await loadUserData();
 });
