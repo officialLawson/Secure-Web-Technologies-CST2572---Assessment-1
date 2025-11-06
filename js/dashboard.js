@@ -117,6 +117,139 @@ async function createDashboardAnalytics() {
             elGrowth.className = growthRate > 0 ? 'positive' : 'negative';
         }
     };
+
+    // -------------------------------------------------
+    // 4. MONTHLY ACTIVITY LOGS
+    // -------------------------------------------------
+
+    const user = JSON.parse(localStorage.getItem("currentUser"));
+    const logsPerMonth = {};
+
+    try {
+      const db = await openClinicDB();
+      const tx = db.transaction("activityLogs", "readonly");
+      const store = tx.objectStore("activityLogs");
+      const request = store.getAll();
+
+      request.onsuccess = () => {
+        const logs = request.result || [];
+        const userLogs = logs.filter(log => log.userId === user.linkedId);
+
+        userLogs.forEach(log => {
+          const date = new Date(log.timestamp);
+          const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+          logsPerMonth[key] = (logsPerMonth[key] || 0) + 1;
+        });
+
+        const now = new Date();
+        const currentKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+        const lastMonth = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+        const lastMonthYear = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+        const lastKey = `${lastMonthYear}-${String(lastMonth + 1).padStart(2, "0")}`;
+
+        const currentMonthCount = logsPerMonth[currentKey] || 0;
+        const lastMonthCount = logsPerMonth[lastKey] || 0;
+
+        const growthRate = lastMonthCount > 0
+          ? ((currentMonthCount - lastMonthCount) / lastMonthCount) * 100
+          : currentMonthCount > 0 ? 100 : 0;
+
+        const activityLogsCount = document.getElementById("activityLogsThisMonth");
+        const activityLogsComparison = document.getElementById("activityLogsComparison");
+
+        if (activityLogsCount) activityLogsCount.textContent = `${sanitize(currentMonthCount)}`;
+        if (activityLogsComparison) {
+          activityLogsComparison.textContent = `${sanitize(growthRate.toFixed(2))}%`;
+          activityLogsComparison.className = growthRate > 0 ? "positive" : "negative";
+        }
+      };
+
+      request.onerror = () => {
+        console.error("Failed to load activity logs.");
+      };
+    } catch (err) {
+      console.error("DB error:", err);
+    }
+    
+}
+
+async function getUserRoleCounts() {
+  const roleCounts = {};
+
+  try {
+    const db = await openClinicDB();
+    const tx = db.transaction("users", "readonly");
+    const store = tx.objectStore("users");
+    const request = store.getAll();
+
+    return await new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        const users = request.result || [];
+
+        users.forEach(user => {
+          const role = user.role?.toLowerCase();
+          if (!role) return;
+
+          const label = role.charAt(0).toUpperCase() + role.slice(1); // e.g., "patient" → "Patient"
+          roleCounts[label] = (roleCounts[label] || 0) + 1;
+        });
+
+        resolve(roleCounts);
+      };
+
+      request.onerror = () => {
+        console.error("Failed to load users.");
+        reject({});
+      };
+    });
+  } catch (err) {
+    console.error("DB error:", err);
+    return {};
+  }
+}
+
+function renderUserRoleChart(roleCounts) {
+  const ctx = document.getElementById("userRoleChart")?.getContext("2d");
+  if (!ctx) return;
+
+  const labels = Object.keys(roleCounts);
+  const data = Object.values(roleCounts);
+
+  new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels,
+      datasets: [{
+        label: "User Roles",
+        data,
+        backgroundColor: [
+          "rgba(75, 192, 192, 0.6)",  // Patient
+          "rgba(255, 159, 64, 0.6)",  // Doctor
+          "rgba(153, 102, 255, 0.6)"  // Admin
+        ],
+        borderColor: "#fff",
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+        },
+        tooltip: {
+          callbacks: {
+            label: (context) => {
+              const total = data.reduce((a, b) => a + b, 0);
+              const value = context.raw;
+              const percent = ((value / total) * 100).toFixed(1);
+              return `${context.label}: ${value} (${percent}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
 }
 
 async function displayRecentActivityLogs() {
@@ -141,7 +274,7 @@ async function displayRecentActivityLogs() {
       const userLogs = logs
         .filter(log => log.userId === user.linkedId)
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .slice(0, 5); // Take latest 5
+        .slice(0, 3); // Take latest 5
 
       list.innerHTML = "";
 
@@ -244,6 +377,9 @@ async function getUpcomingAppointmentsForPatient() {
 
 // Run immediately
 createDashboardAnalytics();
+getUserRoleCounts().then(roleCounts => {
+  renderUserRoleChart(roleCounts); // from earlier chart function
+});
 getUserInfo();
 displayRecentActivityLogs();
 getUpcomingAppointmentsForPatient();

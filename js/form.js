@@ -1,4 +1,4 @@
-(() => {
+document.addEventListener("DOMContentLoaded", () => {
   'use strict';
 
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
@@ -16,7 +16,6 @@
     }
   });
 
-  // Helper: toggle placeholder class
   const updatePlaceholderState = (container, trigger, value) => {
     if (value) {
       trigger.classList.remove('placeholder');
@@ -26,21 +25,20 @@
   };
 
   // -----------------------------------------------------------------
-  // 1. DOCTOR 
+  // 1. DOCTOR
   // -----------------------------------------------------------------
   const docTrigger = document.querySelector('#doctorSelect .custom-select__trigger');
   const docText = docTrigger?.querySelector('.trigger-text');
   const docContainer = document.getElementById('doctorSelect');
   const docHidden = document.getElementById('doctorName');
 
-  if (docTrigger && docContainer && docHidden) {
+  if (docTrigger && docText && docContainer && docHidden) {
     updatePlaceholderState(docContainer, docTrigger, docHidden.value);
 
     docTrigger.addEventListener('click', async (e) => {
       e.stopPropagation();
       closeAll();
 
-      // Show loading state
       const opts = document.createElement('div');
       opts.className = 'custom-select__options';
       opts.innerHTML = '<div class="list-item" style="text-align:center; color:var(--text-muted);">Loading doctors...</div>';
@@ -48,7 +46,6 @@
       docTrigger.setAttribute('aria-expanded', 'true');
 
       try {
-        // Open DB and fetch all doctors
         const db = await openClinicDB();
         const tx = db.transaction('doctors', 'readonly');
         const store = tx.objectStore('doctors');
@@ -58,29 +55,16 @@
           req.onerror = () => reject(req.error);
         });
 
-        // Clear loading message
         opts.innerHTML = '';
 
-        if (!doctors || doctors.length === 0) {
+        if (!doctors.length) {
           opts.innerHTML = '<div class="list-item" style="text-align:center; color:var(--text-muted);">No doctors available</div>';
           return;
         }
 
-        // Add each doctor to dropdown
         for (const d of doctors) {
-          // Decrypt doctor info to get name
-          let firstName = d.First || d.first_name || 'Unknown';
-          let lastName = d.Last || d.last_name || '';
-          if (d.payload) {
-            try {
-              const decrypted = await decryptData(d.payload);
-              const sensitive = JSON.parse(decrypted);
-              // Note: In your encryptDoctorInfo, you only encrypt Email, Address, Telephone
-              // So First/Last remain in plain text — no need to decrypt for name
-            } catch (err) {
-              console.warn('Failed to decrypt doctor payload (name may be incomplete)', err);
-            }
-          }
+          const firstName = d.First || d.first_name || 'Unknown';
+          const lastName = d.Last || d.last_name || '';
           const fullName = `${firstName} ${lastName}`.trim() || `Doctor ${d.id}`;
           const safeName = sanitize(fullName);
 
@@ -120,23 +104,25 @@
   const reasonContainer = document.getElementById('reasonSelect');
   const reasonHidden = document.getElementById('appointmentReason');
 
-  if (reasonTrigger && reasonContainer && reasonHidden) {
+  if (reasonTrigger && reasonText && reasonContainer && reasonHidden) {
     updatePlaceholderState(reasonContainer, reasonTrigger, reasonHidden.value);
 
     reasonTrigger.addEventListener('click', e => {
       e.stopPropagation();
       closeAll();
+
       const opts = document.createElement('div');
       opts.className = 'custom-select__options';
       reasonContainer.appendChild(opts);
       reasonTrigger.setAttribute('aria-expanded', 'true');
 
       const reasons = [
-        {value: 'Consultation', text: 'Consultation'},
-        {value: 'Routine check-up', text: 'Routine check-up'},
-        {value: 'Follow-up', text: 'Follow-up'},
-        {value: 'Treatment review', text: 'Treatment review'}
+        { value: 'Consultation', text: 'Consultation' },
+        { value: 'Routine check-up', text: 'Routine check-up' },
+        { value: 'Follow-up', text: 'Follow-up' },
+        { value: 'Treatment review', text: 'Treatment review' }
       ];
+
       reasons.forEach(r => {
         const safeText = sanitize(r.text);
         const div = document.createElement('div');
@@ -163,7 +149,8 @@
     });
   }
 
-  // -----------------------------------------------------------------
+
+ // -----------------------------------------------------------------
   // 3. DATE
   // -----------------------------------------------------------------
   const dateInp = document.getElementById('appointmentDate');
@@ -171,97 +158,97 @@
   let calYear = new Date().getFullYear();
   let calMonth = new Date().getMonth();
 
-  const renderCalendar = (y, m) => {
-    const existing = dateContainer.querySelector('.custom-date__calendar');
-    if (existing) existing.remove();
-
-    const cal = document.createElement('div');
-    cal.className = 'custom-date__calendar';
-
-    const firstDay = new Date(y, m, 1).getDay();
-    const lastDate = new Date(y, m + 1, 0).getDate();
-    const today = new Date(); today.setHours(0,0,0,0);
-
-    const safeMonthYear = sanitize(new Date(y, m).toLocaleString('default', {month:'long', year:'numeric'}));
-    cal.innerHTML = `
-      <div class="cal-header">
-        <button type="button" class="cal-btn prev" aria-label="Previous month">Previous</button>
-        <span class="cal-title">${safeMonthYear}</span>
-        <button type="button" class="cal-btn next" aria-label="Next month">Next</button>
-      </div>
-      <div class="cal-weekdays">
-        ${['S','M','T','W','T','F','S'].map(d => `<div role="columnheader" aria-label="${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][['S','M','T','W','T','F','S'].indexOf(d)]}">${sanitize(d)}</div>`).join('')}
-      </div>
-      <div class="cal-grid" role="grid"></div>
-    `;
-
-    const grid = cal.querySelector('.cal-grid');
-    for (let i = 0; i < firstDay; i++) {
-      const empty = document.createElement('div');
-      empty.setAttribute('role', 'gridcell');
-      grid.appendChild(empty);
-    }
-    for (let d = 1; d <= lastDate; d++) {
-      const cell = document.createElement('div');
-      const dateObj = new Date(y, m, d);
-      const isPast = dateObj < today;
-      cell.textContent = sanitize(d);
-      cell.className = 'cal-day';
-      cell.setAttribute('role', 'gridcell');
-      cell.setAttribute('tabindex', '-1');
-      if (isPast) {
-        cell.classList.add('disabled');
-        cell.setAttribute('aria-disabled', 'true');
-      } else {
-        cell.classList.add('selectable');
-        cell.setAttribute('tabindex', '0');
-        cell.addEventListener('click', () => {
-          const formattedValue = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-          dateInp.value = formattedValue;
-
-          const displayDiv = dateContainer.querySelector('.custom-date__input');
-          if (displayDiv) {
-            const displayDate = new Date(y, m, d);
-            const safeDisplay = sanitize(displayDate.toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-              year: 'numeric'
-            }));
-            displayDiv.textContent = safeDisplay;
-            displayDiv.classList.remove('placeholder');
-          }
-
-          cal.remove();
-          const displayDivFinal = dateContainer.querySelector('.custom-date__input');
-          if (displayDivFinal) displayDivFinal.focus();
-        });
-        cell.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            cell.click();
-          }
-        });
-      }
-      grid.appendChild(cell);
-    }
-
-    cal.querySelector('.prev').addEventListener('click', e => {
-      e.stopPropagation();
-      calMonth = m === 0 ? 11 : m - 1;
-      calYear = m === 0 ? y - 1 : y;
-      renderCalendar(calYear, calMonth);
-    });
-    cal.querySelector('.next').addEventListener('click', e => {
-      e.stopPropagation();
-      calMonth = m === 11 ? 0 : m + 1;
-      calYear = m === 11 ? y + 1 : y;
-      renderCalendar(calYear, calMonth);
-    });
-
-    dateContainer.appendChild(cal);
-  };
-
   if (dateInp && dateContainer) {
+    const renderCalendar = (y, m) => {
+      const existing = dateContainer.querySelector('.custom-date__calendar');
+      if (existing) existing.remove();
+
+      const cal = document.createElement('div');
+      cal.className = 'custom-date__calendar';
+
+      const firstDay = new Date(y, m, 1).getDay();
+      const lastDate = new Date(y, m + 1, 0).getDate();
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+
+      const safeMonthYear = sanitize(new Date(y, m).toLocaleString('default', { month: 'long', year: 'numeric' }));
+      cal.innerHTML = `
+        <div class="cal-header">
+          <button type="button" class="cal-btn prev" aria-label="Previous month">Previous</button>
+          <span class="cal-title">${safeMonthYear}</span>
+          <button type="button" class="cal-btn next" aria-label="Next month">Next</button>
+        </div>
+        <div class="cal-weekdays">
+          ${['S','M','T','W','T','F','S'].map(d => `<div role="columnheader" aria-label="${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][['S','M','T','W','T','F','S'].indexOf(d)]}">${sanitize(d)}</div>`).join('')}
+        </div>
+        <div class="cal-grid" role="grid"></div>
+      `;
+
+      const grid = cal.querySelector('.cal-grid');
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.setAttribute('role', 'gridcell');
+        grid.appendChild(empty);
+      }
+      for (let d = 1; d <= lastDate; d++) {
+        const cell = document.createElement('div');
+        const dateObj = new Date(y, m, d);
+        const isPast = dateObj < today;
+        cell.textContent = sanitize(d);
+        cell.className = 'cal-day';
+        cell.setAttribute('role', 'gridcell');
+        cell.setAttribute('tabindex', '-1');
+        if (isPast) {
+          cell.classList.add('disabled');
+          cell.setAttribute('aria-disabled', 'true');
+        } else {
+          cell.classList.add('selectable');
+          cell.setAttribute('tabindex', '0');
+          cell.addEventListener('click', () => {
+            const formattedValue = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+            dateInp.value = formattedValue;
+
+            const displayDiv = dateContainer.querySelector('.custom-date__input');
+            if (displayDiv) {
+              const displayDate = new Date(y, m, d);
+              const safeDisplay = sanitize(displayDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              }));
+              displayDiv.textContent = safeDisplay;
+              displayDiv.classList.remove('placeholder');
+              displayDiv.focus();
+            }
+
+            cal.remove();
+          });
+                    cell.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              cell.click();
+            }
+          });
+        }
+        grid.appendChild(cell);
+      }
+
+      cal.querySelector('.prev').addEventListener('click', e => {
+        e.stopPropagation();
+        calMonth = m === 0 ? 11 : m - 1;
+        calYear = m === 0 ? y - 1 : y;
+        renderCalendar(calYear, calMonth);
+      });
+
+      cal.querySelector('.next').addEventListener('click', e => {
+        e.stopPropagation();
+        calMonth = m === 11 ? 0 : m + 1;
+        calYear = m === 11 ? y + 1 : y;
+        renderCalendar(calYear, calMonth);
+      });
+
+      dateContainer.appendChild(cal);
+    };
+
     const displayDiv = dateContainer.querySelector('.custom-date__input');
     if (dateInp.value && displayDiv) {
       const [year, month, day] = dateInp.value.split('-').map(Number);
@@ -277,7 +264,6 @@
       }
     }
 
-    // Click on visible date box opens calendar
     if (displayDiv) {
       displayDiv.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -290,9 +276,9 @@
 // -----------------------------------------------------------------
 // 4. TIME
 // -----------------------------------------------------------------
-const timeInp = document.getElementById('appointmentTime');
-const timeContainer = document.getElementById('timePicker');
-  const timeTrigger = timeContainer.querySelector('.custom-time__input');
+  const timeInp = document.getElementById('appointmentTime');
+  const timeContainer = document.getElementById('timePicker');
+  const timeTrigger = timeContainer?.querySelector('.custom-time__input');
 
   if (timeInp && timeContainer && timeTrigger) {
     updatePlaceholderState(timeContainer, timeTrigger, timeInp.value);
@@ -324,7 +310,7 @@ const timeContainer = document.getElementById('timePicker');
 
       const picker = document.createElement('div');
       picker.className = 'custom-time__picker';
-      
+
       const safeHour = sanitize(String(selectedHour).padStart(2, '0'));
       const safeMinute = sanitize(String(selectedMinute).padStart(2, '0'));
       picker.innerHTML = `
@@ -354,8 +340,7 @@ const timeContainer = document.getElementById('timePicker');
       const minuteValue = picker.querySelector('.minute-value');
       const periodBtns = picker.querySelectorAll('.period-btn');
 
-      hourValue.addEventListener('click', (e) => {
-        e.stopPropagation();
+      hourValue.addEventListener('click', () => {
         selectedHour = selectedHour >= 12 ? 1 : selectedHour + 1;
         hourValue.textContent = sanitize(String(selectedHour).padStart(2, '0'));
       });
@@ -366,8 +351,7 @@ const timeContainer = document.getElementById('timePicker');
         }
       });
 
-      minuteValue.addEventListener('click', (e) => {
-        e.stopPropagation();
+      minuteValue.addEventListener('click', () => {
         selectedMinute = (selectedMinute + 15) % 60;
         minuteValue.textContent = sanitize(String(selectedMinute).padStart(2, '0'));
       });
@@ -379,8 +363,7 @@ const timeContainer = document.getElementById('timePicker');
       });
 
       periodBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
+        btn.addEventListener('click', () => {
           periodBtns.forEach(b => {
             b.classList.remove('active');
             b.setAttribute('aria-pressed', 'false');
@@ -397,14 +380,12 @@ const timeContainer = document.getElementById('timePicker');
         });
       });
 
-      picker.querySelector('.cancel-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
+      picker.querySelector('.cancel-btn').addEventListener('click', () => {
         picker.remove();
         timeTrigger.focus();
       });
 
-      picker.querySelector('.ok-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
+      picker.querySelector('.ok-btn').addEventListener('click', () => {
         let hour24 = selectedHour;
         if (selectedPeriod === 'PM' && selectedHour !== 12) hour24 += 12;
         if (selectedPeriod === 'AM' && selectedHour === 12) hour24 = 0;
@@ -418,7 +399,7 @@ const timeContainer = document.getElementById('timePicker');
       });
 
       timeContainer.appendChild(picker);
-      picker.querySelector('.hour-value').focus();
+      hourValue.focus();
     };
 
     timeTrigger.addEventListener('click', (e) => {
@@ -428,4 +409,4 @@ const timeContainer = document.getElementById('timePicker');
     });
   }
 
-})();
+});

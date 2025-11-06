@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchAllUserData() {
     const tbody = document.getElementById('usersBody');
-    if (!tbody) return console.warn('Table body #usersBody not found.');
+    if (!tbody) return ;
     tbody.innerHTML = '<tr><td colspan="5">Loading users...</td></tr>';
 
     try {
@@ -491,6 +491,16 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
 
         request.onsuccess = function() {
             const patients = request.result || [];
+
+            const nhsSame = patients.find(p => 
+                p.NHS === userNHS
+            );
+
+            if (nhsSame) {
+                const error = document.getElementById("userNHS-form-error");
+                error.innerHTML = `User with this NHS already exists.`;
+                return;
+            }
 
             const existSame = patients.find(p => 
                 p.NHS === userNHS &&
@@ -907,22 +917,12 @@ async function loadPatientForEdit(patientId) {
                 return;
             }
 
-            function convertDOBFormat(dobStr) {
-                // Split the input string by "/"
-                const [day, month, year] = dobStr.split("/");
-
-                // Return the formatted string
-                return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-            }
-
-
             // Fill form fields
             document.getElementById('userTitle').value = patient.Title || '';
             document.getElementById('userFirstName').value = patient.First || '';
             document.getElementById('userLastName').value = patient.Last || '';
             document.getElementById('userNHS').value = patient.NHS || '';
-            document.getElementById('userDOB').value = convertDOBFormat(patient.DOB) || '';
-            console.log(convertDOBFormat(patient.DOB));
+            document.getElementById('userDOB').value = patient.DOB || '';
             document.getElementById('userGender').value = patient.Gender || '';
             document.getElementById('userEmail').value = patient.Email || '';
             document.getElementById('userTelephone').value = patient.Telephone || '';
@@ -940,113 +940,121 @@ async function loadPatientForEdit(patientId) {
 async function editPatient(patientId, updatedData) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
-    if (!userTitle) {
-        const inputError = document.getElementById("userTitle");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userTitle-form-error");
-        error.innerText = `Please enter a title.`;
-        return;
+    if (!updatedData.Title) {
+    const inputError = document.getElementById("userTitle");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userTitle-form-error");
+    error.innerText = `Please enter a title.`;
+    return;
     } else {
-        const inputError = document.getElementById("userTitle");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userTitle-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userTitle");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userTitle-form-error");
+    error.innerHTML = ``;
     }
-    if (!userFirstName) {
-        const inputError = document.getElementById("userFirstName");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userFirstName-form-error");
-        error.innerHTML = `Please enter a first name.`;
-        return;
+
+    if (!updatedData.First) {
+    const inputError = document.getElementById("userFirstName");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userFirstName-form-error");
+    error.innerHTML = `Please enter a first name.`;
+    return;
     } else {
-        const inputError = document.getElementById("userFirstName");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userFirstName-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userFirstName");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userFirstName-form-error");
+    error.innerHTML = ``;
     }
-    if (!userLastName) {
-        const inputError = document.getElementById("userLastName");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userLastName-form-error");
-        error.innerHTML = `Please enter a last name.`;
-        return;
+
+    if (!updatedData.Last) {
+    const inputError = document.getElementById("userLastName");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userLastName-form-error");
+    error.innerHTML = `Please enter a last name.`;
+    return;
     } else {
-        const inputError = document.getElementById("userLastName");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userLastName-form-error"); 
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userLastName");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userLastName-form-error");
+    error.innerHTML = ``;
     }
-    if (!userNHS) {
-        const inputError = document.getElementById("userNHS");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userNHS-form-error");
-        error.innerHTML = `Please select a date of birth.`;
-        return;
+
+    if (!updatedData.NHS) {
+    const inputError = document.getElementById("userNHS");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userNHS-form-error");
+    error.innerHTML = `Please enter an NHS number.`;
+    return;
     } else {
-        const inputError = document.getElementById("userNHS");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userNHS-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userNHS");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userNHS-form-error");
+    error.innerHTML = ``;
     }
-    if (!userDOB) {
-        const inputError = document.getElementById("userDOB");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userDOB-form-error");
-        error.innerHTML = `Please select a date of birth.`;
-        return;
+
+    if (!updatedData.DOB) {
+    const inputError = document.getElementById("userDOB");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userDOB-form-error");
+    error.innerHTML = `Please select a date of birth.`;
+    return;
     } else {
-        const inputError = document.getElementById("userDOB");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userDOB-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userDOB");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userDOB-form-error");
+    error.innerHTML = ``;
     }
-    if (!userGender) {
-        const inputError = document.getElementById("userGender");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userGender-form-error");
-        error.innerHTML = `Please enter the gender.`;
-        return;
+
+    if (!updatedData.Gender) {
+    const inputError = document.getElementById("userGender");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userGender-form-error");
+    error.innerHTML = `Please enter the gender.`;
+    return;
     } else {
-        const inputError = document.getElementById("userGender");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userGender-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userGender");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userGender-form-error");
+    error.innerHTML = ``;
     }
-    if (!userEmail) {
-        const inputError = document.getElementById("userEmail");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userEmail-form-error");
-        error.innerHTML = `Please enter an email address.`;
-        return;
+
+    if (!updatedData.Email) {
+    const inputError = document.getElementById("userEmail");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userEmail-form-error");
+    error.innerHTML = `Please enter an email address.`;
+    return;
     } else {
-        const inputError = document.getElementById("userEmail");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userEmail-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userEmail");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userEmail-form-error");
+    error.innerHTML = ``;
     }
-    if (!userTelephone) {
-        const inputError = document.getElementById("userTelephone");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userTelephone-form-error");
-        error.innerHTML = `Please enter a telephone.`;
-        return;
+
+    if (!updatedData.Telephone) {
+    const inputError = document.getElementById("userTelephone");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userTelephone-form-error");
+    error.innerHTML = `Please enter a telephone.`;
+    return;
     } else {
-        const inputError = document.getElementById("userTelephone");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userTelephone-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userTelephone");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userTelephone-form-error");
+    error.innerHTML = ``;
     }
-    if (!userAddress) {
-        const inputError = document.getElementById("userAddress");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userAddress-form-error");
-        error.innerHTML = `Please enter an address`;
-        return;
+
+    if (!updatedData.Address) {
+    const inputError = document.getElementById("userAddress");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userAddress-form-error");
+    error.innerHTML = `Please enter an address.`;
+    return;
     } else {
-        const inputError = document.getElementById("userAddress");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userAddress-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userAddress");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userAddress-form-error");
+    error.innerHTML = ``;
     }
 
     // Age verification helper function
@@ -1085,6 +1093,16 @@ async function editPatient(patientId, updatedData) {
             const existingPatient = getReq.result;
             if (!existingPatient) {
                 console.error("❌ Patient not found.");
+                return;
+            }
+
+            const nhsSame = patients.find(p => 
+                p.NHS === userNHS
+            );
+
+            if (nhsSame) {
+                const error = document.getElementById("userNHS-form-error");
+                error.innerHTML = `User with this NHS already exists.`;
                 return;
             }
 
