@@ -10,7 +10,7 @@ async function decryptData(encrypted) {
       return null;
     }
 
-    const key = await getCryptoKey(); // from IndexedDB.js
+    const key = await getCryptoKey();
     const iv = new Uint8Array(encrypted.iv);
     const data = new Uint8Array(encrypted.data);
 
@@ -56,7 +56,7 @@ async function loginUser(username, password, role) {
             const patientSelected = patientFiltered[0];
 
             if (!patientFiltered) {
-              return resolve(null); // No doctor found with that email
+              return resolve(null);
             }
 
 
@@ -77,7 +77,7 @@ async function loginUser(username, password, role) {
             const doctor = e.target.result;
 
             if (!doctor) {
-              return resolve(null); // No doctor found with that email
+              return resolve(null);
             }
 
             const linkedId = doctor.id;
@@ -94,7 +94,7 @@ async function loginUser(username, password, role) {
               const userSelected = userFiltered[0];
 
               if (!userSelected) {
-                return resolve(null); // No user found for that doctor
+                return resolve(null);
               }
 
               // Optionally attach doctor profile to user object
