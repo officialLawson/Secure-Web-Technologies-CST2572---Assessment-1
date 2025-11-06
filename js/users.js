@@ -1227,6 +1227,7 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
                 await deleteLinkedRecords("medicalRecord", "patientId", userToDeleteId);
                 await deleteLinkedRecords("appointments", "patientId", userToDeleteId);
                 await deleteLinkedRecords("notifications", "recipientId", userToDeleteId);
+                await deleteLinkedRecords("activityLogs", "userId", userToDeleteId);
                 await deleteItem("patients", userToDeleteId);
 
                 await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a patient`);
@@ -1236,6 +1237,7 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
             } else if (userToDeleteRole === 'doctor') {
                 await deleteLinkedRecords("appointments", "doctorId", parseInt(userToDeleteId));
                 await deleteLinkedRecords("notifications", "recipientId", parseInt(userToDeleteId));
+                await deleteLinkedRecords("activityLogs", "userId", parseInt(userToDeleteId));
                 await deleteItem("doctors", parseInt(userToDeleteId));
 
                 await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a doctor`);

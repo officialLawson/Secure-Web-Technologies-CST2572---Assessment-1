@@ -470,6 +470,7 @@ async function deletePatientCompletely(patientId) {
   results.push(await deleteLinkedRecords("medicalRecord", "patientId", patientId));
   results.push(await deleteLinkedRecords("appointments", "patientId", patientId));
   results.push(await deleteLinkedRecords("notifications", "recipientId", patientId));
+  results.push(await deleteLinkedRecords("activityLogs", "userId", patientId));
   results.push(await deleteItem("users", patientId));
   results.push(await deleteItem("patients", patientId));
 
@@ -480,13 +481,52 @@ async function deletePatientCompletely(patientId) {
 async function deleteDoctorCompletely(doctorId) {
   const results = [];
 
-  results.push(await deleteLinkedRecords("appointments", "doctorId", doctorId));
-  results.push(await deleteLinkedRecords("notifications", "recipientId", doctorId));
-  results.push(await deleteItem("users", doctorId));
-  results.push(await deleteItem("doctors", doctorId));
+  try {
+    const db = await openClinicDB();
+    const tx = db.transaction('appointments', 'readwrite');
+    const store = tx.objectStore('appointments');
+    const request = store.getAll();
 
-  console.log("Deleted Doctor Account.");
-  window.location.href = '../html/login.html';
+    const appointments = await new Promise((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject("Failed to load appointments.");
+    });
+
+    const linkedAppointments = appointments.filter(
+      app => app.doctorId === doctorId && app.status === "Confirmed"
+    );
+
+    // Cancel all confirmed appointments and notify patients
+    for (const a of linkedAppointments) {
+      a.status = "Cancelled";
+      await new Promise((resolve, reject) => {
+        const updateReq = store.put(a);
+        updateReq.onsuccess = async () => {
+          await createNotificationForUser(
+            "Appointment Cancelled",
+            "Due to unavailability of the doctor, your appointment has been cancelled",
+            a.patientId,
+            "patient"
+          );
+          resolve();
+        };
+        updateReq.onerror = e => reject(e.target.error);
+      });
+    }
+
+    // Now delete all linked data
+    results.push(await deleteLinkedRecords("appointments", "doctorId", doctorId));
+    results.push(await deleteLinkedRecords("notifications", "recipientId", doctorId));
+    results.push(await deleteLinkedRecords("activityLogs", "userId", doctorId));
+    results.push(await deleteItem("users", doctorId));
+    results.push(await deleteItem("doctors", doctorId));
+
+    console.log("✅ Doctor account and linked data deleted.");
+    window.location.href = '../html/login.html';
+
+  } catch (err) {
+    console.error("❌ Error during doctor deletion:", err);
+  }
 }
 
 

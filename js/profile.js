@@ -114,10 +114,54 @@ document.getElementById('confirmDelete').addEventListener('click', async () => {
     console.log(user);
     if (user.role.toLowerCase() === 'patient') {
         deletePatientCompletely(user.linkedId);
+
+        try {
+            const db = await openClinicDB();
+            const tx = db.transaction('admins','readwrite');
+            const store = tx.objectStore('admins');
+            const request = store.getAll();
+
+            request.onsuccess = async function() {
+                const admins = request.result || [];
+
+                admins.forEach(adm => {
+                    createNotificationForUser("Account Deleted", `Patient with NHS ${user.linkedId} has deleted their account and linked data`, adm.username, "admin")
+                });
+            };
+
+            request.onerror = function(e) {
+                console.error("Failed to load admin info: ", e.target.err)
+            }
+        } catch (err) {
+            console.warn("DB error.");
+        }
     } else if (user.role.toLowerCase() === 'doctor') {
         deleteDoctorCompletely(user.linkedId);
+
+        try {
+            const db = await openClinicDB();
+            const tx = db.transaction('admins','readwrite');
+            const store = tx.objectStore('admins');
+            const request = store.getAll();
+
+            request.onsuccess = async function() {
+                const admins = request.result || [];
+
+                admins.forEach(adm => {
+                    createNotificationForUser("Account Deleted", `Patient with NHS ${user.linkedId} has deleted their account and linked data`, adm.username, "admin")
+                });
+            };
+
+            request.onerror = function(e) {
+                console.error("Failed to load admin info: ", e.target.err)
+            }
+        } catch (err) {
+            console.warn("DB error.");
+        }
+        
     }
 });
+
 // Handle "Cancel"
 document.getElementById('cancelDelete').addEventListener('click', () => {
   document.getElementById('deleteModal').classList.add('hidden');
