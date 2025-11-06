@@ -1214,6 +1214,9 @@ body {
   margin-left: 4px;
 }
 .btn-decline:hover { background: var(--btn-delete-hover); color: white;}
+.message-success {
+  color: var(--text-positive);
+}
 
 
 /* -------------------------------------------------

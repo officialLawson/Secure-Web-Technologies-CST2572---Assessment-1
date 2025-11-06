@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const isDoctor = role === 'doctor';
 
     if (!isPatient && !isDoctor) {
-        alert('Invalid user role. Redirecting...');
         window.location.href = '../html/login.html';
         return;
     }
@@ -254,28 +253,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         const confirm = document.getElementById('confirmPassword').value;
 
         if (!current || !newPass || newPass !== confirm) {
-            alert('Please fill all fields and ensure passwords match.');
+            const error = document.getElementById('password-change-form-error');
+            error.innerText = sanitize('Please fill all fields and ensure passwords match.');
             return;
         }
 
         if (newPass.length < 6) {
-            alert('New password must be at least 6 characters.');
+            const error = document.getElementById('password-change-form-error');
+            error.innerText = sanitize('New password must be at least 6 characters.');
             return;
         }
 
         const loginCheck = await clinicDB.login(currentUser.username, current);
         if (!loginCheck.success) {
-            alert('Current password is incorrect.');
+            const error = document.getElementById('password-change-form-error');
+            error.innerText = sanitize('Current password is incorrect.');
             return;
         }
 
         try {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
             const encryptedNew = await clinicDB.encryptData(newPass);
             const userRecord = await clinicDB.getItem('users', currentUser.username);
             userRecord.password = encryptedNew;
             await clinicDB.updateItem('users', userRecord);
-
-            alert('Password updated successfully!');
+            await logCurrentUserActivity('Password Change', user.linkedId, `User with ID ${user.linkedId} has changed their password`)
+            const error = document.getElementById('password-change-form-success');
+            error.innerText = sanitize('Password updated successfully!');
             document.getElementById('currentPassword').value =
             document.getElementById('newPassword').value =
             document.getElementById('confirmPassword').value = '';

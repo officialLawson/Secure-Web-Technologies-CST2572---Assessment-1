@@ -175,6 +175,8 @@
                             <input type="password" id="confirmPassword" />
                         </div>
                     </div>
+                    <p id="password-change-form-error" class="error-message"></p>
+                    <p id="password-change-form-success" class="msg success"></p>
                     <div class="form-actions">
                         <button id="updatePasswordBtn" class="submit-btn">Update Password</button>
                     </div>
@@ -267,8 +269,7 @@
 
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
         if (!currentUser || currentUser.role?.toLowerCase() !== 'doctor') {
-            window.location.href = '../html/login.html';
-            return;
+            window.location.href = 'login.html';
         }
 
     </script>
