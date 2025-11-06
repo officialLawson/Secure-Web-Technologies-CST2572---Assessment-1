@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function fetchAllUserData() {
     const tbody = document.getElementById('usersBody');
-    if (!tbody) return console.warn('Table body #usersBody not found.');
+    if (!tbody) return ;
     tbody.innerHTML = '<tr><td colspan="5">Loading users...</td></tr>';
 
     try {
@@ -492,6 +492,16 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
         request.onsuccess = function() {
             const patients = request.result || [];
 
+            const nhsSame = patients.find(p => 
+                p.NHS === userNHS
+            );
+
+            if (nhsSame) {
+                const error = document.getElementById("userNHS-form-error");
+                error.innerHTML = `User with this NHS already exists.`;
+                return;
+            }
+
             const existSame = patients.find(p => 
                 p.NHS === userNHS &&
                 p.DOB === userDOB &&
@@ -727,8 +737,6 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
 
             const doctors = decryptedDoctors;
 
-            console.log(doctors);
-
             const existSameEmail = doctors.find(d => d.email === userEmail);
             if (existSameEmail) {
                 const error = document.getElementById("userEmail-form-error");
@@ -846,7 +854,7 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
                                 const usersReq = usersStore.add(newDoctorUser);
 
                                 usersReq.onsuccess = async function () {
-                                    await logCurrentUserActivity("createUser", newId, `Admin with ID ${user.linkedId} created a doctor`);
+                                    await logCurrentUserActivity("createUser", user.linkedId, `Admin with ID ${user.linkedId} created a doctor`);
                                     console.log(`✅ Added doctor.`);
                                     window.location.href = `users-admin.html`;
                                 };
@@ -909,22 +917,12 @@ async function loadPatientForEdit(patientId) {
                 return;
             }
 
-            function convertDOBFormat(dobStr) {
-                // Split the input string by "/"
-                const [day, month, year] = dobStr.split("/");
-
-                // Return the formatted string
-                return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-            }
-
-
             // Fill form fields
             document.getElementById('userTitle').value = patient.Title || '';
             document.getElementById('userFirstName').value = patient.First || '';
             document.getElementById('userLastName').value = patient.Last || '';
             document.getElementById('userNHS').value = patient.NHS || '';
-            document.getElementById('userDOB').value = convertDOBFormat(patient.DOB) || '';
-            console.log(convertDOBFormat(patient.DOB));
+            document.getElementById('userDOB').value = patient.DOB || '';
             document.getElementById('userGender').value = patient.Gender || '';
             document.getElementById('userEmail').value = patient.Email || '';
             document.getElementById('userTelephone').value = patient.Telephone || '';
@@ -942,113 +940,121 @@ async function loadPatientForEdit(patientId) {
 async function editPatient(patientId, updatedData) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
-    if (!userTitle) {
-        const inputError = document.getElementById("userTitle");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userTitle-form-error");
-        error.innerText = `Please enter a title.`;
-        return;
+    if (!updatedData.Title) {
+    const inputError = document.getElementById("userTitle");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userTitle-form-error");
+    error.innerText = `Please enter a title.`;
+    return;
     } else {
-        const inputError = document.getElementById("userTitle");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userTitle-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userTitle");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userTitle-form-error");
+    error.innerHTML = ``;
     }
-    if (!userFirstName) {
-        const inputError = document.getElementById("userFirstName");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userFirstName-form-error");
-        error.innerHTML = `Please enter a first name.`;
-        return;
+
+    if (!updatedData.First) {
+    const inputError = document.getElementById("userFirstName");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userFirstName-form-error");
+    error.innerHTML = `Please enter a first name.`;
+    return;
     } else {
-        const inputError = document.getElementById("userFirstName");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userFirstName-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userFirstName");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userFirstName-form-error");
+    error.innerHTML = ``;
     }
-    if (!userLastName) {
-        const inputError = document.getElementById("userLastName");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userLastName-form-error");
-        error.innerHTML = `Please enter a last name.`;
-        return;
+
+    if (!updatedData.Last) {
+    const inputError = document.getElementById("userLastName");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userLastName-form-error");
+    error.innerHTML = `Please enter a last name.`;
+    return;
     } else {
-        const inputError = document.getElementById("userLastName");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userLastName-form-error"); 
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userLastName");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userLastName-form-error");
+    error.innerHTML = ``;
     }
-    if (!userNHS) {
-        const inputError = document.getElementById("userNHS");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userNHS-form-error");
-        error.innerHTML = `Please select a date of birth.`;
-        return;
+
+    if (!updatedData.NHS) {
+    const inputError = document.getElementById("userNHS");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userNHS-form-error");
+    error.innerHTML = `Please enter an NHS number.`;
+    return;
     } else {
-        const inputError = document.getElementById("userNHS");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userNHS-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userNHS");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userNHS-form-error");
+    error.innerHTML = ``;
     }
-    if (!userDOB) {
-        const inputError = document.getElementById("userDOB");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userDOB-form-error");
-        error.innerHTML = `Please select a date of birth.`;
-        return;
+
+    if (!updatedData.DOB) {
+    const inputError = document.getElementById("userDOB");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userDOB-form-error");
+    error.innerHTML = `Please select a date of birth.`;
+    return;
     } else {
-        const inputError = document.getElementById("userDOB");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userDOB-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userDOB");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userDOB-form-error");
+    error.innerHTML = ``;
     }
-    if (!userGender) {
-        const inputError = document.getElementById("userGender");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userGender-form-error");
-        error.innerHTML = `Please enter the gender.`;
-        return;
+
+    if (!updatedData.Gender) {
+    const inputError = document.getElementById("userGender");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userGender-form-error");
+    error.innerHTML = `Please enter the gender.`;
+    return;
     } else {
-        const inputError = document.getElementById("userGender");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userGender-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userGender");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userGender-form-error");
+    error.innerHTML = ``;
     }
-    if (!userEmail) {
-        const inputError = document.getElementById("userEmail");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userEmail-form-error");
-        error.innerHTML = `Please enter an email address.`;
-        return;
+
+    if (!updatedData.Email) {
+    const inputError = document.getElementById("userEmail");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userEmail-form-error");
+    error.innerHTML = `Please enter an email address.`;
+    return;
     } else {
-        const inputError = document.getElementById("userEmail");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userEmail-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userEmail");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userEmail-form-error");
+    error.innerHTML = ``;
     }
-    if (!userTelephone) {
-        const inputError = document.getElementById("userTelephone");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userTelephone-form-error");
-        error.innerHTML = `Please enter a telephone.`;
-        return;
+
+    if (!updatedData.Telephone) {
+    const inputError = document.getElementById("userTelephone");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userTelephone-form-error");
+    error.innerHTML = `Please enter a telephone.`;
+    return;
     } else {
-        const inputError = document.getElementById("userTelephone");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userTelephone-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userTelephone");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userTelephone-form-error");
+    error.innerHTML = ``;
     }
-    if (!userAddress) {
-        const inputError = document.getElementById("userAddress");
-        inputError.style.borderColor = "red";
-        const error = document.getElementById("userAddress-form-error");
-        error.innerHTML = `Please enter an address`;
-        return;
+
+    if (!updatedData.Address) {
+    const inputError = document.getElementById("userAddress");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userAddress-form-error");
+    error.innerHTML = `Please enter an address.`;
+    return;
     } else {
-        const inputError = document.getElementById("userAddress");
-        inputError.style.borderColor = "";
-        const error = document.getElementById("userAddress-form-error");
-        error.innerHTML = ``;
+    const inputError = document.getElementById("userAddress");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userAddress-form-error");
+    error.innerHTML = ``;
     }
 
     // Age verification helper function
@@ -1087,6 +1093,16 @@ async function editPatient(patientId, updatedData) {
             const existingPatient = getReq.result;
             if (!existingPatient) {
                 console.error("❌ Patient not found.");
+                return;
+            }
+
+            const nhsSame = patients.find(p => 
+                p.NHS === userNHS
+            );
+
+            if (nhsSame) {
+                const error = document.getElementById("userNHS-form-error");
+                error.innerHTML = `User with this NHS already exists.`;
                 return;
             }
 
@@ -1348,69 +1364,81 @@ document.addEventListener('click', (e) => {
     document.getElementById('deleteModal').classList.remove('hidden');
   }
 });
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmDeleteBtn = document.getElementById("confirmDelete");
+  const cancelDeleteBtn = document.getElementById("cancelDelete");
+  const deleteModal = document.getElementById("deleteModal");
 
-document.getElementById('confirmDelete').addEventListener('click', async () => {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+      const user = JSON.parse(localStorage.getItem("currentUser"));
 
-  if (userToDelete !== null) {
+      if (userToDelete !== null) {
+        try {
+          const db = await openClinicDB();
+          const tx = db.transaction("users", "readwrite");
+          const store = tx.objectStore("users");
+          const request = store.delete(userToDelete);
 
-    try {
-      const db = await openClinicDB();
-      const tx = db.transaction('users', 'readwrite');
-      const store = tx.objectStore('users');
-      const request = store.delete(userToDelete); 
-
-      request.onsuccess = async function() {
-
-        if (userToDeleteRole !== null ) {
-
-            if (userToDeleteRole === 'patient') {
+          request.onsuccess = async function () {
+            if (userToDeleteRole !== null) {
+              if (userToDeleteRole === "patient") {
                 await deleteLinkedRecords("medicalRecord", "patientId", userToDeleteId);
                 await deleteLinkedRecords("appointments", "patientId", userToDeleteId);
                 await deleteLinkedRecords("notifications", "recipientId", userToDeleteId);
                 await deleteLinkedRecords("activityLogs", "userId", userToDeleteId);
                 await deleteItem("patients", userToDeleteId);
 
-                await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a patient`);
-                fetchAllUserData();
-                document.getElementById('deleteModal').classList.add('hidden');
-                userToDelete = null;
-            } else if (userToDeleteRole === 'doctor') {
-                await deleteLinkedRecords("appointments", "doctorId", parseInt(userToDeleteId));
-                await deleteLinkedRecords("notifications", "recipientId", parseInt(userToDeleteId));
-                await deleteLinkedRecords("activityLogs", "userId", parseInt(userToDeleteId));
-                await deleteItem("doctors", parseInt(userToDeleteId));
+                await logCurrentUserActivity(
+                  "deleteUser",
+                  userToDeleteId,
+                  `Admin with ID ${user.linkedId} deleted a patient`
+                );
+              } else if (userToDeleteRole === "doctor") {
+                const doctorId = parseInt(userToDeleteId);
+                await deleteLinkedRecords("appointments", "doctorId", doctorId);
+                await deleteLinkedRecords("notifications", "recipientId", doctorId);
+                await deleteLinkedRecords("activityLogs", "userId", doctorId);
+                await deleteItem("doctors", doctorId);
 
-                await logCurrentUserActivity("deleteUser", userToDeleteId, `Admin with ID ${user.linkedId} deleted a doctor`);
-                fetchAllUserData();
-                document.getElementById('deleteModal').classList.add('hidden');
-                userToDelete = null;
+                await logCurrentUserActivity(
+                  "deleteUser",
+                  userToDeleteId,
+                  `Admin with ID ${user.linkedId} deleted a doctor`
+                );
+              }
+
+              fetchAllUserData();
+              if (deleteModal) deleteModal.classList.add("hidden");
+              userToDelete = null;
             }
+          };
+
+          request.onerror = function () {
+            alert("Error deleting user.");
+            userToDelete = null;
+          };
+        } catch (err) {
+          console.error("DB error:", err);
+          userToDelete = null;
         }
-
-      };
-
-      request.onerror = function() {
-        alert('Error deleting user.');
-        userToDelete = null;
-      };
-    } catch (err) {
-      console.error('DB error:', err);
-      userToDelete = null;
-    }
+      }
+    });
   }
-});
 
-// Handle "Cancel"
-document.getElementById('cancelDelete').addEventListener('click', () => {
-  document.getElementById('deleteModal').classList.add('hidden');
-  userToDelete = null;
-});
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener("click", () => {
+      if (deleteModal) deleteModal.classList.add("hidden");
+      userToDelete = null;
+    });
+  }
 
-// Close modal if clicking outside
-document.getElementById('deleteModal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    e.currentTarget.classList.add('hidden');
-    userToDelete = null;
+  if (deleteModal) {
+    deleteModal.addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) {
+        deleteModal.classList.add("hidden");
+        userToDelete = null;
+      }
+    });
   }
 });

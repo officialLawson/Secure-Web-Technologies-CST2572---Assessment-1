@@ -129,69 +129,69 @@ document.addEventListener('click', (e) => {
         document.getElementById('deleteModal').classList.remove('hidden');
     }
 });
-document.getElementById('confirmDelete').addEventListener('click', async () => {
-    const user = JSON.parse(localStorage.getItem('currentUser'));
-    console.log(user);
-    if (user.role.toLowerCase() === 'patient') {
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmDeleteBtn = document.getElementById("confirmDelete");
+  const cancelDeleteBtn = document.getElementById("cancelDelete");
+  const deleteModal = document.getElementById("deleteModal");
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+      const user = JSON.parse(localStorage.getItem("currentUser"));
+      if (!user || !user.role || !user.linkedId) return;
+
+      console.log(user);
+
+      const notifyAdmins = async (message) => {
+        try {
+          const db = await openClinicDB();
+          const tx = db.transaction("admins", "readwrite");
+          const store = tx.objectStore("admins");
+          const request = store.getAll();
+
+          request.onsuccess = async function () {
+            const admins = request.result || [];
+            admins.forEach(adm => {
+              createNotificationForUser(
+                "Account Deleted",
+                message,
+                adm.username,
+                "admin"
+              );
+            });
+          };
+
+          request.onerror = function (e) {
+            console.error("Failed to load admin info:", e.target.error);
+          };
+        } catch (err) {
+          console.warn("DB error:", err);
+        }
+      };
+
+      if (user.role.toLowerCase() === "patient") {
         deletePatientCompletely(user.linkedId);
-
-        try {
-            const db = await openClinicDB();
-            const tx = db.transaction('admins','readwrite');
-            const store = tx.objectStore('admins');
-            const request = store.getAll();
-
-            request.onsuccess = async function() {
-                const admins = request.result || [];
-
-                admins.forEach(adm => {
-                    createNotificationForUser("Account Deleted", `Patient with NHS ${user.linkedId} has deleted their account and linked data`, adm.username, "admin")
-                });
-            };
-
-            request.onerror = function(e) {
-                console.error("Failed to load admin info: ", e.target.err)
-            }
-        } catch (err) {
-            console.warn("DB error.");
-        }
-    } else if (user.role.toLowerCase() === 'doctor') {
+        await notifyAdmins(`Patient with NHS ${user.linkedId} has deleted their account and linked data`);
+      } else if (user.role.toLowerCase() === "doctor") {
         deleteDoctorCompletely(user.linkedId);
+        await notifyAdmins(`Doctor with ID ${user.linkedId} has deleted their account and linked data`);
+      }
+    });
+  }
 
-        try {
-            const db = await openClinicDB();
-            const tx = db.transaction('admins','readwrite');
-            const store = tx.objectStore('admins');
-            const request = store.getAll();
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener("click", () => {
+      if (deleteModal) deleteModal.classList.add("hidden");
+      userToDelete = null;
+    });
+  }
 
-            request.onsuccess = async function() {
-                const admins = request.result || [];
-
-                admins.forEach(adm => {
-                    createNotificationForUser("Account Deleted", `Patient with NHS ${user.linkedId} has deleted their account and linked data`, adm.username, "admin")
-                });
-            };
-
-            request.onerror = function(e) {
-                console.error("Failed to load admin info: ", e.target.err)
-            }
-        } catch (err) {
-            console.warn("DB error.");
-        }
-        
-    }
-});
-
-// Handle "Cancel"
-document.getElementById('cancelDelete').addEventListener('click', () => {
-  document.getElementById('deleteModal').classList.add('hidden');
-  userToDelete = null;
-});
-// Close modal if clicking outside
-document.getElementById('deleteModal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    e.currentTarget.classList.add('hidden');
-    userToDelete = null;
+  if (deleteModal) {
+    deleteModal.addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) {
+        deleteModal.classList.add("hidden");
+        userToDelete = null;
+      }
+    });
   }
 });
 // Load on page ready

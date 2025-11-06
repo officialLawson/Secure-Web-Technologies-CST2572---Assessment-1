@@ -6,6 +6,7 @@
     <title>Dashboard</title>
     <link rel="icon" type="image/png" href="../images/logo.png">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -150,10 +151,10 @@
 
                     <!-- Visit Duration -->
                     <div class="card">
-                        <h3>Visit Duration</h3>
-                        <p class="value">2m 56s</p>
+                        <h3>Activity Logs this month</h3>
+                        <p class="value" id="activityLogsThisMonth"></p>
                         <div class="stats">
-                        <span class="positive">+7%</span>
+                        <span class="positive" id="activityLogsComparison"></span>
                         <span class="compare">Vs last month</span>
                         </div>
                     </div>
@@ -162,16 +163,14 @@
                 <!-- Additional content can go here -->
                 <div class="second-row-container">
                     <div class="graph-card">
-                        <h3>Graph/Table</h3>
-                        <div class="graph-placeholder">[Graph Placeholder]</div>
+                        <h3>User Distribution by Role</h3>
+                        <div class="graph-placeholder">
+                            <canvas id="userRoleChart" width="400" height="400"></canvas>
+                        </div>
                     </div>
                     <div class="activity-log-card">
                         <h3>Recent Activity</h3>
-                        <ul class="activity-log">
-                            <li>User JohnDoe signed up<span class="timestamp"> - 2 hours ago</span></li>
-                            <li>New appointment booked by JaneSmith<span class="timestamp"> - 1 day ago</span></li>
-                            <li>System maintenance completed<span class="timestamp"> - 3 days ago</span></li>
-                            <li>User MikeBrown updated profile<span class="timestamp"> - 1 week ago</span></li>
+                        <ul class="activity-log" id="activityLogsList">
                         </ul>
                     </div>
                 </div>
@@ -200,6 +199,7 @@
     <script src="../js/notification.js"></script>
     <script src="../js/activityLogs.js"></script>
     <script src="../js/sidebar.js"></script>
+    <script src="../js/profile.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/D-Lmode.js"></script>
     <script>
