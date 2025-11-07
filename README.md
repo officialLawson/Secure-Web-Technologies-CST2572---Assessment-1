@@ -18,26 +18,14 @@ This is a browser-based clinic management system built with HTML, CSS, and JavaS
 2. Open `html/home.html` using live server in VS code to start.
 3. Make sure JavaScript is enabled.
 4. All data is stored locally in the browser via IndexedDB.
+5. This website works on a single webpage.
 
 ## 📁 Folder Structure
 project-root/ 
-├── html/    
-    ├── login.html │   
-    ├── dashboard-doctor.html │   
-    ├── dashboard-patient.html │   
-    ├── dashboard-admin.html │   
-    |── forget-password.html 
-   
+├── html/   
 ├── js/ 
-    ├── auth-guard.js │   
-    ├── indexeddb.js │   
-    ├── dashboard.js │   
-    |── form-switcher.js 
-
 ├── css/  
-    └── styles.css
-
-
+├── image/
 
 ## 🔐 Authentication
 
@@ -57,10 +45,10 @@ project-root/
 - No backend or server is required.
 - All data is stored in the browser and will be lost if cleared.
 
-## 📧 Group Members
+## 📧 Group Members - Student No.
 
-1. Hassan Fazal Datoo (M01029432)
-2. Darenn Selvinen Ramsamy (M01036587)
-3. Zariyat Bibi Maudarbux (M01014970)
-4. Archy Lawson Ifeanyi (M01017315)
-5. Malaika Usman (M01012620)
+1. M01029432
+2. M01036587
+3. M01014970
+4. M01017315
+5. M01012620

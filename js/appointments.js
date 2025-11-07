@@ -923,7 +923,7 @@ function handleAddAppointment(event) {
   addAppointment(event, doctorId, patientId, reason, date, time);
 }
 
-// Edit Appointment
+// Edit Appointment as patient
 async function loadAppointmentForEdit(id) {
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
   try {
@@ -1104,4 +1104,193 @@ function handleEditAppointment(event) {
   const date = document.getElementById('appointmentDateEdit').value;
   const time = document.getElementById('appointmentTimeEdit').value;
   editAppointment(event, doctorId, patientId, reason, date, time);
+}
+
+// Edit Appointment as doctor
+async function loadAppointmentForEditAsDoctor(id) {
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
+  try {
+    const db = await openClinicDB();
+
+    // Step 1: Get the appointment
+    const appointmentTx = db.transaction('appointments', 'readonly');
+    const appointmentStore = appointmentTx.objectStore('appointments');
+    const appointmentReq = appointmentStore.getAll();
+
+    appointmentReq.onsuccess = function () {
+      const appointments = appointmentReq.result || [];
+      const appointment = appointments.find(app => app.appointmentId === id);
+      if (!appointment) {
+        console.error("Appointment not found.");
+        return;
+      }
+
+      // Step 2: Get the patient info
+      const patientTx = db.transaction('patients', 'readonly');
+      const patientStore = patientTx.objectStore('patients');
+      const patientReq = patientStore.getAll();
+
+      patientReq.onsuccess = async function () {
+        const encryptedPatients = patientReq.result || [];
+        const decryptedPatients = await Promise.all(
+          encryptedPatients.map(p => decryptPatientInfo(p))
+        );
+        const patient = decryptedPatients.find(p => p.NHS === appointment.patientId);
+        const patientFullName = patient?.name?.trim() ||
+          [patient.First, patient.Last].filter(Boolean).join(' ').trim() ||
+          'Unknown Patient';
+
+        // Step 3: Parse time string to HH:MM format
+        function parseTimeString(strTime) {
+          if (/^\d{2}:\d{2}$/.test(strTime)) return strTime;
+          const timeObj = new Date(strTime);
+          if (isNaN(timeObj.getTime())) throw new Error("Invalid time format");
+          return timeObj.toTimeString().slice(0, 5);
+        }
+
+        // Step 4: Populate form fields (doctor ID is fixed, patient info is read-only)
+        const currentDoctorId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
+        if (parseInt(appointment.doctorId) !== currentDoctorId) {
+          console.error("Doctor is not authorized to edit this appointment.");
+          return;
+        }
+
+        document.getElementById('appointmentDateEdit').value = sanitize(appointment.date || '');
+        document.getElementById('appointmentTimeEdit').value = parseTimeString(appointment.time);
+        document.getElementById('appointmentReasonEdit').value = sanitize(appointment.reason || '');
+
+        // Optional: Display patient name somewhere read-only
+        const patientDisplay = document.getElementById('patientNameDisplay');
+        if (patientDisplay) patientDisplay.textContent = sanitize(patientFullName);
+      };
+
+      patientReq.onerror = function (e) {
+        console.error("Error loading patient:", e.target.error);
+      };
+    };
+
+    appointmentReq.onerror = function (e) {
+      console.error("Error loading appointments:", e.target.error);
+    };
+  } catch (err) {
+    console.error("Database error:", err);
+  }
+}
+
+async function editAppointmentAsDoctor(event, reason, date, time) {
+  if (event) event.preventDefault();
+
+  const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+  const appointmentId = new URLSearchParams(window.location.search).get('id');
+  if (!appointmentId) {
+    console.error("No appointment ID found in URL.");
+    return;
+  }
+
+  // Validate fields
+  const fields = [
+    { value: reason, id: "appointmentReasonEdit", message: "Please enter a reason." },
+    { value: date, id: "appointmentDateEdit", message: "Please enter a date." },
+    { value: time, id: "appointmentTimeEdit", message: "Please enter a time." }
+  ];
+  for (const field of fields) {
+    const input = document.getElementById(field.id);
+    const error = document.getElementById(`${field.id}-form-error`);
+    if (!input || !error) continue;
+    if (!field.value) {
+      input.style.borderColor = "red";
+      error.textContent = field.message;
+      return;
+    } else {
+      input.style.borderColor = "";
+      error.textContent = "";
+    }
+  }
+
+  if (new Date(`${date}T${time}`) < new Date()) {
+    const inputError = document.getElementById("appointmentTimeEdit");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("appointmentTimeEdit-form-error");
+    error.textContent = `Appointment date and time must be in the future.`;
+    return;
+  }
+
+  try {
+    const db = await openClinicDB();
+    const tx = db.transaction('appointments', 'readwrite');
+    const store = tx.objectStore("appointments");
+
+    const getAllReq = store.getAll();
+    getAllReq.onsuccess = function () {
+      const appointments = getAllReq.result || [];
+      const appointment = appointments.find(app => app.appointmentId === appointmentId);
+      if (!appointment) {
+        console.error("Appointment not found.");
+        return;
+      }
+
+      const doctorId = JSON.parse(localStorage.getItem('currentUser')).linkedId;
+      const patientId = appointment.patientId;
+
+      const existSame = appointments.find(app =>
+        app.appointmentId !== appointmentId &&
+        app.doctorId === doctorId &&
+        app.patientId === patientId &&
+        app.date === date &&
+        app.time === time
+      );
+      if (existSame) {
+        document.getElementById("appointmentTimeEdit-form-error").textContent =
+          `Appointment with the same details already exists.`;
+        return;
+      }
+
+      const existConflict = appointments.find(app =>
+        app.appointmentId !== appointmentId &&
+        app.doctorId === doctorId &&
+        app.date === date &&
+        app.time === time
+      );
+      if (existConflict) {
+        document.getElementById("appointmentTimeEdit-form-error").textContent =
+          `Appointment at this specified time is not possible.`;
+        return;
+      }
+
+      const updatedAppointment = {
+        appointmentId,
+        doctorId,
+        patientId,
+        reason,
+        date,
+        time: normalizeTimeHHMM(time),
+        status: 'Confirmed',
+      };
+
+      const updateReq = store.put(updatedAppointment);
+      updateReq.onsuccess = async function () {
+        await createNotification("Appointment Rescheduled", "Your appointment is rescheduled.");
+        await createNotificationForUser("Appointment Rescheduled", "A doctor has rescheduled an appointment", patientId, "patient");
+        await logCurrentUserActivity("editAppointmentAsDoctor", appointmentId, `Doctor with ID ${doctorId} rescheduled an appointment`);
+        console.log("Appointment updated successfully.");
+        window.location.href = `appointments-doctor.html`;
+      };
+      updateReq.onerror = function (e) {
+        console.error("Failed to update appointment:", e.target.error);
+      };
+    };
+    getAllReq.onerror = (e) => {
+      console.error("Error fetching appointments:", e.target.error);
+    };
+  } catch (err) {
+    console.error("Database error:", err);
+  }
+}
+
+function handleEditAppointmentAsDoctor(event) {
+  const reason = document.getElementById('appointmentReasonEdit').value;
+  const date = document.getElementById('appointmentDateEdit').value;
+  const time = document.getElementById('appointmentTimeEdit').value;
+  editAppointmentAsDoctor(event, reason, date, time);
 }
