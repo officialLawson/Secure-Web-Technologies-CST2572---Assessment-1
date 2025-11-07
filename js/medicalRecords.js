@@ -117,9 +117,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 let recordToView = null;
 
-// ======================
-// 1. PATIENT: List own records
-// ======================
+
+// List own records
 async function fetchPatientRecords() {
     const tbody = document.getElementById("medicalRecordsBody");
     if (!tbody) return;
@@ -226,7 +225,7 @@ async function fetchPatientRecordsforDoctor(patientId) {
         patientRecords.forEach(rec => {
             const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
             const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
-            const isOwner = user.linkedId == rec.doctorId;
+            const isOwner = rec.accessedBy && rec.accessedBy.includes(user.linkedId);
 
             // Store structured data for search
             allRenderedDoctorViewRecords.push({
