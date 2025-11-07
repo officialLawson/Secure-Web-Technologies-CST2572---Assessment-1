@@ -45,10 +45,10 @@ project-root/
 - No backend or server is required.
 - All data is stored in the browser and will be lost if cleared.
 
-## 📧 Group Members
+## 📧 Group Members - Student No.
 
-1. Hassan Fazal Datoo (M01029432)
-2. Darenn Selvinen Ramsamy (M01036587)
-3. Zariyat Bibi Maudarbux (M01014970)
-4. Archy Lawson Ifeanyi (M01017315)
-5. Malaika Usman (M01012620)
+1. M01029432
+2. M01036587
+3. M01014970
+4. M01017315
+5. M01012620
