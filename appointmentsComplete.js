@@ -1,23 +1,54 @@
+
 (function () {
-  // Exit early if not on a doctor/admin dashboard
+  const sanitize = (dirty) =>
+  DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
   let currentUser;
   try {
     currentUser = JSON.parse(localStorage.getItem('currentUser') || null);
   } catch (e) {
+    console.warn("Failed to parse currentUser:", e);
     return;
   }
-  if (!currentUser || !['doctor', 'admin'].includes(currentUser.role)) {
+
+  // Allow doctor, admin, and patient (patients: auto only)
+  if (!currentUser || !['doctor', 'admin', 'patient'].includes(currentUser.role)) {
     return;
   }
+  // --- Hide Mark Completed buttons for invalid conditions (doctor only) ---
+  function hideInvalidMarkButtons() {
+    if (!currentUser || currentUser.role.toLowerCase() !== "doctor") return;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    document.querySelectorAll(".complete-btn").forEach(btn => {
+      const row = btn.closest("tr[data-id][data-date]");
+      if (!row) return;
+
+      const status = (row.dataset.status || "").toLowerCase();
+      const dateStr = row.dataset.date;
+      const apptDate = new Date(dateStr);
+      const apptDay = new Date(apptDate.getFullYear(), apptDate.getMonth(), apptDate.getDate());
+
+      // Hide if appointment is Cancelled, Completed, or in the past
+      if (["cancelled", "completed"].includes(status) || apptDay < today) {
+        btn.style.display = "none";
+      } else {
+        btn.style.display = ""; // visible for active confirmed ones
+      }
+    });
+  }
+
 
   function initAfterAppointmentsLoaded() {
-
     if (typeof window.updateAppointmentStatus !== 'function') {
       console.warn('window.updateAppointmentStatus not available. Skipping appointment completion helper.');
       return;
     }
 
     let currentAppointmentId = null;
+
 
     // --- Modal helpers ---
     function showModal() {
@@ -36,61 +67,45 @@
         const dateTime = row.querySelector('td:nth-child(3)')?.textContent || 'Unknown Date/Time';
         const title = document.getElementById('complete-modal-title');
         const message = document.getElementById('complete-modal-message');
-        if (title) title.textContent = `Mark ${patientName}'s Appointment as Completed?`;
-        if (message) message.textContent = `Date/Time: ${dateTime}\nThis will mark the appointment as completed.`;
+        if (title) title.textContent = `Mark ${sanitize(patientName)}'s Appointment as Completed?`;
+        if (message) message.textContent = `Date/Time: ${sanitize(dateTime)}\nThis will mark the appointment as completed.`;
       }
     }
 
-    // --- UI Updaters ---
+    // --- UI helpers ---
     function uiMarkCompleted(row) {
       if (!row) return;
       row.dataset.status = 'Completed';
-      const statusLabel = row.querySelector('.status-label, .status');
-      if (statusLabel) statusLabel.textContent = 'Completed';
       const statusCell = row.querySelector('td:nth-child(4)');
-      if (!statusLabel && statusCell) statusCell.textContent = 'Completed';
-
-      // Completed button state
+      if (statusCell) statusCell.textContent = 'Completed';
       const btn = row.querySelector('.complete-btn');
       if (btn) {
         btn.disabled = true;
         btn.textContent = 'Completed';
         btn.classList.add('request-sent');
-        btn.setAttribute('aria-pressed', 'true');
       }
 
-      // --- Handle Completed At timestamp ---
-      let completedAtEl = row.querySelector('.completed-at');
       const timestamp = new Date().toLocaleString();
-
-      if (completedAtEl) {
-        completedAtEl.textContent = timestamp;
-      } else {
-        // If table doesn’t have a cell for it, add one at the end
-        const td = document.createElement('td');
-        td.className = 'completed-at';
-        td.textContent = timestamp;
-        row.appendChild(td);
+      let completedAtEl = row.querySelector('.completed-at');
+      if (!completedAtEl) {
+        completedAtEl = document.createElement('td');
+        completedAtEl.className = 'completed-at';
+        row.appendChild(completedAtEl);
       }
+      completedAtEl.textContent = timestamp;
     }
 
     function uiMarkConfirmed(row) {
       if (!row) return;
       row.dataset.status = 'Confirmed';
-      const statusLabel = row.querySelector('.status-label, .status');
-      if (statusLabel) statusLabel.textContent = 'Confirmed';
       const statusCell = row.querySelector('td:nth-child(4)');
-      if (!statusLabel && statusCell) statusCell.textContent = 'Confirmed';
-
+      if (statusCell) statusCell.textContent = 'Confirmed';
       const btn = row.querySelector('.complete-btn');
       if (btn) {
         btn.disabled = false;
         btn.textContent = 'Mark Completed';
         btn.classList.remove('request-sent');
-        btn.setAttribute('aria-pressed', 'false');
       }
-
-      // Clear completed-at timestamp if reverting to confirmed
       const completedAtEl = row.querySelector('.completed-at');
       if (completedAtEl) completedAtEl.textContent = '';
     }
@@ -99,7 +114,7 @@
     async function persistMarkCompleted(id) {
       try {
         await window.updateAppointmentStatus(id, 'Completed');
-        console.log(`Appointment ${id} marked as Completed in IndexedDB`);
+        console.log(`✅ Appointment ${id} marked as Completed in IndexedDB`);
       } catch (err) {
         console.error('persistMarkCompleted failed:', err);
       }
@@ -108,7 +123,7 @@
     async function persistMarkConfirmed(id) {
       try {
         await window.updateAppointmentStatus(id, 'Confirmed');
-        console.log(`Appointment ${id} reset to Confirmed in IndexedDB`);
+        console.log(`♻️ Appointment ${id} reset to Confirmed`);
       } catch (err) {
         console.error('persistMarkConfirmed failed:', err);
       }
@@ -121,7 +136,7 @@
       persistMarkCompleted(id);
     }
 
-    // --- Smart auto-update for appointment statuses ---
+    // --- Auto-check every minute ---
     async function checkAndAutoUpdateAppointments() {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -137,30 +152,25 @@
         if (isNaN(apptDate)) continue;
         const apptDay = new Date(apptDate.getFullYear(), apptDate.getMonth(), apptDate.getDate());
 
-        // Case 1: Past but not completed → mark Completed
         if (apptDay < today && status !== 'completed') {
           console.log(`Auto-marking past appointment ${id} as Completed`);
           markCompletedById(id);
-          continue;
-        }
-
-        // Case 2: Future but completed → revert to Confirmed
-        if (apptDay > today && status === 'completed') {
-          console.log(`Fixing future appointment ${id} from Completed → Confirmed`);
+        } else if (apptDay > today && status === 'completed') {
+          console.log(`Reverting future appointment ${id} to Confirmed`);
           uiMarkConfirmed(row);
           persistMarkConfirmed(id);
         }
       }
     }
 
-    // --- Inject “Mark Completed” buttons ---
+    // --- Inject “Mark Completed” buttons (for doctor/admin only) ---
     function injectButtonsIntoRows() {
+      if (currentUser.role === 'patient') return; // patients get no manual button
       const rows = document.querySelectorAll('tbody tr[data-id]');
       rows.forEach(row => {
         if (row.querySelector('.complete-btn')) return;
         const status = (row.dataset.status || '').toLowerCase();
         if (status === 'completed') return;
-
         const actionsCell = row.querySelector('td.actions, td:last-child') || row.querySelector('td:nth-last-child(1)');
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -177,35 +187,30 @@
       });
     }
 
-    // --- Initialization ---
+    // --- Initialize ---
     try {
       injectButtonsIntoRows();
       checkAndAutoUpdateAppointments();
+      hideInvalidMarkButtons();
       setInterval(checkAndAutoUpdateAppointments, 60 * 1000);
     } catch (e) {
       console.error('Error initializing appointment completion helper:', e);
     }
 
-    // Watch for dynamic row updates
-    try {
-      document.querySelectorAll('tbody').forEach(tbody => {
-        const obs = new MutationObserver(() => {
-          injectButtonsIntoRows();
-          checkAndAutoUpdateAppointments();
-        });
-        obs.observe(tbody, { childList: true, subtree: true });
+    // Watch for dynamic changes
+    document.querySelectorAll('tbody').forEach(tbody => {
+      const obs = new MutationObserver(() => {
+        injectButtonsIntoRows();
+        checkAndAutoUpdateAppointments();
+        hideInvalidMarkButtons();
       });
-    } catch (e) {
-      /* ignore */
-    }
+      obs.observe(tbody, { childList: true, subtree: true });
+    });
 
-    // Modal actions
+    // --- Modal logic (only used by doctor/admin) ---
     const cancelBtn = document.getElementById('cancel-complete');
     const confirmBtn = document.getElementById('confirm-complete');
-    if (cancelBtn) cancelBtn.addEventListener('click', () => {
-      currentAppointmentId = null;
-      hideModal();
-    });
+    if (cancelBtn) cancelBtn.addEventListener('click', hideModal);
     if (confirmBtn) confirmBtn.addEventListener('click', () => {
       if (currentAppointmentId) {
         markCompletedById(currentAppointmentId);
@@ -214,8 +219,8 @@
       hideModal();
     });
 
-    // Button click handler
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', (e) => {
+      if (currentUser.role === 'patient') return; // skip for patients
       const btn = e.target.closest('.complete-btn');
       if (!btn) return;
       e.preventDefault();
@@ -225,7 +230,7 @@
     });
   }
 
-  // Trigger initialization
+  // Initialize after appointments render
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       document.addEventListener('appointmentsRendered', initAfterAppointmentsLoaded, { once: true });
@@ -234,7 +239,7 @@
     document.addEventListener('appointmentsRendered', initAfterAppointmentsLoaded, { once: true });
   }
 
-  // Expose helper for manual use
+  // expose manual trigger
   window.__markAppointmentCompletedClient = function (id) {
     if (id && typeof window.updateAppointmentStatus === 'function') {
       const row = document.querySelector(`tr[data-id="${CSS.escape(id)}"]`);
