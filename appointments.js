@@ -1,4 +1,8 @@
+
 // Helper function
+const sanitize = (dirty) =>
+  DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+
 function normalizeTimeHHMM(str) {
   if (typeof str !== "string") return null;
 
@@ -163,39 +167,53 @@ function renderCancelledAppointments(data) {
 let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
 let allRenderedAppointments = []; // holds sanitized, display-ready rows
 
-document.getElementById("searchConfirmed").addEventListener("input", function () {
-  const query = this.value.toLowerCase().trim();
+const searchConfirmedInput = document.getElementById("searchConfirmed");
 
-  const filtered = query === ""
-    ? allRenderedCofirmedAppointments
-    : allRenderedCofirmedAppointments.filter(app =>
-        app.doctorName.toLowerCase().includes(query) ||
-        app.patientName.toLowerCase().includes(query) ||
-        app.status.toLowerCase().includes(query) ||
-        app.reason.toLowerCase().includes(query) ||
-        app.date.toLowerCase().includes(query) ||
-        app.time.toLowerCase().includes(query)
-      );
+if (searchConfirmedInput) {
+  searchConfirmedInput.addEventListener("input", function () {
+    const query = this.value.toLowerCase().trim();
 
-  renderConfirmedAppointments(filtered);
-});
+    const filtered = query === ""
+      ? allRenderedCofirmedAppointments
+      : allRenderedCofirmedAppointments.filter(app =>
+          app.doctorName.toLowerCase().includes(query) ||
+          app.patientName.toLowerCase().includes(query) ||
+          app.status.toLowerCase().includes(query) ||
+          app.reason.toLowerCase().includes(query) ||
+          app.date.toLowerCase().includes(query) ||
+          app.time.toLowerCase().includes(query)
+        );
 
-document.getElementById("searchCancelled").addEventListener("input", function () {
-  const query = this.value.toLowerCase().trim();
+    renderConfirmedAppointments(filtered);
+  });
+} else {
+  console.warn("searchConfirmed input not found — skipping listener setup.");
+}
 
-  const filtered = query === ""
-    ? allRenderedAppointments
-    : allRenderedAppointments.filter(app =>
-        app.doctorName.toLowerCase().includes(query) ||
-        app.patientName.toLowerCase().includes(query) ||
-        app.status.toLowerCase().includes(query) ||
-        app.reason.toLowerCase().includes(query) ||
-        app.date.toLowerCase().includes(query) ||
-        app.time.toLowerCase().includes(query)
-      );
 
-  renderCancelledAppointments(filtered);
-});
+const searchCancelledInput = document.getElementById("searchCancelled");
+
+if (searchCancelledInput) {
+  searchCancelledInput.addEventListener("input", function () {
+    const query = this.value.toLowerCase().trim();
+
+    const filtered = query === ""
+      ? allRenderedAppointments
+      : allRenderedAppointments.filter(app =>
+          app.doctorName.toLowerCase().includes(query) ||
+          app.patientName.toLowerCase().includes(query) ||
+          app.status.toLowerCase().includes(query) ||
+          app.reason.toLowerCase().includes(query) ||
+          app.date.toLowerCase().includes(query) ||
+          app.time.toLowerCase().includes(query)
+        );
+
+    renderCancelledAppointments(filtered);
+  });
+} else {
+  console.warn("searchCancelled input not found — skipping listener setup.");
+}
+
 
 // Appointments Management
 async function loadAppointments() {
@@ -270,9 +288,10 @@ async function loadAppointments() {
                         }
                         appointmentsDoctor.forEach(app => {
                         const row = document.createElement('tr');
-                        row.dataset.id = sanitize(app.appointmentId);
-                        row.dataset.date = sanitize(app.date);
-                        row.dataset.status = sanitize(app.status);
+                        row.dataset.id = DOMPurify.sanitize(app.appointmentId);
+                        row.dataset.date = DOMPurify.sanitize(app.date);
+                        row.dataset.status = DOMPurify.sanitize(app.status);
+
                         const doctorName = doctorMap[app.doctorId] || 'Unknown';
                         const patientName = patientMap[app.patientId] || 'Unknown';
                         const safeReason = sanitize(app.reason || 'Unknown');
@@ -365,6 +384,10 @@ async function loadAppointments() {
                       
                         appointmentsPatient.forEach(app => {
                           const row = document.createElement('tr');
+                          row.dataset.id = DOMPurify.sanitize(app.appointmentId);
+                          row.dataset.date = DOMPurify.sanitize(app.date);
+                          row.dataset.status = DOMPurify.sanitize(app.status);
+
                           const doctorName = doctorMap[app.doctorId] || 'Unknown';
                           const safeReason = sanitize(app.reason || 'Unknown');
                           const safeDate = sanitize(app.date || '-');
@@ -394,6 +417,23 @@ async function loadAppointments() {
                               date: app.date || '',
                               time: app.time || ''
                             });
+
+                            // Auto-update past appointments for patients
+                            appointmentsPatient.forEach(async (app) => {
+                              const apptDate = new Date(app.date);
+                              const today = new Date();
+                              if (apptDate < today && app.status !== "Completed") {
+                                try {
+                                  await window.updateAppointmentStatus(app.appointmentId, "Completed");
+                                  console.log(`Auto-completed past appointment ${app.appointmentId}`);
+                                } catch (err) {
+                                  console.error("Auto-complete failed:", err);
+                                }
+                              }
+                            });
+
+
+
                           } else if (app.status === "Completed") {
                             row.innerHTML = `
                               <td>Dr. ${doctorName}</td>
@@ -442,6 +482,11 @@ async function loadAppointments() {
                     case 'admin':
                         appointments.forEach(app => {
                         const row = document.createElement('tr');
+                        row.dataset.id = DOMPurify.sanitize(app.appointmentId);
+                        row.dataset.date = DOMPurify.sanitize(app.date);
+                        row.dataset.status = DOMPurify.sanitize(app.status);
+
+
                         const doctorName = doctorMap[app.doctorId] || 'Unknown';
                         const patientName = patientMap[app.patientId] || 'Unknown';
                         const safeDate = sanitize(app.date || '-');
@@ -581,11 +626,7 @@ async function loadAppointments() {
                               });
                             });
 
-                            tbodyConfirmed.querySelectorAll('.complete-btn').forEach(btn => {
-                              btn.addEventListener('click', async (e) => {
-                                // ...mark completed code...
-                              });
-                            });
+
 
                           }
                         };
@@ -619,6 +660,29 @@ async function loadAppointments() {
         console.error('Error opening DB:', err);
         tbody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
       }
+      if (typeof window.updateAppointmentStatus !== "function") {
+        window.updateAppointmentStatus = async (id, newStatus) => {
+          const db = await openClinicDB();
+          const tx = db.transaction("appointments", "readwrite");
+          const store = tx.objectStore("appointments");
+          const req = store.get(id);
+          return await new Promise((resolve, reject) => {
+            req.onsuccess = () => {
+              const appt = req.result;
+              if (!appt) return reject("Not found");
+              appt.status = newStatus;
+              if (newStatus === "Completed") {
+                appt.completedAt = new Date().toISOString();
+              }
+              const putReq = store.put(appt);
+              putReq.onsuccess = () => resolve(appt);
+              putReq.onerror = (e) => reject(e);
+            };
+            req.onerror = (e) => reject(e);
+          });
+        };
+      }
+
       document.dispatchEvent(new Event('appointmentsRendered'));
 }
 async function populateDoctorDropdown() {
