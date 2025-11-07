@@ -1,14 +1,6 @@
-/* ==============================
-   editmedicalrecord.js
-   – works with encrypted payload
-   – uses clinicDB.getMedicalRecordById()
-   – uses clinicDB.updateMedicalRecord()
-   – populates medicine <select> from medicines store
-   ============================== */
-
 let currentRecord = null;
 
-// DOM elements -------------------------------------------------
+// DOM elements
 const form               = document.getElementById('editRecordForm');
 const diagnosisInput     = document.getElementById('userDiagnosis');
 const treatmentInput     = document.getElementById('userTreatment');
@@ -19,7 +11,6 @@ const submitBtn          = form.querySelector('.submit-btn');
 const recordIdInput      = document.getElementById('recordId');
 const patientIdInput     = document.getElementById('patientId');
 
-// ----------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
     await initializeEditPage();
 });
@@ -29,11 +20,9 @@ document.addEventListener('DOMContentLoaded', async () => {
    -------------------------------------------------------------- */
 async function initializeEditPage() {
     try {
-        // 1. DB ready?
         if (!window.clinicDB?.openClinicDB) throw new Error('clinicDB not loaded');
         await clinicDB.openClinicDB();
 
-        // 2. URL params
         const urlParams = new URLSearchParams(window.location.search);
         const recordId  = urlParams.get('recordId');
         const patientId = urlParams.get('patientId');
@@ -44,28 +33,23 @@ async function initializeEditPage() {
         recordIdInput.value  = recordId;
         patientIdInput.value = patientId;
 
-        // 3. Load + decrypt record
         currentRecord = await clinicDB.getMedicalRecordById(recordId);
         if (!currentRecord) {
             console.error('Record not found');
             history.back(); return;
         }
 
-        // 4. Ownership check
         const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
         if (user.role !== 'doctor' || user.linkedId !== currentRecord.doctorId) {
             alert('You can only edit your own records');
             history.back(); return;
         }
 
-        // 5. Fill the form
         populateForm(currentRecord);
 
-        // 6. Show Save button
         saveBtn.style.display = 'inline-block';
         saveBtn.onclick = () => form.requestSubmit();
 
-        // 7. Submit handler
         form.addEventListener('submit', handleSubmit);
     } catch (e) {
         console.error('Init error: ' + e.message);
@@ -81,12 +65,12 @@ function populateForm(rec) {
 
     prescriptionsContainer.innerHTML = '';
     const pres = rec.prescriptions || [];
-    if (pres.length === 0) addPrescription();               // at least one row
+    if (pres.length === 0) addPrescription();
     else pres.forEach(p => addPrescription(p));
 }
 
 /* --------------------------------------------------------------
-   3. Add a prescription row (empty or pre-filled)
+   3. Add a prescription row
    -------------------------------------------------------------- */
 function addPrescription(prescription = null) {
     const index = prescriptionsContainer.children.length;
@@ -143,7 +127,7 @@ async function populateMedicineSelect(selectEl, selectedId = null) {
 }
 
 /* --------------------------------------------------------------
-   5. Collect form data (ready for DB)
+   5. Collect form data
    -------------------------------------------------------------- */
 function collectFormData() {
     const rows = prescriptionsContainer.querySelectorAll('.prescription-row');
@@ -166,12 +150,11 @@ function collectFormData() {
 }
 
 /* --------------------------------------------------------------
-   6. Submit → encrypt → update DB
+   6. Submit
    -------------------------------------------------------------- */
 async function handleSubmit(e) {
     e.preventDefault();
 
-    // ---- basic validation ----
     if (!diagnosisInput.value.trim()) return showError(diagnosisInput, 'Diagnosis required');
     if (!treatmentInput.value.trim()) return showError(treatmentInput, 'Treatment required');
 
@@ -183,7 +166,6 @@ async function handleSubmit(e) {
         if (!r.querySelector('.duration-input').value.trim()) return showError(r.querySelector('.duration-input'), 'Duration required');
     }
 
-    // ---- UI lock ----
     submitBtn.disabled = saveBtn.disabled = true;
     submitBtn.textContent = 'Saving…';
 
@@ -202,9 +184,6 @@ async function handleSubmit(e) {
     }
 }
 
-/* --------------------------------------------------------------
-   7. Tiny inline error helper
-   -------------------------------------------------------------- */
 function showError(el, msg) {
     let err = el.parentElement.querySelector('.error-message');
     if (!err) {
@@ -217,9 +196,6 @@ function showError(el, msg) {
     setTimeout(() => err.style.display = 'none', 5000);
 }
 
-/* --------------------------------------------------------------
-   8. Auto-re-populate selects if they are empty (slow load)
-   -------------------------------------------------------------- */
 setTimeout(async () => {
     document.querySelectorAll('.medicine-select').forEach(async s => {
         if (s.children.length <= 1) await populateMedicineSelect(s);

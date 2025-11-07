@@ -1,16 +1,9 @@
-/*clinicDB (IndexedDB)
- - encryption 
- - Fetches JSON from GitHub raw URLs 
- - Stores: admins, doctors, patients, medicines, users, appointments, medicalRecord, notifications
- - Exposes functions for import, register, admin-create-doctor, login, query, clear,etc*/
-
 const DB_NAME = 'clinicDB';
 const DB_VERSION = 1;
 let db = null;
-
-//  encryption 
+ 
 // AES Encryption/Decryption using Web Crypto API 
-const ENCRYPTION_KEY = 'myEncryptionKey'; // any length string, now auto-hashed
+const ENCRYPTION_KEY = 'myEncryptionKey';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -19,7 +12,6 @@ const decoder = new TextDecoder();
   This ensures valid key length even if ENCRYPTION_KEY is short.
  */
 async function getCryptoKey() {
-  // Hash the string to 32 bytes (256 bits)
   const keyMaterial = await crypto.subtle.digest("SHA-256", encoder.encode(ENCRYPTION_KEY));
   return crypto.subtle.importKey(
     "raw",
@@ -30,12 +22,9 @@ async function getCryptoKey() {
   );
 }
 
-/*
-  Encrypts plain text using AES-GCM.
-  Returns an object: { iv: [...], data: [...] }
- */
+/* Encrypts plain text using AES-GCM. */
 async function encryptData(plainText) {
-  const iv = crypto.getRandomValues(new Uint8Array(12)); // unique IV for each encryption
+  const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await getCryptoKey();
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
@@ -45,10 +34,7 @@ async function encryptData(plainText) {
   return { iv: Array.from(iv), data: Array.from(new Uint8Array(encrypted)) };
 }
 
-/*
-  Decrypts AES-GCM encrypted payloads created by encryptData().
-  Expects an object: { iv: [...], data: [...] }
- */
+/* Decrypts AES-GCM encrypted payloads created by encryptData(). */
 async function decryptData(encryptedObj) {
   if (!encryptedObj || !encryptedObj.iv || !encryptedObj.data) return null;
   try {
@@ -99,7 +85,6 @@ async function decryptPatientInfo(p) {
 
 async function encryptDoctorInfo(d) {
   // Only encrypt sensitive fields that should NOT be in plain text
-  // Note: 'email' is intentionally NOT encrypted because login.js needs it plain for indexing
   const sensitive = {
     Address: d.Address,
     Telephone: d.Telephone
@@ -107,7 +92,6 @@ async function encryptDoctorInfo(d) {
   d.payload = await encryptData(JSON.stringify(sensitive));
   delete d.Address;
   delete d.Telephone;
-  // Keep 'first_name', 'last_name', 'email', 'gender' in plain text
   return d;
 }
 
@@ -118,7 +102,6 @@ async function decryptDoctorInfo(d) {
       const sensitive = JSON.parse(decrypted);
       d.Address = sensitive.Address;
       d.Telephone = sensitive.Telephone;
-      // 'email' was never encrypted, so nothing to restore
     } catch (err) {
       console.warn("Failed to decrypt doctor info:", err);
     }
@@ -127,7 +110,7 @@ async function decryptDoctorInfo(d) {
 }
 
 
-//  raw URLs 
+//  Raw URLs 
 const JSON_URLS = {
   admins:  'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/admin.json',
   doctors: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/doctors.json',
@@ -139,7 +122,7 @@ const JSON_URLS = {
   notification:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/notif.json'
 };
 
-// Local caches (populated by fetch)
+// Local caches
 let admin_data = null;
 let doctor_data = null;
 let patient_data = null;
@@ -185,7 +168,6 @@ function openClinicDB() {
       }
 
       // patients 
-      // JSON contains numeric "id" and string "NHS" —  key =NHS for validation
       if (!db.objectStoreNames.contains('patients')) {
         const patients = db.createObjectStore('patients', { keyPath: 'NHS' });
         patients.createIndex('id', 'id', { unique: false });
@@ -350,7 +332,6 @@ function getRecordsByPatientId(patientId) {
     request.onsuccess = async () => {
       try {
         const raw = request.result || [];
-        // decrypt payloads in parallel
         const decrypted = await Promise.all(raw.map(async (r) => {
           if (r.payload) {
             const plain = await decryptData(r.payload);
@@ -367,7 +348,6 @@ function getRecordsByPatientId(patientId) {
                   notes: sensitive.notes
                 };
               } catch (e) {
-                // if JSON parse fails, just return raw payload as text
                 return {
                   recordId: r.recordId,
                   patientId: r.patientId,
@@ -380,7 +360,6 @@ function getRecordsByPatientId(patientId) {
               }
             }
           }
-          // if no payload, return the object as-is (backwards compatibility)
           return r;
         }));
         resolve(decrypted);
@@ -431,14 +410,12 @@ function getNotifications(roleOrId) {
     const tx = db.transaction('notifications', 'readonly');
     const store = tx.objectStore('notifications');
 
-    // Try by role first
     const roleIndex = store.index('recipientRole');
     const reqRole = roleIndex.getAll(roleOrId);
 
     reqRole.onsuccess = () => {
       if (reqRole.result.length > 0) return resolve(reqRole.result);
 
-      // Otherwise, try by specific ID
       const idIndex = store.index('recipientId');
       const reqId = idIndex.getAll(roleOrId);
 
@@ -455,7 +432,6 @@ async function deleteLinkedRecords(tableName, indexName, linkedId) {
     const tx = db.transaction(tableName, "readwrite");
     const store = tx.objectStore(tableName);
 
-    // Check if the index exists
     if (!store.indexNames.contains(indexName)) {
       return reject(new Error(`Index "${indexName}" not found in "${tableName}"`));
     }
@@ -540,7 +516,7 @@ async function deleteDoctorCompletely(doctorId) {
       });
     }
 
-    // Now delete all linked data
+    // Delete all linked data
     results.push(await deleteLinkedRecords("appointments", "doctorId", doctorId));
     results.push(await deleteLinkedRecords("notifications", "recipientId", doctorId));
     results.push(await deleteLinkedRecords("activityLogs", "userId", doctorId));
@@ -559,7 +535,6 @@ async function deleteDoctorCompletely(doctorId) {
 //Doctor Dashboard Loader
 async function loadDoctorDashboard(doctorId) {
   try {
-    // Fetch all data in parallel
     const [appointments, notifications] = await Promise.all([
       getAppointmentsByDoctorId(doctorId),
       getNotifications(doctorId)
@@ -568,7 +543,6 @@ async function loadDoctorDashboard(doctorId) {
     console.log(`Appointments for Doctor ${doctorId}:`, appointments);
     console.log(`Notifications for Doctor ${doctorId}:`, notifications);
 
-    // Optionally, return them as a single object
     return { appointments, notifications };
 
   } catch (err) {
@@ -596,7 +570,7 @@ async function loadPatientDashboard(patientId) {
   }
 }
 
-// Helper for appointments by patient (similar to doctor one)
+// Helper for appointments by patient
 function getAppointmentsByPatientId(patientId) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('appointments', 'readonly');
@@ -631,13 +605,11 @@ async function loadAdminDashboard() {
   }
 }
 
-// ---------- Add encrypted medical record helper ----------
+//Add encrypted medical record helper
 async function addMedicalRecord(record) {
-  // record must include: recordId, patientId, doctorId, date, diagnosis, treatment (diagnosis/treatment will be encrypted)
   if (!db) throw new Error("DB not opened");
   if (!record || !record.recordId) throw new Error("record.recordId required");
 
-  // Build the stored object: keep indexes (recordId, patientId, doctorId, date) in plain text
   const { recordId, patientId, doctorId, dateTime, prescriptions, accessedBy } = record;
   const sensitive = {
     diagnosis: record.diagnosis || "",
@@ -659,7 +631,7 @@ async function addMedicalRecord(record) {
   return addItem('medicalRecord', stored);
 }
 
-// ---------- Decrypt medical record ---------------
+//Decrypt medical record
 async function decryptMedicalRecord(d) {
   if (d.payload) {
     try {
@@ -672,16 +644,14 @@ async function decryptMedicalRecord(d) {
   return d;
 }
 
-// Fetch JSONs (from GitHub raw) 
+// Fetch JSONs
 async function fetchJson(url) {
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`Fetch failed for ${url}: ${resp.status}`);
   return resp.json();
 }
 
-/* Fetch all JSON files and cache locally (admin_data, doctor_data, patient_data, medicine_data) */
 async function fetchAllJsons(urls = JSON_URLS) {
-  // parallel fetch
   const [admins, doctors, patients, medicines,users,medicalRecord,appointment,notification] = await Promise.all([
     fetchJson(urls.admins).catch(err => { console.error('admins fetch error', err); return []; }),
     fetchJson(urls.doctors).catch(err => { console.error('doctors fetch error', err); return []; }),
@@ -718,10 +688,9 @@ async function fetchAllJsons(urls = JSON_URLS) {
 }
 
 /* =============================
-   🧠 Filter Data by User Role
+   Filter Data by User Role
    ============================= */
 async function filterDataForUser(allData, user) {
-  // Ensure all tables exist
   const {
     patients = [],
     doctors = [],
@@ -737,12 +706,10 @@ async function filterDataForUser(allData, user) {
   const role = user.role?.toLowerCase();
 
 
-  // Initialize filtered object
   const filtered = {};
 
   switch (role) {
     case 'admin':
-      // Admins see everything
       filtered.admins = admins;
       filtered.doctors = doctors;
       filtered.patients = patients;
@@ -757,15 +724,15 @@ async function filterDataForUser(allData, user) {
 
     case 'doctor':
       filtered.doctors = doctors;
-      filtered.patients = patients; // all patients visible
+      filtered.patients = patients;
       filtered.medicalRecord = medicalRecord;
       filtered.appointment = appointment.filter(a => a.doctorId === user.linkedId);
-      filtered.medicines = medicines; // all medicines visible
+      filtered.medicines = medicines;
       filtered.notification = notification.filter(
         n => n.recipientRole === 'doctor' && n.recipientId === user.linkedId
       );
-      filtered.users = users; // optional, depending on your logic
-      filtered.admins = admins; // optional
+      filtered.users = users;
+      filtered.admins = admins;
       break;
 
     case 'patient':
@@ -779,9 +746,8 @@ async function filterDataForUser(allData, user) {
       filtered.notification = notification.filter(
         n => n.recipientRole === 'patient' && n.recipientId === user.linkedId
       );
-      filtered.medicines = medicines; // all medicines visible
-      filtered.doctors = doctors; // all doctors visible
-      // Hide other tables
+      filtered.medicines = medicines; 
+      filtered.doctors = doctors;
       filtered.admins = [];
       filtered.users = [];
       break;
@@ -796,12 +762,11 @@ async function filterDataForUser(allData, user) {
 }
 
 /* =============================
-   🧠 Set All Data
+   Set All Data
    ============================= */
 async function allDataForUser(allData) {
 
   try{
-    // Ensure all tables exist
     const {
       patients = [],
       doctors = [],
@@ -813,7 +778,6 @@ async function allDataForUser(allData) {
       notification = []
     } = allData || {};
 
-    // Initialize filtered object
     const filtered = {};
 
     
@@ -1043,7 +1007,7 @@ async function login(username, password) {
 
 //Clear / Query / Show Helpers 
 
-// clearData(storeNames) - clears listed stores; if omitted clears medical/doctors/patients/medicines
+// clearData - clears listed stores; if omitted clears medical/doctors/patients/medicines
 
 async function clearData(storeNames = ['medicalRecord','doctors','patients','medicines','appointments','notifications']) {
   if (!db) throw new Error('DB not opened');
@@ -1073,7 +1037,7 @@ async function queryAllAndLog(storeName) {
   return items;
 }
 
-// Show first N in a store (optionally into containerId) 
+// Show first N in a store 
 async function showFirstN(storeName, n = 10, containerId = null) {
   const all = await getAllItems(storeName);
   const sample = all.slice(0, n);
@@ -1094,17 +1058,6 @@ function closeDB() {
     console.log('clinicDB closed');
   }
 }
-
-/*  Example quick-run  
-
-(async () => {
-  await openClinicDB();
-  await showFirstN('patients', 5); // logs first 5 patients
-  // registerPatientAccount('p@example.com','pass123','6538586104').then(console.log).catch(console.error);
-  // createDoctorAccountByAdmin('sheilah', 1, 'dr_violante', 'docpass').then(console.log).catch(console.error);
-})();
-
-*/
 
 // Expose for global access from UI /
 window.clinicDB = {

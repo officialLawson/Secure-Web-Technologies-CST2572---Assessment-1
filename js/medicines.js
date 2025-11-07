@@ -1,5 +1,4 @@
-// Search Feature
-let allRenderedMedicines = []; // holds structured medicine data for search
+let allRenderedMedicines = [];
 
 function renderMedicines(data) {
   const tbody = document.getElementById("medicinesBody");
@@ -56,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Load all medicines and populate the table
 async function loadMedicines() {
     const tbody = document.getElementById('medicinesBody');
-    if (tbody) tbody.innerHTML = ''; // Clear existing rows
+    if (tbody) tbody.innerHTML = '';
     const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     try {
         const db = await openClinicDB();
@@ -73,14 +72,13 @@ async function loadMedicines() {
             }
             
             if (tbody) tbody.innerHTML = '';
-            allRenderedMedicines = []; // reset before loading
+            allRenderedMedicines = [];
 
             medicines.forEach((med) => {
               const safeId = sanitize(med.id);
               const safeDrug = sanitize(med.Drug || 'Unknown');
               const safeRole = sanitize(user.role.toLowerCase());
 
-              // Store structured data
               allRenderedMedicines.push({
                 id: med.id,
                 drug: med.Drug || 'Unknown',
@@ -123,7 +121,7 @@ async function addMedicine(drugName) {
     const getAllReq = store.getAll();
     getAllReq.onsuccess = function () {
       const medicines = getAllReq.result || [];
-      // Check for duplicate (case-insensitive)
+      // Check for duplicate
       const exists = medicines.some(
         (m) => m.Drug.toLowerCase() === drug.toLowerCase()
       );
@@ -132,19 +130,18 @@ async function addMedicine(drugName) {
         error.innerHTML = `Medicine "${drug}" already exists.`;
         return;
       }
-      // Find the next ID (increment from max)
+      // Find the next ID
       const nextId =
         medicines.length > 0
           ? Math.max(...medicines.map((m) => m.id || 0)) + 1
           : 1;
-      // Proper structure: { id: 27, Drug: "Menthol" }
       const newMedicine = { id: nextId, Drug: drug };
       const addReq = store.add(newMedicine);
       const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
       addReq.onsuccess = async function() {
         await logCurrentUserActivity("createMedicine", nextId, `User with ID ${user.linkedId} created a medicine`);
         console.log(`Added medicine: ${drug} (id: ${nextId})`);
-        window.location.href = `medicines-${userRole}.html`; // Redirect after adding
+        window.location.href = `medicines-${userRole}.html`;
       };
       addReq.onerror = (e) => {
         console.error("Failed to add medicine:", e.target.error);
@@ -162,7 +159,7 @@ function handleAddMedicine() {
   const input = document.getElementById('medicineName');
   const name = input.value;
   addMedicine(name);
-  input.value = ''; // clear after adding
+  input.value = '';
 }
 // Edit Medicine
 document.addEventListener('click', (e) => {
@@ -209,7 +206,6 @@ async function displayEditMedicine(id) {
     }
 }
 async function editMedicine(event, id, newDrugName) {
-  // Prevent form submission reload
   if (event) event.preventDefault();
    try {
       const db = await openClinicDB();
@@ -231,7 +227,6 @@ async function editMedicine(event, id, newDrugName) {
           alert(`Medicine "${newDrugName}" already exists.`);
           return;
         }
-        // Update and save
         medicine.Drug = newDrugName;
         const updateRequest = store.put(medicine);
         updateRequest.onsuccess = async function () {
@@ -261,13 +256,10 @@ function handleEditMedicine(event) {
   const medicineName = document.getElementById('medicineName').value;
   editMedicine(event, id, medicineName);
 }
-// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadMedicines();
 });
-// Store the medicine ID to delete
 let medicineToDelete = null;
-// Attach event listeners to delete buttons (dynamic)
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {
     e.preventDefault();

@@ -1,4 +1,3 @@
-// Helper function
 const stripFields = (array, allowedKeys) =>
   array.map(item => {
     const clean = {};
@@ -37,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const activityFields = ["logId", "userId", "userRole", "action", "target", "timestamp", "details"];
             const notificationFields = ["notifId", "title", "message", "recipientId", "recipientRole", "date", "read"];
 
-            // ✅ Load everything
             const [
                 allPatients,
                 allDoctors,
@@ -54,28 +52,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 getAllItems("activityLogs")
             ]);
 
-            // ✅ Decrypt all patients
             const allPatientsDecrypted = await Promise.all(
                 allPatients.map(p => decryptPatientInfo(p))
             );
 
-            // ✅ Decrypt all doctors
             const allDoctorsDecrypted = await Promise.all(
                 allDoctors.map(p => decryptDoctorInfo(p))
             );
 
-            // ✅ Decrypt medical records
+
             for (let i = 0; i < allRecords.length; i++) {
                 allRecords[i] = await decryptMedicalRecord(allRecords[i]);
             }
 
-            // Filter patients (if user is a patient)
             const filteredPatients = allPatientsDecrypted.filter(p => p.NHS === userId);
 
-            // Filter doctors (if user is a doctor)
             const filteredDoctors = allDoctorsDecrypted.filter(d => d.id === userId);
 
-            // Filter and clean medical records (linked to user as patient or doctor)
             const filteredRecords = allRecords.filter(r =>
             r.patientId === userId || r.doctorId === userId
             );
@@ -84,20 +77,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 prescriptions: formatPrescriptions(r.prescriptions)
             }));
 
-            // Filter appointments (linked to user as patient or doctor)
             const filteredAppointments = allAppts.filter(a =>
             a.patientId === userId || a.doctorId === userId
             );
 
-            // Filter activity logs (linked to user)
             const filteredActivityLogs = allAct.filter(l => l.userId === userId )
 
 
-            // ✅ Build PDF
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ unit: "pt", format: "a4" });
 
-            // ============= HEADER =================
             doc.setFontSize(18);
             doc.text("MedTrack — Exported Personal Data", 40, 40);
 
@@ -107,9 +96,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let y = 90;
 
-            // =============================
-            // ✅ FUNCTION: GENERATE TABLE
-            // =============================
             const makeTable = (title, array) => {
                 if (!array || array.length === 0) return;
 
@@ -132,8 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 y = doc.lastAutoTable.finalY + 20;
             };
 
-            // ============= ADD TABLES ===============
-
+            //  ADD TABLES 
            if (user.role.toLowerCase() === 'patient') {
             makeTable("User Information", stripFields(filteredPatients, patientFields));
             makeTable("Medical Records", stripFields(cleanedRecords, recordFields));
@@ -149,7 +134,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
 
-            // ✅ Save PDF
             doc.save("My_MedTrack_Data.pdf");
 
         } catch (err) {

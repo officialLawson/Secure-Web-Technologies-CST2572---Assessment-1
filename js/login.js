@@ -46,7 +46,7 @@ async function decryptData(encrypted) {
       return null;
     }
 
-    const key = await getCryptoKey(); // from IndexedDB.js
+    const key = await getCryptoKey();
     const iv = new Uint8Array(encrypted.iv);
     const data = new Uint8Array(encrypted.data);
 
@@ -71,7 +71,6 @@ async function loginUser(username, password, role) {
   if (!username || !password)
     return { success: false, message: "Please enter both username and password." };
 
-  // Helper to check users/admins stores
   async function checkStore(storeName) {
     const tx = db.transaction(storeName, "readonly");
     let index;
@@ -134,7 +133,6 @@ async function loginUser(username, password, role) {
                 return resolve(null);
               }
 
-              // Optionally attach doctor profile to user object
               user._linkedDoctor = doctor;
 
               resolve(userSelected);
@@ -322,7 +320,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const input = box.querySelector("input");
         const isActive = box.dataset.role === selected;
 
-        box.style.display = isActive ? "block" : "none"; // or use visibility if preferred
+        box.style.display = isActive ? "block" : "none";
         if (input) {
           input.required = isActive;
           input.disabled = !isActive;
@@ -339,7 +337,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
   }
-  // ===== REAL LOGIN HANDLER =====
+
+  // ---------------------------
+  // REAL LOGIN HANDLER
+  // ---------------------------
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -358,7 +359,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const password = document.getElementById("loginPassword").value;
 
-      // Optional: show loading message
+  
       const originalBtnText = document.querySelector("#loginForm .btn").textContent;
       const btn = document.querySelector("#loginForm .btn");
       btn.textContent = "Logging in...";
@@ -368,10 +369,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         const result = await loginUser(username, password, selectedRole);
 
         if (result.success) {
-          // Save user
           localStorage.setItem("currentUser", JSON.stringify(result.user));
 
-          // Redirect
           let redirectUrl = "../html/dashboard.html";
           switch (result.user.role?.toLowerCase()) {
             case "doctor":
@@ -393,7 +392,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         } else {
           const userError = document.getElementById('userError');
-          userError.textContent = result.message; // or show in UI
+          userError.textContent = result.message;
           btn.textContent = originalBtnText;
           btn.disabled = false;
         }
@@ -715,8 +714,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ---------------------------
 let otpExpiry = null;
 let otpInterval = null;
-const otpDuration = 120; // seconds
-const resendCooldown = 30; // seconds
+const otpDuration = 120;
+const resendCooldown = 30;
 const otpTimerDisplay = document.getElementById("otpTimer");
 const resendOtpBtn = document.getElementById("resendOtp");
 

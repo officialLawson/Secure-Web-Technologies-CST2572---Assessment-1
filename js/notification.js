@@ -18,7 +18,7 @@ function sortNotifications() {
   notifications.sort((a, b) => {
     const timeA = new Date(a.time).getTime();
     const timeB = new Date(b.time).getTime();
-    return timeB - timeA; // newest first
+    return timeB - timeA;
   });
 }
 async function generateUniqueNotificationId(store) {
@@ -34,7 +34,7 @@ async function generateUniqueNotificationId(store) {
   }
   return id;
 }
-/* ---- DB (IndexedDB) ---- */
+/* ---- IndexedDB */
 async function saveNotificationsToDB() {
   try {
     const db = await openClinicDB();
@@ -55,18 +55,16 @@ async function loadNotificationsFromDB() {
       notifications = req.result || [];
       sortNotifications();
       renderNotifications();
-      // updateBadge();
     };
   } catch(e){
     console.error(e);
-    // ----- FALLBACK SAMPLE DATA -----
+    // ----- Fallback sample data
     notifications = [
       {id:1,title:"New Medical Record Added",message:"Dr. Etie Beardsworth added a record.",time:"2 mins ago",read:false,type:"record"},
       {id:2,title:"Appointment Confirmed",message:"Your appointment with Dr. Stafani Gives.",time:"1 hour ago",read:true,type:"appointment"},
       {id:3,title:"Access Requested",message:"Dr. Violante Rilton requested access.",time:"3 hours ago",read:false,type:"access"}
     ];
     renderNotifications();
-    // updateBadge();
   }
 }
 /* ---- Creating ---- */
@@ -79,7 +77,7 @@ async function createNotification(title, message) {
     const store = tx.objectStore('notifications');
     const notifId = await generateUniqueNotificationId(store);
     const notification = {
-      notifId, // matches keyPath
+      notifId,
       title: sanitize(title),
       message: sanitize(message),
       date: new Date().toISOString().split('T')[0],
@@ -106,10 +104,10 @@ async function createNotificationForUser(title, message, recipientId, recipientR
     const store = tx.objectStore('notifications');
     const notifId = await generateUniqueNotificationId(store);
     const notification = {
-      notifId: notifId, // e.g. "N125"
+      notifId: notifId,
       title: sanitize(title),
       message: sanitize(message),
-      date: new Date().toISOString().split('T')[0], // "YYYY-MM-DD"
+      date: new Date().toISOString().split('T')[0],
       recipientId: recipientId,
       recipientRole: recipientRole,
       read: false
@@ -175,8 +173,8 @@ function renderNotifications() {
 
       const meta = extractIdsFromMessage(safeMessage);
       if (meta) {
-        const recordId = meta.recordId ;     // "REC123"
-        const requesterId = meta.requesterId ;  // "DOC456"
+        const recordId = meta.recordId ;
+        const requesterId = meta.requesterId ;
         item.innerHTML = `
           <div class="layout-set">
             <div><span class="icon">${getIcon(n.type)}</span></div>
@@ -283,13 +281,6 @@ async function markNotifAsRead(id) {
   }
 }
 
-/* ---- Badge ---- */
-// function updateBadge(){
-//   const unread = notifications.filter(n=>!n.read).length;
-//   const badge = document.querySelector('.notif-badge');
-//   badge.textContent = unread>9?'9+':unread;
-//   badge.style.display = unread?'flex':'none';
-// }
 function updateBadgeByNumber(n){
   const unread = n;
   const badge = document.querySelector('.notif-badge');
@@ -363,7 +354,6 @@ document.addEventListener("click", async (e) => {
           return;
         }
 
-        // ✅ Add requester to accessedBy
         record.accessedBy = record.accessedBy || [];
         if (!record.accessedBy.includes(requesterId)) {
           record.accessedBy.push(requesterId);
@@ -372,7 +362,7 @@ document.addEventListener("click", async (e) => {
         updateReq.onsuccess = async function() {
           console.log("✅ Access granted and record updated.");
           await createNotificationForUser("Access Request Accepted", `The doctor has accepted your request to access medical record ${recordId}`, requesterId, "doctor");
-          await logCurrentUserActivity("acceptAccess", recordId, `Doctor with ID ${parseInt(user.linkedId)} accepted access to medical record with ID ${recordId} from doctor with ID ${requesterId}`); // see below
+          await logCurrentUserActivity("acceptAccess", recordId, `Doctor with ID ${parseInt(user.linkedId)} accepted access to medical record with ID ${recordId} from doctor with ID ${requesterId}`);
           await markNotifAsRead(notifId);
         };
         updateReq.onerror = (e) => {
@@ -385,5 +375,4 @@ document.addEventListener("click", async (e) => {
   }
 });
 
-/* ---- Init ---- */
 loadNotificationsFromDB();

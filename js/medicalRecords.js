@@ -1,6 +1,5 @@
-// Search Feature
-let allRenderedMedicalRecords = []; // holds structured records for search
-let allRenderedDoctorViewRecords = []; // for search
+let allRenderedMedicalRecords = [];
+let allRenderedDoctorViewRecords = [];
 
 function renderMedicalRecords(data) {
   const tbody = document.getElementById("medicalRecordsBody");
@@ -147,13 +146,12 @@ async function fetchPatientRecords() {
             return;
         }
 
-        allRenderedMedicalRecords = []; // reset before loading
+        allRenderedMedicalRecords = [];
 
         myRecords.forEach(rec => {
         const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
         const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
 
-        // Store structured data for search
         allRenderedMedicalRecords.push({
             doctorName,
             diagnosis: rec.diagnosis || '-',
@@ -180,7 +178,7 @@ async function fetchPatientRecords() {
 }
 
 // ======================
-// 2. DOCTOR: List patient's records (with Request Access)
+// 2. DOCTOR: List patient's records
 // ======================
 async function fetchPatientRecordsforDoctor(patientId) {
     const tbody = document.getElementById("medicalRecordsBody");
@@ -209,7 +207,7 @@ async function fetchPatientRecordsforDoctor(patientId) {
         const patientName = patient ? `${patient.Title} ${patient.First} ${patient.Last}` : 'Unknown Patient';
         if (patientNameDisplay) patientNameDisplay.textContent = sanitize(patientName);
 
-        // Current doctor's name (for request button)
+        // Current doctor's name
         const selfDoctor = decryptedDoctors.find(d => d.id === user.linkedId);
         const selfName = selfDoctor ? `Dr ${selfDoctor.first_name} ${selfDoctor.last_name}` : 'Unknown';
 
@@ -221,14 +219,13 @@ async function fetchPatientRecordsforDoctor(patientId) {
             return;
         }
 
-        allRenderedDoctorViewRecords = []; // reset before loading
+        allRenderedDoctorViewRecords = [];
 
         patientRecords.forEach(rec => {
             const doctor = decryptedDoctors.find(d => d.id == rec.doctorId);
             const doctorName = doctor ? `Dr ${doctor.first_name} ${doctor.last_name}` : 'Unknown';
             const isOwner = user.linkedId == rec.doctorId;
 
-            // Store structured data for search
             allRenderedDoctorViewRecords.push({
                 doctorName,
                 diagnosis: rec.diagnosis || '-',
@@ -263,7 +260,7 @@ async function fetchPatientRecordsforDoctor(patientId) {
 }
 
 // ======================
-// 3. DOCTOR: Load single record view (with Edit button)
+// 3. DOCTOR: Load single record view
 // ======================
 async function loadSingleRecordView() {
     const tbody = document.getElementById('prescriptionsBody');
@@ -363,13 +360,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const patientId = params.get('patientId');
 
     if (recordId && patientId) {
-        // Doctor viewing a specific record
         await loadSingleRecordView();
     } else if (patientId) {
-        // Doctor viewing patient's list
         await fetchPatientRecordsforDoctor(patientId);
     } else {
-        // Patient viewing own list
         await fetchPatientRecords();
     }
 });
@@ -434,7 +428,7 @@ document.addEventListener("click", async (e) => {
 });
 
 // ======================
-// 7. Expose for debugging (optional)
+// 7. Expose for debugging
 // ======================
 window.clinicDB = window.clinicDB || {};
 window.clinicDB.decryptDoctorInfo = decryptDoctorInfo;
@@ -478,7 +472,6 @@ async function viewMedicalRecord(medicalrecordId) {
                 const medicalrecords = decryptedMedicalRecords.filter(med => med.recordId === recordId) || [];
                 const medicalrecord = medicalrecords[0];
                 
-                // Check if medical record exists
                 if (!medicalrecord) {
                     console.error('Medical record not found');
                     recordDoctorName.innerText = 'N/A';
@@ -489,11 +482,9 @@ async function viewMedicalRecord(medicalrecordId) {
                     return;
                 }
                 
-                // Try both strict and loose comparison
                 const currentUserData = decryptedDoctors.filter(d => d.id == medicalrecord.doctorId) || [];
                 const doctor = currentUserData[0];
                 
-                // Check if doctor exists, provide fallback
                 let doctorFullName = 'Unknown Doctor';
                 if (doctor && doctor.first_name && doctor.last_name) {
                     doctorFullName = `Dr ${doctor.first_name} ${doctor.last_name}`;

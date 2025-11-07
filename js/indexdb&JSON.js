@@ -1,25 +1,14 @@
-/*clinicDB (IndexedDB)
- - encryption 
- - Fetches JSON from GitHub raw URLs 
- - Stores: admins, doctors, patients, medicines, users, appointments, medicalRecord, notifications
- - Exposes functions for import, register, admin-create-doctor, login, query, clear,etc*/
-
 const DB_NAME = 'clinicDB';
 const DB_VERSION = 1;
 let db = null;
 
-//  encryption 
 // AES Encryption/Decryption using Web Crypto API 
-const ENCRYPTION_KEY = 'myEncryptionKey'; // any length string, now auto-hashed
+const ENCRYPTION_KEY = 'myEncryptionKey';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-/*
-  Derives a 256-bit AES key using SHA-256 hashing.
-  This ensures valid key length even if ENCRYPTION_KEY is short.
- */
+/* Derives a 256-bit AES key using SHA-256 hashing.\*/
 async function getCryptoKey() {
-  // Hash the string to 32 bytes (256 bits)
   const keyMaterial = await crypto.subtle.digest("SHA-256", encoder.encode(ENCRYPTION_KEY));
   return crypto.subtle.importKey(
     "raw",
@@ -30,12 +19,9 @@ async function getCryptoKey() {
   );
 }
 
-/*
-  Encrypts plain text using AES-GCM.
-  Returns an object: { iv: [...], data: [...] }
- */
+/* Encrypts plain text using AES-GCM. */
 async function encryptData(plainText) {
-  const iv = crypto.getRandomValues(new Uint8Array(12)); // unique IV for each encryption
+  const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await getCryptoKey();
   const encrypted = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
@@ -45,10 +31,7 @@ async function encryptData(plainText) {
   return { iv: Array.from(iv), data: Array.from(new Uint8Array(encrypted)) };
 }
 
-/*
-  Decrypts AES-GCM encrypted payloads created by encryptData().
-  Expects an object: { iv: [...], data: [...] }
- */
+/* Decrypts AES-GCM encrypted payloads created by encryptData(). */
 async function decryptData(encryptedObj) {
   if (!encryptedObj || !encryptedObj.iv || !encryptedObj.data) return null;
   try {
@@ -66,7 +49,6 @@ async function decryptData(encryptedObj) {
 }
 
 //  Encryption Helpers for Patient & Doctor Info 
-
 async function encryptPatientInfo(p) {
   const sensitive = {
     Address: p.Address,
@@ -120,7 +102,7 @@ async function decryptDoctorInfo(d) {
 }
 
 
-//  raw URLs 
+//Raw URLs 
 const JSON_URLS = {
   admins:  'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/admin.json',
   doctors: 'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/doctors.json',
@@ -132,7 +114,7 @@ const JSON_URLS = {
   notification:'https://raw.githubusercontent.com/officialLawson/Secure-Web-Technologies-CST2572---Assessment-1/refs/heads/new-branch/notif.json'
 };
 
-// Local caches (populated by fetch)
+// Local caches
 let admin_data = null;
 let doctor_data = null;
 let patient_data = null;
@@ -150,7 +132,7 @@ function openClinicDB() {
     req.onupgradeneeded = (e) => {
       const db = e.target.result;
 
-      // users store (login validation)
+      // users store
       if (!db.objectStoreNames.contains('users')) {
         const users = db.createObjectStore('users', { keyPath: 'linkedId' });
         users.createIndex('username', 'username', { unique: true });
@@ -177,7 +159,6 @@ function openClinicDB() {
       }
 
       // patients 
-      // JSON contains numeric "id" and string "NHS" —  key =NHS for validation
       if (!db.objectStoreNames.contains('patients')) {
         const patients = db.createObjectStore('patients', { keyPath: 'NHS' });
         patients.createIndex('id', 'id', { unique: false });
@@ -320,8 +301,6 @@ function deleteItem(storeName, key) {
   });
 }
 
-//read patient medical records by id
-// Get records by patientId and decrypt payload 
 function getRecordsByPatientId(patientId) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('medicalRecord', 'readonly');
@@ -349,7 +328,6 @@ function getRecordsByPatientId(patientId) {
                   notes: sensitive.notes
                 };
               } catch (e) {
-                // if JSON parse fails, just return raw payload as text
                 return {
                   recordId: r.recordId,
                   patientId: r.patientId,
@@ -362,7 +340,6 @@ function getRecordsByPatientId(patientId) {
               }
             }
           }
-          // if no payload, return the object as-is (backwards compatibility)
           return r;
         }));
         resolve(decrypted);
@@ -375,7 +352,6 @@ function getRecordsByPatientId(patientId) {
   });
 }
 
-//see all appointments or patients they’re handling (for doctor)
 function getAppointmentsByDoctorId(doctorId) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('appointments', 'readonly');
@@ -394,14 +370,12 @@ function getNotifications(roleOrId) {
     const tx = db.transaction('notifications', 'readonly');
     const store = tx.objectStore('notifications');
 
-    // Try by role first
     const roleIndex = store.index('recipientRole');
     const reqRole = roleIndex.getAll(roleOrId);
 
     reqRole.onsuccess = () => {
       if (reqRole.result.length > 0) return resolve(reqRole.result);
 
-      // Otherwise, try by specific ID
       const idIndex = store.index('recipientId');
       const reqId = idIndex.getAll(roleOrId);
 
@@ -417,7 +391,6 @@ function getNotifications(roleOrId) {
 //Doctor Dashboard Loader
 async function loadDoctorDashboard(doctorId) {
   try {
-    // Fetch all data in parallel
     const [appointments, notifications] = await Promise.all([
       getAppointmentsByDoctorId(doctorId),
       getNotifications(doctorId)
@@ -426,7 +399,6 @@ async function loadDoctorDashboard(doctorId) {
     console.log(`Appointments for Doctor ${doctorId}:`, appointments);
     console.log(`Notifications for Doctor ${doctorId}:`, notifications);
 
-    // Optionally, return them as a single object
     return { appointments, notifications };
 
   } catch (err) {
@@ -454,7 +426,7 @@ async function loadPatientDashboard(patientId) {
   }
 }
 
-// Helper for appointments by patient (similar to doctor one)
+// Helper for appointments by patient
 function getAppointmentsByPatientId(patientId) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction('appointments', 'readonly');
@@ -489,18 +461,16 @@ async function loadAdminDashboard() {
   }
 }
 
-// ---------- Add encrypted medical record helper ----------
+// Add encrypted medical record
 async function addMedicalRecord(record) {
-  // record must include: recordId, patientId, doctorId, date, diagnosis, treatment (diagnosis/treatment will be encrypted)
   if (!db) throw new Error("DB not opened");
   if (!record || !record.recordId) throw new Error("record.recordId required");
 
-  // Build the stored object: keep indexes (recordId, patientId, doctorId, date) in plain text
   const { recordId, patientId, doctorId, date } = record;
   const sensitive = {
     diagnosis: record.diagnosis || "",
     treatment: record.treatment || "",
-    notes: record.notes || ""    // optional extra
+    notes: record.notes || ""
   };
 
   const encryptedPayload = await encryptData(JSON.stringify(sensitive));
@@ -516,16 +486,15 @@ async function addMedicalRecord(record) {
   return addItem('medicalRecord', stored);
 }
 
-// Fetch JSONs (from GitHub raw) 
+// Fetch JSONs 
 async function fetchJson(url) {
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`Fetch failed for ${url}: ${resp.status}`);
   return resp.json();
 }
 
-/* Fetch all JSON files and cache locally (admin_data, doctor_data, patient_data, medicine_data) */
+/* Fetch all JSON files and cache locally */
 async function fetchAllJsons(urls = JSON_URLS) {
-  // parallel fetch
   const [admins, doctors, patients, medicines,users,medicalRecord,appointment,notification] = await Promise.all([
     fetchJson(urls.admins).catch(err => { console.error('admins fetch error', err); return []; }),
     fetchJson(urls.doctors).catch(err => { console.error('doctors fetch error', err); return []; }),
@@ -557,12 +526,10 @@ async function importFetchedDataToDB() {
 
   const results = { admins:0, doctors:0, patients:0, medicines:0 };
 
-  // admins: expects array of { username, password, ... }
   if (Array.isArray(admin_data)) {
     for (const a of admin_data) {
       try {
         if (!a.username) continue;
-        // store as-is; keyPath is username in admins store
         await addItem('admins', a);
         results.admins++;
       } catch (err) {
@@ -571,7 +538,6 @@ async function importFetchedDataToDB() {
     }
   }
 
-  // doctors: expects array with id, first_name, last_name, email, Address, Telephone
 
   if (Array.isArray(doctor_data)) {
     for (const d of doctor_data) {
@@ -586,7 +552,6 @@ async function importFetchedDataToDB() {
     }
   }
 
-  // patients: expects array with id and NHS (we key on NHS)
   if (Array.isArray(patient_data)) {
     for (const p of patient_data) {
       try {
@@ -611,12 +576,11 @@ async function importFetchedDataToDB() {
     }
    }
   }
-  //medical record- mr.recordID
+  //medical record
   if (Array.isArray(medicalRecord_data)){
     for (const r of medicalRecord_data){
       try {
         if (!r.recordId) continue;
-        // r may include diagnosis/treatment; use addMedicalRecord to encrypt payload
         const toAdd = {
           recordId: r.recordId,
           patientId: r.patientId || r.patientId || r.NHS || r.patient || null,
@@ -661,7 +625,7 @@ async function importFetchedDataToDB() {
     }
   }
 
-  // medicines: expects array with id and Drug
+  // medicines
   if (Array.isArray(medicine_data)) {
     for (const m of medicine_data) {
       try {
@@ -679,7 +643,7 @@ async function importFetchedDataToDB() {
 }
 
 
-//Convenience: fetch all JSONs then import them into DB 
+//Fetch all JSONs then import them into DB 
 async function fetchAndImportAll(urls = JSON_URLS) {
   if (!db) throw new Error('DB not opened');
   await fetchAllJsons(urls);
@@ -687,7 +651,6 @@ async function fetchAndImportAll(urls = JSON_URLS) {
 }
 
 //Registration / Creation / Login with encryption-cryptography
-
 
 // Encrypt passwords before storing
 async function registerPatientAccount(username, password, patientNHS) {
@@ -789,8 +752,7 @@ async function login(username, password) {
 
 //Clear / Query / Show Helpers 
 
-// clearData(storeNames) - clears listed stores; if omitted clears admins/doctors/patients/medicines
- 
+// clearData
 async function clearData(storeNames = ['admins','doctors','patients','medicines']) {
   if (!db) throw new Error('DB not opened');
   const results = {};
@@ -812,14 +774,13 @@ async function clearData(storeNames = ['admins','doctors','patients','medicines'
   return results;
 }
 
-// Log everything in a store to console 
 async function queryAllAndLog(storeName) {
   const items = await getAllItems(storeName);
   console.log(`All items in ${storeName}:`, items);
   return items;
 }
 
-// Show first N in a store (optionally into containerId) 
+// Show first N in a store
 async function showFirstN(storeName, n = 10, containerId = null) {
   const all = await getAllItems(storeName);
   const sample = all.slice(0, n);
@@ -841,17 +802,6 @@ function closeDB() {
   }
 }
 
-/*  Example quick-run  
-
-(async () => {
-  await openClinicDB();
-  await fetchAndImportAll(); // uses JSON_URLS placeholders
-  await showFirstN('patients', 5); // logs first 5 patients
-  // registerPatientAccount('p@example.com','pass123','6538586104').then(console.log).catch(console.error);
-  // createDoctorAccountByAdmin('sheilah', 1, 'dr_violante', 'docpass').then(console.log).catch(console.error);
-})();
-
-*/
 
 // Expose for global access from UI /
 window.clinicDB = {
@@ -881,7 +831,6 @@ window.clinicDB = {
   encryptData,
   decryptData,
   closeDB,
-  // caches for debugging
   _caches: () => ({ admin_data, doctor_data, patient_data, medicine_data }),
   JSON_URLS
 };

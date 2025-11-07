@@ -136,7 +136,6 @@
 
                                     <select id="doctorNameEdit" name="doctorNameEdit" required>
                                         <option value="">Select a doctor</option>
-                                        <!-- Add more dynamically if needed -->
                                     </select>
 
                                     <p id="doctorNameEdit-form-error" class="error-message"></p>
@@ -209,7 +208,7 @@
             const role = params.get('role');
 
             if (id) {
-                loadAppointmentForEdit(id); // ✅ This runs on the correct page
+                loadAppointmentForEdit(id);
             }
         });
     </script>
@@ -231,7 +230,6 @@
 
         });
 
-        // Close if click outside modal
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });

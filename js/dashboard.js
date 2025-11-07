@@ -1,4 +1,3 @@
-// createDashboardAnalytics.js
 async function createDashboardAnalytics() {
     // -------------------------------------------------
     // 1. Open DB + Get current user
@@ -190,7 +189,7 @@ async function getUserRoleCounts() {
           const role = user.role?.toLowerCase();
           if (!role) return;
 
-          const label = role.charAt(0).toUpperCase() + role.slice(1); // e.g., "patient" → "Patient"
+          const label = role.charAt(0).toUpperCase() + role.slice(1);
           roleCounts[label] = (roleCounts[label] || 0) + 1;
         });
 
@@ -223,9 +222,9 @@ function renderUserRoleChart(roleCounts) {
         label: "User Roles",
         data,
         backgroundColor: [
-          "rgba(75, 192, 192, 0.6)",  // Patient
-          "rgba(255, 159, 64, 0.6)",  // Doctor
-          "rgba(153, 102, 255, 0.6)"  // Admin
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(255, 159, 64, 0.6)",
+          "rgba(153, 102, 255, 0.6)"
         ],
         borderColor: "#fff",
         borderWidth: 1
@@ -270,11 +269,11 @@ async function displayRecentActivityLogs() {
     request.onsuccess = () => {
       const logs = request.result || [];
 
-      // Filter logs for this user and sort by timestamp descending
+      // Filter logs for specific user and sort by timestamp descending
       const userLogs = logs
         .filter(log => log.userId === user.linkedId)
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .slice(0, 3); // Take latest 5
+        .slice(0, 3);
 
       list.innerHTML = "";
 
@@ -321,7 +320,7 @@ async function getUpcomingAppointmentsForPatient() {
     request.onsuccess = async function () {
       const appointments = request.result || [];
 
-      // Filter for this patient and future confirmed appointments
+      // Filter for specific patient and future confirmed appointments
       const upcoming = appointments
         .filter(app =>
           app.patientId === patientId &&
@@ -338,7 +337,7 @@ async function getUpcomingAppointmentsForPatient() {
         return;
       }
 
-      // Optional: fetch doctor names
+      // Fetch doctor names
       const doctorTx = db.transaction("doctors", "readonly");
       const doctorStore = doctorTx.objectStore("doctors");
       const doctorReq = doctorStore.getAll();
@@ -375,10 +374,9 @@ async function getUpcomingAppointmentsForPatient() {
 }
 
 
-// Run immediately
 createDashboardAnalytics();
 getUserRoleCounts().then(roleCounts => {
-  renderUserRoleChart(roleCounts); // from earlier chart function
+  renderUserRoleChart(roleCounts);
 });
 getUserInfo();
 displayRecentActivityLogs();

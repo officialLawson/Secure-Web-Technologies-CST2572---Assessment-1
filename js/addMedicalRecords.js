@@ -1,13 +1,13 @@
 document.addEventListener('DOMContentLoaded', async () => {
   const db = await clinicDB.openClinicDB();
 
-  // Fix form submit handler
+  // submit handler
   const form = document.querySelector('form');
   if (form) {
     form.onsubmit = handleAddMedicalRecord;
   }
 
-  // Fix "Cancel" link
+  // Cancel link
   const backLink = document.getElementById('back');
   if (backLink) {
     backLink.addEventListener('click', () => {
@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Initialize one prescription row
   addPrescription();
 });
 let prescriptionCount = 0;
@@ -82,7 +81,6 @@ async function handleAddMedicalRecord(event) {
   const currentTime = `${hours}:${minutes}`;
   const dateTime = `${currentDate} - ${currentTime}`;
 
-  // Optional: set hidden input
   document.getElementById('appointmentDate').value = currentDate;
 
   const diagnosis = document.getElementById('userDiagnosis').value.trim();
@@ -175,7 +173,7 @@ async function handleAddMedicalRecord(event) {
   }
 }
 
-// DOM Ready – attach form, back button, and init first prescription
+// Attach form, back button, and init first prescription
 document.addEventListener('DOMContentLoaded', async () => {
   const db = await clinicDB.openClinicDB();
 
@@ -185,7 +183,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     form.onsubmit = handleAddMedicalRecord;
   }
 
-  // "Cancel" link goes back to patient records
+  // Cancel link goes back to patient records
   const backLink = document.getElementById('back');
   if (backLink) {
     backLink.addEventListener('click', () => {
@@ -195,6 +193,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Start with one prescription row
   addPrescription();
 });

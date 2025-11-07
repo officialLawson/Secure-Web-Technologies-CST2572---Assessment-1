@@ -1,5 +1,3 @@
-// settingdoctor.js — Fixed for proper data fetch/display
-
 document.addEventListener('DOMContentLoaded', async () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     if (!currentUser || currentUser.role?.toLowerCase() !== 'doctor') {
@@ -34,11 +32,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // Decrypt the doctor info
             record = await clinicDB.decryptDoctorInfo(record);
             
 
-            // Handle multiple possible field names from JSON (fallbacks)
             const firstName = record.first_name || record.First || record.firstName || '';
             const lastName = record.last_name || record.Last || record.lastName || '';
             const email = record.email || record.Email || '';
@@ -52,7 +48,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // Normalize to canonical field names from doctors.json
             originalData = {
                 id: record.id,
                 first_name: firstName,
@@ -137,26 +132,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             showMsg('Valid email required.', 'error');
             return;
         }
-
         try {
-            // Use EXACT field names from doctors.json
             const updated = {
                 id: originalData.id,
                 first_name: first_name,
                 last_name: last_name,
-                email: email,              // lowercase — required for login index
+                email: email,
                 gender: originalData.gender,
-                Address: address,          // capitalized as in schema
-                Telephone: phone           // capitalized as in schema
+                Address: address,
+                Telephone: phone 
             };
 
-
-            // Encrypt (only Address & Telephone are encrypted; email stays plain)
-            const encrypted = await clinicDB.encryptDoctorInfo(updated);
-            
+            const encrypted = await clinicDB.encryptDoctorInfo(updated); 
             await clinicDB.updateItem('doctors', encrypted);
 
-            // Reload fresh data
             const fresh = await clinicDB.getItem('doctors', userId);
             originalData = await clinicDB.decryptDoctorInfo(fresh);
 

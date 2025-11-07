@@ -45,7 +45,7 @@
                 <!-- Mobile Menu Toggle -->
                 <button id="mobile-toggle" class="toggle-btn" aria-label="Open menu">Menu</button>
 
-                <!-- Sidebar Collapse (Desktop) -->
+                <!-- Sidebar Collapse -->
                 <div class="left-controls">
                     <button id="collapse-toggle" class="sidebar-toggle" aria-label="Collapse sidebar" title="Collapse sidebar">
                         <svg class="sidebar-icon" width="16" height="12" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor">
@@ -274,8 +274,6 @@
                 e.stopPropagation();
                 profileModal.style.display = (profileModal.style.display === 'flex') ? 'none' : 'flex';
             });
-
-            // Close when clicking outside
             document.addEventListener('click', (e) => {
                 if (!profileButton.contains(e.target) && !profileModal.contains(e.target)) {
                     profileModal.style.display = 'none';

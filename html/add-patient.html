@@ -146,11 +146,6 @@
                                 <!-- Date of Birth -->
                                 <div class="form-group">
                                     <label for="userDOB">Date of Birth</label>
-                                    <!-- <div class="custom-date" id="datePicker">
-                                        <div class="custom-date__input placeholder">Select date of birth</div>
-                                        <div class="custom-date__calendar" hidden></div>
-                                        <input type="hidden" id="userDOB" name="userDOB" required>
-                                    </div> -->
                                     <input type="date" id="userDOB" name="userDOB" required>
                                     <p id="userDOB-form-error" class="error-message"></p>
                                 </div>
@@ -251,7 +246,6 @@
 
         });
 
-        // Close if click outside modal
         document.addEventListener('click', () => {
             profileModal.style.display = 'none';
         });

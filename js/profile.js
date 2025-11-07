@@ -1,5 +1,4 @@
 async function getUserInfo() {
-    // === SAFE ELEMENT GETTERS ===
     const els = {
         userFullName: document.getElementById("userFullName"),
         userRoleMain: document.getElementById("userRoleMain"),
@@ -27,20 +26,17 @@ async function getUserInfo() {
         const user = JSON.parse(localStorage.getItem('currentUser'));
         switch (user.role.toLowerCase()) {
             case 'doctor':
-                // Fetch doctors first and build a lookup map
                 const doctorTx = db.transaction('doctors', 'readonly');
                 const doctorStore = doctorTx.objectStore('doctors');
                 const doctorsReq = doctorStore.getAll();
                 doctorsReq.onsuccess = async function() {
                     const encryptedDoctors = doctorsReq.result || [];
-                    // Decrypt all doctors in parallel
                     const decryptedDoctors = await Promise.all(
                         encryptedDoctors.map(p => decryptDoctorInfo(p))
                     );
                     const currentUserData = decryptedDoctors.filter(d => d.id === user.linkedId) || [];
                     const doctor = currentUserData[0];
 
-                    // Normalize field names
                     doctor.First = doctor.first_name || doctor.First || '';
                     doctor.Last = doctor.last_name || doctor.Last || '';
                     doctor.Email = doctor.email || doctor.Email || '';
@@ -72,17 +68,14 @@ async function getUserInfo() {
                 };
                 break;
             case 'patient':
-                // Fetch patients first and build a lookup map
                 const patientTx = db.transaction('patients', 'readonly');
                 const patientStore = patientTx.objectStore('patients');
                 const patientsReq = patientStore.getAll();
                 patientsReq.onsuccess = async function () {
                     const encryptedPatients = patientsReq.result || [];
-                    // Decrypt all patients in parallel
                     const decryptedPatients = await Promise.all(
                         encryptedPatients.map(p => decryptPatientInfo(p))
                     );
-                    // Now filter using decrypted fields
                     const currentUserData = decryptedPatients.filter(d => d.NHS === user.linkedId);
                     if (currentUserData.length === 0) {
                         console.warn("No matching patient found for linkedId:", user.linkedId);
@@ -192,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-// Load on page ready
 document.addEventListener('DOMContentLoaded', () => {
     getUserInfo();
 });

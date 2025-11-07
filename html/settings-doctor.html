@@ -258,18 +258,15 @@
         if (profileButton && profileModal) {
             profileButton.addEventListener("click", (e) => {
                 e.stopPropagation();
-                // Fixed: parentheses + single line or proper block
                 profileModal.style.display = (profileModal.style.display === 'flex') ? 'none' : 'flex';
             });
 
-            // Close if click outside
             document.addEventListener('click', (e) => {
                 if (!profileButton.contains(e.target) && !profileModal.contains(e.target)) {
                     profileModal.style.display = 'none';
                 }
             });
 
-            // Close on ESC
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     profileModal.style.display = 'none';

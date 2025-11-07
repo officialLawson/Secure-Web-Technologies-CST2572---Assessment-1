@@ -1,4 +1,3 @@
-/* calendar.js  */
 document.addEventListener('DOMContentLoaded', async function () {
     // -------------------------------------------------
     // 1. Open the IndexedDB (clinicDB) if not already open
@@ -57,7 +56,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             const rows = await Promise.all(
                 todayAppointments.map(async (appt) => {
-                    // ---- patient name -------------------------------------------------
                     let patientName = 'Unknown Patient';
                     try {
                         const patient = await clinicDB.getItem('patients', appt.patientId);
@@ -70,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                         console.warn('Could not load patient:', appt.patientId);
                     }
 
-                    // ---- sanitise everything that comes from the DB -----------------
+                    // Sanitise everything that comes from the DB
                     const safeTime   = sanitize(appt.time);
                     const safeName   = sanitize(patientName);
                     const safeReason = sanitize(appt.reason);
@@ -95,7 +93,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     const events = [];
 
     for (const appt of allAppointments) {
-        // ---- patient name (same logic as above) -------------------------
         let patientName = 'Unknown Patient';
         try {
             const patient = await clinicDB.getItem('patients', appt.patientId);
@@ -108,14 +105,14 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.warn('Could not load patient for calendar:', appt.patientId);
         }
 
-        // ---- datetime helpers -------------------------------------------
+        //Datetime helpers
         const startDateTime = `${appt.date}T${appt.time}:00`;
         const [h, m] = appt.time.split(':').map(Number);
         const end = new Date(`${appt.date}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`);
         end.setMinutes(end.getMinutes() + 30);
         const endDateTime = end.toISOString().slice(0, 16);
 
-        // ---- sanitised title --------------------------------------------
+        //Sanitised title
         const safeName   = sanitize(patientName);
         const safeReason = sanitize(appt.reason);
         let title = `${safeName} – ${safeReason}`;
@@ -148,7 +145,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             height:     'auto',
             dayMaxEvents: true,
             eventClick: function (info) {
-                // Even the alert must be safe
                 const safeTitle = sanitize(info.event.title);
                 alert(`Appointment: ${safeTitle}`);
             }

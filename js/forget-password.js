@@ -1,19 +1,17 @@
-// Minimal, self-contained — uses only your existing DB functions
 let currentRole = 'doctor';
 let currentUsername = '';
 let currentLinkedId = '';
 let lastAttemptTime = 0;
-const COOLDOWN_MS = 5000; // 5 seconds
+const COOLDOWN_MS = 5000;
 let otpExpiry = 0;
 let encryptedOtp = null;
 
-// Clear sensitive data on page exit
 window.addEventListener('beforeunload', () => {
   encryptedOtp = null;
   document.querySelectorAll('input').forEach(el => el.value = '');
 });
 
-// Email masking (GDPR-safe)
+// Email masking
 function maskEmail(email) {
   if (!email || !email.includes('@')) return '***@***.***';
   const [local, domain] = email.split('@');
@@ -28,7 +26,7 @@ function maskEmail(email) {
 // OTP encryption helpers
 async function setEncryptedOtp(plainOtp) {
   encryptedOtp = await encryptData(plainOtp);
-  otpExpiry = Date.now() + 2 * 60 * 1000; // 2 minutes
+  otpExpiry = Date.now() + 2 * 60 * 1000;
   return encryptedOtp;
 }
 
@@ -40,7 +38,6 @@ async function getDecryptedOtp() {
   return await decryptData(encryptedOtp);
 }
 
-// =============== COOLDOWN HELPER (Forget Password Only) ===============
 function isOnCooldown() {
   return Date.now() - lastAttemptTime < COOLDOWN_MS;
 }
@@ -49,9 +46,7 @@ function getRemainingCooldown() {
   const elapsed = Date.now() - lastAttemptTime;
   return Math.max(0, COOLDOWN_MS - elapsed);
 }
-// =====================================================================
-
-// =============== VALIDATION HELPERS ===============
+// Validation
 function isValidNHS(nhs) {
   return /^\d{10}$/.test(nhs);
 }
@@ -68,7 +63,6 @@ function isValidName(name) {
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
-// ===============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
   if (!db) await openClinicDB();
@@ -165,7 +159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Step 1: Verify identity
 async function submitIdentity() {
   const forgotPasswordError = document.getElementById('forgotPasswordError');
-  // ===== COOLDOWN CHECK =====
   if (isOnCooldown()) {
     const remaining = getRemainingCooldown();
     const seconds = Math.ceil(remaining / 1000);
@@ -179,7 +172,6 @@ async function submitIdentity() {
     firstName = document.getElementById('doctorFirstName').value.trim();
     lastName = document.getElementById('doctorLastName').value.trim();
 
-    // ✅ Validate doctor inputs
     if (!isValidEmail(identifier)) {
       forgotPasswordError.textContent = 'Please enter a valid email address.';
       return;
@@ -194,7 +186,6 @@ async function submitIdentity() {
     firstName = document.getElementById('patientFirstName').value.trim();
     lastName = document.getElementById('patientLastName').value.trim();
 
-    // ✅ Validate patient inputs
     if (!isValidNHS(identifier)) {
       forgotPasswordError.textContent = 'Please enter a valid 10-digit NHS number.';
       return;
@@ -227,7 +218,6 @@ async function submitIdentity() {
       currentUsername = user.username;
       currentLinkedId = doctor.id;
     } else {
-      // Convert HTML date (YYYY-MM-DD) to DD/MM/YYYY for DB comparison
       function formatDateToDDMMYYYY(isoDate) {
         if (!isoDate) return '';
         const [year, month, day] = isoDate.split('-');
@@ -239,7 +229,7 @@ async function submitIdentity() {
       const decrypted = await Promise.all(patients.map(p => decryptPatientInfo(p)));
       const patient = decrypted.find(p =>
         p.NHS === identifier &&
-        p.DOB === formattedDOB && // ✅ Now matches DD/MM/YYYY
+        p.DOB === formattedDOB &&
         p.First.toLowerCase() === firstName.toLowerCase() &&
         p.Last.toLowerCase() === lastName.toLowerCase()
       );
@@ -254,7 +244,7 @@ async function submitIdentity() {
       currentLinkedId = patient.NHS;
     }
 
-    // ===== RECORD ATTEMPT (for cooldown) =====
+    //  Record Attempt
     lastAttemptTime = Date.now();
 
     // Generate and encrypt OTP
@@ -262,7 +252,7 @@ async function submitIdentity() {
     console.log("Generated OTP: ", plainOtp)
     const encryptedOTP = await setEncryptedOtp(plainOtp);
 
-    // Show email preview (mask patient email)
+    // Show email preview 
     const previewTo = currentRole === 'doctor'
       ? identifier
       : maskEmail(identifier);
@@ -275,9 +265,8 @@ async function submitIdentity() {
     document.getElementById('step2').style.display = 'block';
 
   } catch (err) {
-    // Also record attempt on failure (to prevent brute force)
+    // Record attempt on failure
     lastAttemptTime = Date.now();
-    // ✅ Generic error message (avoid user enumeration)
     forgotPasswordError.textContent = 'Details do not match our records.';
   }
 }
@@ -308,7 +297,7 @@ async function resendOtp(e) {
   e.preventDefault();
   const OTPError = document.getElementById('OTPError');
 
-  // ===== COOLDOWN CHECK FOR RESEND =====
+  // Cooldown check for resend
   if (isOnCooldown()) {
     const remaining = getRemainingCooldown();
     const seconds = Math.ceil(remaining / 1000);
@@ -318,7 +307,7 @@ async function resendOtp(e) {
 
   const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
   await setEncryptedOtp(newOtp);
-  lastAttemptTime = Date.now(); // Record cooldown for resend too
+  lastAttemptTime = Date.now();
 
   console.log(`[MedTrack OTP] Resent: ${newOtp}`);
   document.getElementById('previewOtp').textContent = newOtp;
@@ -365,12 +354,7 @@ async function resetPassword() {
   }
 }
 
-
-// Theme Switcher
-// ---------------------------
-  // THEME SWITCH
-  // ---------------------------
-
+// Theme Switch
 const themeSwitch = document.getElementById("theme-switch");
 
 if (themeSwitch) {

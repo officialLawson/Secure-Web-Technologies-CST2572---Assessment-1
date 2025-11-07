@@ -1,5 +1,3 @@
-// settingpatient.js – Fixed for proper data handling and persistence
-
 document.addEventListener('DOMContentLoaded', async () => {
     /* ==================== 1. AUTH & ROLE CHECK ==================== */
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -40,7 +38,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let record = await clinicDB.getItem('patients', userId);
             if (!record) {
-                // Try as number just in case
                 const fallbackRecord = await clinicDB.getItem('patients', Number(userId));
                 if (fallbackRecord) {
                     record = fallbackRecord;
@@ -56,10 +53,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // Store full original record for cancel/save
             originalData = { ...record };
 
-            // Display name WITHOUT Title (Title is read-only and not editable)
             const fullNameStr = `${record.First} ${record.Last}`.trim();
             els.fullName.value = sanitize(fullNameStr);
             els.email.value = sanitize(record.Email || '');
@@ -132,7 +127,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const address = sanitize(els.address.value);
         const dob = els.dob ? sanitize(els.dob.value) : '';
 
-        // Parse First and Last name (Title is preserved from originalData)
         const nameParts = name.split(/\s+/).filter(Boolean);
         if (nameParts.length < 2) {
             showMsg('Please enter both first and last name.', 'error');
@@ -157,7 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
-            // Build updated record using exact field names from patients.json
             const updated = {
                 id: originalData.id,
                 NHS: String(userId),
@@ -175,8 +168,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showMsg('Critical error: NHS number is missing or invalid.', 'error');
                 return;
             }
-
-            // Encrypt sensitive fields and save
             const encrypted = await clinicDB.encryptPatientInfo(updated);
             encrypted.NHS = String(userId);
             await clinicDB.updateItem('patients', encrypted);
@@ -187,8 +178,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showMsg('Save failed: Record not found after update.', 'error');
                 return;
             }
-
-            // Update originalData for future edits/cancel
             originalData = { ...originalData, ...updated };
 
             disableEdit();
@@ -233,6 +222,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
     
-    /* ==================== 8. INITIALIZE ==================== */
     await loadUserData();
 });

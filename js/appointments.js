@@ -7,7 +7,6 @@ function normalizeTimeHHMM(str) {
 
   let [hour, minute] = parts;
 
-  // Pad with leading zeros if needed
   hour = hour.padStart(2, "0");
   minute = minute.padStart(2, "0");
 
@@ -147,7 +146,6 @@ function renderCancelledAppointments(data) {
   attachAppointmentListeners();
   
   if (window.__markAppointmentCompletedClient && typeof window.__markAppointmentCompletedClient === 'function') {
-      // Re-inject "Mark Completed" buttons after dynamic rendering
       if (window.injectButtonsIntoRows) {
           try { window.injectButtonsIntoRows(); } catch (err) { console.error(err); }
       }
@@ -155,8 +153,8 @@ function renderCancelledAppointments(data) {
 
 }
 
-let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
-let allRenderedAppointments = []; // holds sanitized, display-ready rows
+let allRenderedCofirmedAppointments = [];
+let allRenderedAppointments = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const confirmedInput = document.getElementById("searchConfirmed");
@@ -202,12 +200,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Appointments Management
 async function loadAppointments() {
-  allRenderedAppointments = []; // clear previous cache
-  allRenderedCofirmedAppointments = []; // clear previous cache
+  allRenderedAppointments = [];
+  allRenderedCofirmedAppointments = [];
   const tbody = document.getElementById('appointmentsBody');
   const tbodyConfirmed = document.getElementById('appointmentsConfirmedBody');
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-  tbody.innerHTML = "" // clear previous rows
+  tbody.innerHTML = ""
   tbodyConfirmed.innerHTML = "";
   try {
     const db = await openClinicDB();
@@ -562,12 +560,11 @@ async function loadAppointments() {
                           const appointment = request.result;
                           if (appointment && appointment.status === "Confirmed") {
                             appointment.status = "Completed";
-                            appointment.completedAt = new Date().toISOString(); // optional
+                            appointment.completedAt = new Date().toISOString();
 
                             const updateReq = store.put(appointment);
                             updateReq.onsuccess = () => {
                               console.log(`Appointment ${id} marked as Completed`);
-                              // Refresh the entire table
                               loadAppointments();
                             
                             };
@@ -576,7 +573,7 @@ async function loadAppointments() {
                             updateReq.onerror = () => {
                               alert('Error updating appointment.');
                             };
-                            //  Rebind cancel and complete buttons after render
+                            //  Rebind cancel and complete buttons
                             tbodyConfirmed.querySelectorAll('.btn-cancel').forEach(btn => {
                               btn.addEventListener('click', (e) => {
                                 const id = sanitize(e.target.dataset.id);
@@ -586,7 +583,6 @@ async function loadAppointments() {
 
                             tbodyConfirmed.querySelectorAll('.complete-btn').forEach(btn => {
                               btn.addEventListener('click', async (e) => {
-                                // ...mark completed code...
                               });
                             });
 
@@ -874,10 +870,10 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
           error.innerHTML = `Appointment at this specified time is not possible.`;
           return;
         }
-        // Generate unique appointment ID (e.g., "AP7241")
+        // Generate unique appointment ID
         function generateAppointmentId() {
-          const randomNum = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
-          const timestamp = Date.now().toString().slice(-4); // last 4 digits of timestamp (adds uniqueness)
+          const randomNum = Math.floor(1000 + Math.random() * 9000);
+          const timestamp = Date.now().toString().slice(-4); 
           return `AP${randomNum}${timestamp}`;
         }
         const appointmentId = generateAppointmentId();
@@ -901,7 +897,7 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
           await createNotificationForUser("New appointment scheduled", "A patient has scheduled an appointment", doctorId, "doctor");
           await logCurrentUserActivity("bookAppointment", appointmentId, `Patient with NHS ${patientId} booked an appointment`);
           console.log(`Added appointment: ${reason} (id: ${newAppointment.appointmentId})`);
-          window.location.href = `appointments-${userRole}.html`; // Redirect after adding
+          window.location.href = `appointments-${userRole}.html`;
         };
         addReq.onerror = (e) => {
           console.error("Failed to add appointment:", e.target.error);
@@ -989,7 +985,7 @@ async function editAppointment(event, doctorId, patientId, reason, date, time) {
     console.error("No appointment ID found in URL.");
     return;
   }
-  // Field validation (same structure as patient)
+  // Field validation
     const fields = [
         { value: doctorNameEdit, id: "doctorNameEdit", message: "Please select a doctor." },
         { value: appointmentDateEdit, id: "appointmentDateEdit", message: "Please enter a last name." },
@@ -1001,7 +997,7 @@ async function editAppointment(event, doctorId, patientId, reason, date, time) {
       const error = document.getElementById(`${field.id}-form-error`);
       if (!input || !error) {
         console.warn(`Missing field or error element for ID: ${field.id}`);
-        continue; // Skip this field
+        continue;
       }
       if (!field.value) {
         input.style.borderColor = "red";
@@ -1027,7 +1023,7 @@ async function editAppointment(event, doctorId, patientId, reason, date, time) {
       const db = await openClinicDB();
       const tx = db.transaction('appointments', 'readwrite');
       const store = tx.objectStore("appointments");
-      // 1. Get all appointments to check for duplicates and determine next ID
+      // Get all appointments to check for duplicates and determine next ID
       const getAllReq = store.getAll();
       getAllReq.onsuccess = function() {
         const appointments = getAllReq.result || [];

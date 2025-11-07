@@ -530,7 +530,7 @@ body.dark-mode .password-modal {
 #otpPopup .modal-content,
 #emailPopup .modal-content {
   max-width: 400px;
-  background: rgba(255, 255, 255, 0.95); /* light background for readability */
+  background: rgba(255, 255, 255, 0.95);
   color: #111;
   padding: 30px 25px;
   border-radius: 18px;

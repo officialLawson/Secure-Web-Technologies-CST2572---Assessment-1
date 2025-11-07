@@ -111,6 +111,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         alert('Password set successfully!');
-        // window.location.href = '../HTML/login.html';
     });
 });

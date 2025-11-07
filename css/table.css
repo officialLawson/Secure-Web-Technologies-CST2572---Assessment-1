@@ -78,7 +78,7 @@
 /* Input field */
 .search-container input {
   width: 100%;
-  padding: 8px 12px 8px 32px; /* space for icon */
+  padding: 8px 12px 8px 32px;
   font-size: 14px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
@@ -89,7 +89,7 @@
 }
 
 .search-container input:focus {
-  border-color: var(--accent); /* Indigo */
+  border-color: var(--accent);
   box-shadow: 0 0 0 2px var(--accent-focus-shadow);
 }
 
@@ -105,7 +105,7 @@
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  background-color: var(--accent); /* Indigo */
+  background-color: var(--accent);
   border: none;
   border-radius: 6px;
   cursor: pointer;

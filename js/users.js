@@ -1,6 +1,5 @@
-// Search Feature
-let allRenderedUsers = []; // holds display-ready user data
-let allRenderedPatients = []; // holds structured patient data for search
+let allRenderedUsers = [];
+let allRenderedPatients = [];
 
 function renderUsers(data) {
   const tbody = document.getElementById("usersBody");
@@ -253,7 +252,7 @@ async function fetchAllUserData() {
 
 
 async function fetchAllPatientData() {
-    allRenderedPatients = []; // reset before loading
+    allRenderedPatients = [];
     const tbody = document.getElementById('patientsBody');
     if (!tbody) return console.warn('Table body #patientsBody not found.');
     tbody.innerHTML = '<tr><td colspan="5">Loading patients...</td></tr>';
@@ -300,7 +299,6 @@ async function fetchAllPatientData() {
                     const dob = patient.DOB || 'N/A';
                     const email = patient.Email || 'N/A';
 
-                    // Store structured data for search
                     allRenderedPatients.push({
                         name: patientName,
                         gender,
@@ -309,7 +307,6 @@ async function fetchAllPatientData() {
                         linkedId: u.linkedId
                     });
 
-                    // Render row
                     row.innerHTML = `
                         <td>${DOMPurify.sanitize(patientName)}</td>
                         <td>${DOMPurify.sanitize(gender)}</td>
@@ -345,7 +342,7 @@ async function fetchAllPatientData() {
 async function addPatient(event, userTitle, userFirstName, userLastName, userNHS, userDOB, userGender, userEmail, userTelephone, userAddress) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
-    // ✅ Prevent form submission reload
+    // Prevent form submission reload
     if (event) event.preventDefault();
 
     if (!userTitle) {
@@ -457,8 +454,7 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
         error.innerHTML = ``;
     }
 
-    // Age verification helper function
-    // Function to check if age is above 16
+    // Age verification
     function isAbove16(dob) {
         const birthDate = new Date(dob);
         const today = new Date();
@@ -525,7 +521,6 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
                 return;
             }
 
-            // Hepler function
             function generateNextId(db, storeName, callback) {
                 const transaction = db.transaction(storeName, 'readonly');
                 const store = transaction.objectStore(storeName);
@@ -541,7 +536,6 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
                         }
                         cursor.continue();
                     } else {
-                        // All records scanned, return next ID
                         callback(maxId + 1);
                     }
                 };
@@ -554,7 +548,6 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
 
             generateNextId(db, 'patients', async function (newId) {
                 if (newId !== null) {
-                    // Create the new patient object
                     const newPatient = {
                         id: newId,
                         Title: userTitle,
@@ -575,7 +568,7 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
                     const addReq = store.add(encryptedNewPatient);
 
                     addReq.onsuccess = () => {
-                        // Helper function: generate username and password
+                        // Generate username and password
                         function generateUsernameAndPassword(db, storeName, firstName, lastName, callback) {
                             const baseUsername = (firstName + lastName).toLowerCase().replace(/\s+/g, '');
                             const transaction = db.transaction([storeName], 'readonly');
@@ -644,7 +637,7 @@ async function addPatient(event, userTitle, userFirstName, userLastName, userNHS
                                 usersReq.onsuccess = async function() {
                                     await logCurrentUserActivity("createUser", userNHS, `Admin with ID ${user.linkedId} created a patient`);
                                     console.log(`✅ Added patient.`);
-                                    window.location.href = `users-admin.html`; // Redirect after adding
+                                    window.location.href = `users-admin.html`;
                                 };
                                 
                                 usersReq.onerror = function() {
@@ -696,7 +689,7 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
 
     if (event) event.preventDefault();
 
-    // 🔍 Field validation (same structure as patient)
+    // Field validation
     const fields = [
         { value: userFirstName, id: "userFirstName", message: "Please enter a first name." },
         { value: userLastName, id: "userLastName", message: "Please enter a last name." },
@@ -720,7 +713,7 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
     }
 
 
-    // 🧠 Main logic
+    // Main logic
     try {
         const db = await openClinicDB();
         const tx = db.transaction('doctors', 'readwrite');
@@ -730,7 +723,6 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
         request.onsuccess = async function () {
             const encryptedDoctors = request.result || [];
 
-            // Decrypt all doctors in parallel
             const decryptedDoctors = await Promise.all(
                 encryptedDoctors.map(p => decryptDoctorInfo(p))
             );
@@ -744,7 +736,7 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
                 return;
             }
 
-            // 🔢 ID generator
+            // ID generator
             function generateNextId(db, storeName, callback) {
                 const transaction = db.transaction(storeName, 'readonly');
                 const store = transaction.objectStore(storeName);
@@ -790,7 +782,7 @@ async function addDoctor(event, userFirstName, userLastName, userGender, userEma
                     const addReq = store.add(encryptedNewDoctor);
 
                     addReq.onsuccess = () => {
-                        // 👤 Username + encrypted password
+                        // Username + encrypted password
                         function generateUsernameAndPassword(db, storeName, firstName, lastName, callback) {
                             const baseUsername = (firstName + lastName).toLowerCase().replace(/\s+/g, '');
                             const transaction = db.transaction([storeName], 'readonly');
@@ -903,7 +895,6 @@ async function loadPatientForEdit(patientId) {
         request.onsuccess = async function () {
             const encryptedPatients = request.result || [];
 
-            // Decrypt all patients in parallel
             const decryptedPatients = await Promise.all(
                 encryptedPatients.map(p => decryptPatientInfo(p))
             );
@@ -1057,8 +1048,7 @@ async function editPatient(patientId, updatedData) {
     error.innerHTML = ``;
     }
 
-    // Age verification helper function
-    // Function to check if age is above 16
+    // Age verification
     function isAbove16(dob) {
         const birthDate = new Date(dob);
         const today = new Date();
@@ -1146,7 +1136,6 @@ async function loadDoctorForEdit(doctorId) {
         request.onsuccess = async function () {
             const encryptedDoctors = request.result || [];
 
-            // Decrypt all doctors in parallel
             const decryptedDoctors = await Promise.all(
                 encryptedDoctors.map(p => decryptDoctorInfo(p))
             );
@@ -1160,7 +1149,6 @@ async function loadDoctorForEdit(doctorId) {
                 return;
             }
 
-            // Fill form fields
             document.getElementById('userFirstName').value = doctor.first_name || '';
             document.getElementById('userLastName').value = doctor.last_name || '';
             document.getElementById('userGender').value = doctor.gender || '';
@@ -1180,7 +1168,7 @@ async function loadDoctorForEdit(doctorId) {
 async function editDoctor(doctorId, updatedData) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
-    // 🔍 Field validation (same structure as patient)
+    //  Field validation
     const fields = [
         { value: userFirstName, id: "userFirstName", message: "Please enter a first name." },
         { value: userLastName, id: "userLastName", message: "Please enter a last name." },
@@ -1214,7 +1202,6 @@ async function editDoctor(doctorId, updatedData) {
 
             const encryptedDoctors = getReq.result || [];
 
-            // Decrypt all patients in parallel
             const decryptedDoctors = await Promise.all(
                 encryptedDoctors.map(p => decryptDoctorInfo(p))
             );
@@ -1279,7 +1266,6 @@ function handleEditUser(event) {
 
     // Add unique identifier field
     if (role === 'patient') {
-        // Collect updated form data
         const updatedData = {
             Title: document.getElementById('userTitle').value,
             First: document.getElementById('userFirstName').value,
@@ -1349,12 +1335,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Store the user ID to delete
 let userToDelete = null;
 let userToDeleteId = null;
 let userToDeleteRole = null;
 
-// Attach event listener to delete buttons (dynamic)
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('btn-delete')) {
     e.preventDefault();

@@ -11,17 +11,15 @@
     return;
   }
 
-  // Wait until appointments are loaded and rendered
   function initAfterAppointmentsLoaded() {
 
-    // Only proceed if update function is available
     function updateModalContent() {
       const row = document.querySelector(`tr[data-id="${currentAppointmentId}"]`);
       if (row) {
         const patientName = row.querySelector('td:first-child')?.textContent || 'Unknown Patient';
         const dateTime = row.querySelector('td:nth-child(3)')?.textContent || 'Unknown Date/Time';
         const title = document.getElementById('complete-modal-title');
-        const message = document.getElementById('complete-modal-message'); // add this ID to your modal
+        const message = document.getElementById('complete-modal-message');
 
         if (title) title.textContent = `Mark ${patientName}'s Appointment as Completed?`;
         if (message) message.textContent = `Date/Time: ${dateTime}\nThis will mark the appointment as completed.`;
@@ -45,7 +43,7 @@
       const id = btn.dataset.id;
       if (!id) return;
       currentAppointmentId = id;
-      updateModalContent(); // 👈 Add this line
+      updateModalContent();
       showModal();
     });
     function showModal() {
@@ -73,7 +71,6 @@
 
     async function persistMarkCompleted(id) {
       try {
-        // ONLY use the global IndexedDB updater
         await window.updateAppointmentStatus(id, 'Completed');
         console.log(`Appointment ${id} marked as Completed in IndexedDB`);
       } catch (err) {
@@ -172,7 +169,6 @@
         obs.observe(tbody, { childList: true, subtree: true });
       });
     } catch (e) {
-      /* ignore */
     }
   }
 
@@ -185,7 +181,6 @@
     document.addEventListener('appointmentsRendered', initAfterAppointmentsLoaded, { once: true });
   }
 
-  // Expose helper
   window.__markAppointmentCompletedClient = function (id) {
     if (id && typeof window.updateAppointmentStatus === 'function') {
       const row = document.querySelector(`tr[data-id="${CSS.escape(id)}"]`);

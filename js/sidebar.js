@@ -1,7 +1,7 @@
     // Show user role from login
     const role = localStorage.getItem("currentUser");
     if (!role) {
-        window.location.href = "../html/login.html"; // redirect if not logged in
+        window.location.href = "../html/login.html";
     } else {
         const user = JSON.parse(role);
     }
@@ -11,7 +11,7 @@
     const sidebar = document.getElementById('sidebar');
 
     mobileToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active'); // for small screens only (CSS handles transform)
+        sidebar.classList.toggle('active');
     });
 
     // Collapse/expand for desktop
@@ -23,11 +23,10 @@
         sidebar.style.transition = 'width 0.5s ease';
         mainContent.style.transition = 'margin-left 0.5s ease';
 
-        // optional: move focus back to collapse button for accessibility
         collapseToggle.focus();
     });
 
-    // Close mobile sidebar when clicking outside (nice UX)
+    // Close mobile sidebar when clicking outside
     document.addEventListener('click', (e) => {
         if (window.innerWidth <= 768) {
             if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target) && sidebar.classList.contains('active')) {
@@ -36,7 +35,7 @@
         }
     });
 
-    // ensure layout responds on resize (adjust main margin)
+    // ensure layout responds on resize
     const adjustMainMargin = () => {
         if (sidebar.classList.contains('collapsed')) {
             mainContent.style.marginLeft = '80px';
@@ -80,7 +79,7 @@
     // Open modal when sign-out button is clicked
     if (signOutBtn) {
         signOutBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
+            e.preventDefault();
             if (signOutModal) {
                 signOutModal.classList.remove('hidden');
             }
@@ -120,7 +119,7 @@
     // Open modal when sign-out button is clicked
     if (addUser) {
         addUser.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
+            e.preventDefault();
             if (addUserModal) {
                 addUserModal.classList.remove('hidden');
             }
