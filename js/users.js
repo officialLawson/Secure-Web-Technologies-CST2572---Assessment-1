@@ -1,5 +1,6 @@
 let allRenderedUsers = [];
 let allRenderedPatients = [];
+let UserIDtoRender = null;
 
 function renderUsers(data) {
   const tbody = document.getElementById("usersBody");
@@ -908,6 +909,15 @@ async function loadPatientForEdit(patientId) {
                 return;
             }
 
+            // Helper functions
+            function convertDateFormat(dateStr) {
+                const [day, month, year] = dateStr.split('/');
+                if (!day || !month || !year) {
+                    throw new Error('Invalid date format. Expected dd/mm/yyyy');
+                }
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            }
+
             // Fill form fields
             document.getElementById('userTitle').value = patient.Title || '';
             document.getElementById('userFirstName').value = patient.First || '';
@@ -1077,17 +1087,27 @@ async function editPatient(patientId, updatedData) {
         const db = await openClinicDB();
         const tx = db.transaction('patients', 'readwrite');
         const store = tx.objectStore('patients');
-        const getReq = store.get(patientId);
+        const getReq = store.getAll();
 
         getReq.onsuccess = async function () {
-            const existingPatient = getReq.result;
+            const encryptedPatients = getReq.result || [];
+
+            
+
+            // Decrypt all patients in parallel
+            const decryptedPatients = await Promise.all(
+                encryptedPatients.map(p => decryptPatientInfo(p))
+            );
+
+            const existingPatient = decryptedPatients.find(p => p.NHS == updatedData.NHS);
+
             if (!existingPatient) {
                 console.error("❌ Patient not found.");
                 return;
             }
 
-            const nhsSame = patients.find(p => 
-                p.NHS === userNHS
+            const nhsSame = decryptedPatients.find(p => 
+                p.NHS === updatedData.userNHS
             );
 
             if (nhsSame) {
@@ -1168,27 +1188,82 @@ async function loadDoctorForEdit(doctorId) {
 async function editDoctor(doctorId, updatedData) {
     const user = JSON.parse(localStorage.getItem('currentUser'));
 
-    //  Field validation
-    const fields = [
-        { value: userFirstName, id: "userFirstName", message: "Please enter a first name." },
-        { value: userLastName, id: "userLastName", message: "Please enter a last name." },
-        { value: userGender, id: "userGender", message: "Please enter the gender." },
-        { value: userEmail, id: "userEmail", message: "Please enter an email address." },
-        { value: userTelephone, id: "userTelephone", message: "Please enter a telephone." },
-        { value: userAddress, id: "userAddress", message: "Please enter an address." }
-    ];
+    if (!updatedData.first_name) {
+    const inputError = document.getElementById("userFirstName");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userFirstName-form-error");
+    error.innerHTML = `Please enter a first name.`;
+    return;
+    } else {
+    const inputError = document.getElementById("userFirstName");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userFirstName-form-error");
+    error.innerHTML = ``;
+    }
 
-    for (const field of fields) {
-        const input = document.getElementById(field.id);
-        const error = document.getElementById(`${field.id}-form-error`);
-        if (!field.value) {
-            input.style.borderColor = "red";
-            error.innerHTML = field.message;
-            return;
-        } else {
-            input.style.borderColor = "";
-            error.innerHTML = "";
-        }
+    if (!updatedData.last_name) {
+    const inputError = document.getElementById("userLastName");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userLastName-form-error");
+    error.innerHTML = `Please enter a last name.`;
+    return;
+    } else {
+    const inputError = document.getElementById("userLastName");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userLastName-form-error");
+    error.innerHTML = ``;
+    }
+
+    if (!updatedData.gender) {
+    const inputError = document.getElementById("userGender");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userGender-form-error");
+    error.innerHTML = `Please enter the gender.`;
+    return;
+    } else {
+    const inputError = document.getElementById("userGender");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userGender-form-error");
+    error.innerHTML = ``;
+    }
+
+    if (!updatedData.email) {
+    const inputError = document.getElementById("userEmail");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userEmail-form-error");
+    error.innerHTML = `Please enter an email address.`;
+    return;
+    } else {
+    const inputError = document.getElementById("userEmail");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userEmail-form-error");
+    error.innerHTML = ``;
+    }
+
+    if (!updatedData.Telephone) {
+    const inputError = document.getElementById("userTelephone");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userTelephone-form-error");
+    error.innerHTML = `Please enter a telephone.`;
+    return;
+    } else {
+    const inputError = document.getElementById("userTelephone");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userTelephone-form-error");
+    error.innerHTML = ``;
+    }
+
+    if (!updatedData.Address) {
+    const inputError = document.getElementById("userAddress");
+    inputError.style.borderColor = "red";
+    const error = document.getElementById("userAddress-form-error");
+    error.innerHTML = `Please enter an address.`;
+    return;
+    } else {
+    const inputError = document.getElementById("userAddress");
+    inputError.style.borderColor = "";
+    const error = document.getElementById("userAddress-form-error");
+    error.innerHTML = ``;
     }
 
 
@@ -1376,10 +1451,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 await logCurrentUserActivity(
                   "deleteUser",
                   userToDeleteId,
-                  `Admin with ID ${user.linkedId} deleted a patient`
+                  `Admin with deleted a patient`
                 );
               } else if (userToDeleteRole === "doctor") {
                 const doctorId = parseInt(userToDeleteId);
+                console.log(userToDeleteId);
                 await deleteLinkedRecords("appointments", "doctorId", doctorId);
                 await deleteLinkedRecords("notifications", "recipientId", doctorId);
                 await deleteLinkedRecords("activityLogs", "userId", doctorId);
@@ -1388,7 +1464,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 await logCurrentUserActivity(
                   "deleteUser",
                   userToDeleteId,
-                  `Admin with ID ${user.linkedId} deleted a doctor`
+                  `Admin with deleted a doctor`
                 );
               }
 

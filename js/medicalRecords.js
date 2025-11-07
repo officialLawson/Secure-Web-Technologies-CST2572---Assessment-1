@@ -302,7 +302,7 @@ async function loadSingleRecordView() {
         recordDate.textContent = sanitize(rec.dateTime || '-');
         recordDiagnosis.textContent = sanitize(rec.diagnosis || '-');
         recordTreatment.textContent = sanitize(rec.treatment || '-');
-        
+
         // Edit button
         const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
         if (editBtn && user.role === 'doctor' && user.linkedId == rec.doctorId) {
