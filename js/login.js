@@ -2,6 +2,42 @@ const enc = new TextEncoder();
 const dec = new TextDecoder();
 let confirmedPassword = null;
 
+// Helper functions
+function formatDateToDDMMYYYY(isoDate) {
+  if (!isoDate) return '';
+  const [year, month, day] = isoDate.split('-');
+  return `${day}/${month}/${year}`;
+}
+
+async function checkNHSExists(regNHS) {
+  if (!regNHS) return false;
+
+  try {
+    const db = await openClinicDB();
+    const tx = db.transaction("patients", "readonly");
+    const store = tx.objectStore("patients");
+    const request = store.getAll();
+
+    return await new Promise((resolve, reject) => {
+      request.onsuccess = () => {
+        const patients = request.result || [];
+        const exists = patients.some(p => p.nhs === regNHS);
+        resolve(exists);
+      };
+      request.onerror = () => reject(false);
+    });
+  } catch (err) {
+    console.error("Error checking NHS:", err);
+    return false;
+  }
+}
+
+function capitalizeFirst(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+
+
 /* ========== Decrypt Data ========== */
 async function decryptData(encrypted) {
   try {
@@ -19,6 +55,7 @@ async function decryptData(encrypted) {
       key,
       data
     );
+    
 
     return dec.decode(decrypted);
   } catch (err) {
@@ -137,6 +174,7 @@ async function loginUser(username, password, role) {
 
   // Decrypt stored password
   const decryptedPassword = await decryptData(user.password);
+  console.log(decryptedPassword);
 
   if (!decryptedPassword) {
     return { success: false, message: "Error reading password. Please try again." };
@@ -382,8 +420,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ---------------------------
   openPasswordBtn.addEventListener("click", () => {
     const regNHS = document.getElementById("regNHS");
-    const regFirstName = document.getElementById("regFirstName");
-    const regLastName = document.getElementById("regLastName");
+    const regFirstNameNormal = document.getElementById("regFirstName");
+    const regLastNameNormal = document.getElementById("regLastName");
+    const regFirstName = capitalizeFirst(regFirstNameNormal.value.trim());
+    const regLastName = capitalizeFirst(regLastNameNormal.value.trim());
     const regGender = document.getElementById("regGender");
     const regAddress = document.getElementById("regAddress");
     const regEmail = document.getElementById("regEmail");
@@ -399,6 +439,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const nhsValue = regNHS.value.trim();
     const isValidNHS = /^\d{10}$/.test(nhsValue);
+
+    checkNHSExists(regNHS).then(exists => {
+      if (exists) {
+        nhsWarning.textContent = "This NHS number is already registered.";
+        nhsWarning.style.display = "block";
+      } else {
+        nhsWarning.style.display = "none";
+      }
+    });
 
     nhsWarning.style.display = isValidNHS ? "none" : "block";
     if (!isValidNHS) return;
@@ -450,7 +499,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    confirmedPassword = password1;
+    confirmedPassword = password1.value;
 
     passwordModal.classList.add("hidden");
     emailModal.classList.remove("hidden");
@@ -497,7 +546,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           const regFirstName = document.getElementById("regFirstName").value.trim();
           const regLastName = document.getElementById("regLastName").value.trim();
           const regGender = document.getElementById("regGender").value.trim();
-          const regDOB = document.getElementById("regDOB").value.trim();
+          const unformattedRegDOB = document.getElementById("regDOB").value.trim();
+          const regDOB = formatDateToDDMMYYYY(unformattedRegDOB);
           const regAddress = document.getElementById("regAddress").value.trim();
           const regEmail = document.getElementById("regEmail").value.trim();
           const regTelephone = document.getElementById("regTelephone").value.trim();
@@ -557,6 +607,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
               // 6. Encrypt password
               const encryptedPassword = await encryptPassword(regPassword);
+              console.log(regPassword);
+              console.log(encryptedPassword);
 
               // 7. Store in users table
               const addUserTx = db.transaction("users", "readwrite");
@@ -674,7 +726,8 @@ verifyOtpBtn.addEventListener("click", () => {
           const regFirstName = document.getElementById("regFirstName").value.trim();
           const regLastName = document.getElementById("regLastName").value.trim();
           const regGender = document.getElementById("regGender").value.trim();
-          const regDOB = document.getElementById("regDOB").value.trim();
+          const unformattedRegDOB = document.getElementById("regDOB").value.trim();
+          const regDOB = formatDateToDDMMYYYY(unformattedRegDOB);
           const regAddress = document.getElementById("regAddress").value.trim();
           const regEmail = document.getElementById("regEmail").value.trim();
           const regTelephone = document.getElementById("regTelephone").value.trim();

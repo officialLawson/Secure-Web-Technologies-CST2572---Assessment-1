@@ -29,6 +29,7 @@ function maskEmail(email) {
 async function setEncryptedOtp(plainOtp) {
   encryptedOtp = await encryptData(plainOtp);
   otpExpiry = Date.now() + 2 * 60 * 1000; // 2 minutes
+  return encryptedOtp;
 }
 
 async function getDecryptedOtp() {
@@ -163,11 +164,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Step 1: Verify identity
 async function submitIdentity() {
+  const forgotPasswordError = document.getElementById('forgotPasswordError');
   // ===== COOLDOWN CHECK =====
   if (isOnCooldown()) {
     const remaining = getRemainingCooldown();
     const seconds = Math.ceil(remaining / 1000);
-    alert(`Please wait ${seconds} second(s) before trying again.`);
+    forgotPasswordError.textContent = `Please wait ${seconds} second(s) before trying again.`;
     return;
   }
 
@@ -179,11 +181,11 @@ async function submitIdentity() {
 
     // ✅ Validate doctor inputs
     if (!isValidEmail(identifier)) {
-      alert('Please enter a valid email address.');
+      forgotPasswordError.textContent = 'Please enter a valid email address.';
       return;
     }
     if (!isValidName(firstName) || !isValidName(lastName)) {
-      alert('Please enter valid first and last names (letters, spaces, hyphens, or apostrophes only).');
+      forgotPasswordError.textContent = 'Please enter valid first and last names (letters, spaces, hyphens, or apostrophes only).';
       return;
     }
   } else {
@@ -194,15 +196,15 @@ async function submitIdentity() {
 
     // ✅ Validate patient inputs
     if (!isValidNHS(identifier)) {
-      alert('Please enter a valid 10-digit NHS number.');
+      forgotPasswordError.textContent = 'Please enter a valid 10-digit NHS number.';
       return;
     }
     if (!isValidISODate(dob)) {
-      alert('Please select a valid date of birth.');
+      forgotPasswordError.textContent = 'Please select a valid date of birth.';
       return;
     }
     if (!isValidName(firstName) || !isValidName(lastName)) {
-      alert('Please enter valid first and last names (letters, spaces, hyphens, or apostrophes only).');
+      forgotPasswordError.textContent = 'Please enter valid first and last names (letters, spaces, hyphens, or apostrophes only).';
       return;
     }
   }
@@ -241,6 +243,9 @@ async function submitIdentity() {
         p.First.toLowerCase() === firstName.toLowerCase() &&
         p.Last.toLowerCase() === lastName.toLowerCase()
       );
+      const patientFiltered = decrypted.find(p=> p.NHS === identifier) || [];
+      console.log(formattedDOB)
+      console.log(patientFiltered.DOB);
       if (!patient) throw new Error('Patient not found.');
       const users = await getAllItems('users');
       user = users.find(u => u.linkedId === patient.NHS && u.role === 'patient');
@@ -254,7 +259,8 @@ async function submitIdentity() {
 
     // Generate and encrypt OTP
     const plainOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    await setEncryptedOtp(plainOtp);
+    console.log("Generated OTP: ", plainOtp)
+    const encryptedOTP = await setEncryptedOtp(plainOtp);
 
     // Show email preview (mask patient email)
     const previewTo = currentRole === 'doctor'
@@ -272,7 +278,7 @@ async function submitIdentity() {
     // Also record attempt on failure (to prevent brute force)
     lastAttemptTime = Date.now();
     // ✅ Generic error message (avoid user enumeration)
-    alert('Details do not match our records.');
+    forgotPasswordError.textContent = 'Details do not match our records.';
   }
 }
 
@@ -281,8 +287,9 @@ async function verifyOtp() {
   const input = document.getElementById('otpInput').value.trim();
   const realOtp = await getDecryptedOtp();
 
+  const OTPError = document.getElementById('OTPError');
   if (!realOtp) {
-    alert('OTP has expired. Please request a new one.');
+    OTPError.textContent = 'OTP has expired. Please request a new one.';
     return;
   }
 
@@ -292,19 +299,20 @@ async function verifyOtp() {
     document.getElementById('step3').style.display = 'block';
     document.getElementById('emailPreview').style.display = 'none';
   } else {
-    alert('Invalid OTP. Please try again.');
+    OTPError.textContent = 'Invalid OTP. Please try again.';
   }
 }
 
 // Resend OTP
 async function resendOtp(e) {
   e.preventDefault();
+  const OTPError = document.getElementById('OTPError');
 
   // ===== COOLDOWN CHECK FOR RESEND =====
   if (isOnCooldown()) {
     const remaining = getRemainingCooldown();
     const seconds = Math.ceil(remaining / 1000);
-    alert(`Please wait ${seconds} second(s) before resending.`);
+    OTPError.textContent = `Please wait ${seconds} second(s) before resending.`;
     return;
   }
 
@@ -313,7 +321,6 @@ async function resendOtp(e) {
   lastAttemptTime = Date.now(); // Record cooldown for resend too
 
   console.log(`[MedTrack OTP] Resent: ${newOtp}`);
-  alert(`New OTP: ${newOtp}`);
   document.getElementById('previewOtp').textContent = newOtp;
 }
 
@@ -322,12 +329,13 @@ async function resetPassword() {
   const pass1 = document.getElementById('newPassword').value;
   const pass2 = document.getElementById('confirmPassword').value;
 
+  const resetPasswordError = document.getElementById('resetPasswordError');
   if (pass1.length < 6) {
-    alert('Password must be at least 6 characters.');
+    resetPasswordError.textContent = 'Password must be at least 6 characters.';
     return;
   }
   if (pass1 !== pass2) {
-    alert('Passwords do not match.');
+    resetPasswordError.textContent = 'Passwords do not match.';
     return;
   }
 
@@ -348,11 +356,35 @@ async function resetPassword() {
     user.password = encrypted;
     await updateItem('users', user);
 
-    alert('✅ Password updated! Redirecting to login...');
+    console.log('✅ Password updated! Redirecting to login...');
     window.location.href = 'login.html';
 
   } catch (err) {
-    alert('Failed to update password. Please try again.');
+    console.warn('Failed to update password. Please try again.');
     console.error(err);
+  }
+}
+
+
+// Theme Switcher
+// ---------------------------
+  // THEME SWITCH
+  // ---------------------------
+
+const themeSwitch = document.getElementById("theme-switch");
+
+if (themeSwitch) {
+  themeSwitch.addEventListener("click", () => {
+    document.body.classList.toggle("darkmode");
+    const isDark = document.body.classList.contains("darkmode");
+    localStorage.setItem("darkmode", isDark ? "active" : "null");
+  });
+
+  const savedTheme = localStorage.getItem("darkmode");
+  if (
+    savedTheme === "dark" ||
+    (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) {
+    document.body.classList.add("darkmode");
   }
 }
