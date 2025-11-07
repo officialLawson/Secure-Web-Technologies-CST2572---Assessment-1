@@ -111,7 +111,8 @@ async function loadMedicines() {
 async function addMedicine(drugName) {
   const user = JSON.parse(localStorage.getItem('currentUser'));
   if (!drugName || !drugName.trim()) {
-    alert("Please enter a valid medicine name.");
+    const error = document.getElementById("medicineName-form-error");
+    error.innerHTML = "Please enter a valid medicine name.";
     return;
   }
   const drug = drugName.trim();
@@ -221,16 +222,29 @@ async function editMedicine(event, id, newDrugName) {
         const medicines = request.result || [];
         const medicine = medicines.find(m => m.id === parseInt(id));
         if (!medicine) {
-          console.error("Medicine not found");
-          alert("Medicine not found.");
+          const error = document.getElementById("medicineName-form-error");
+          error.innerHTML = "Medicine not found.";
           return;
         }
-        const newDrugNameLower = newDrugName.toLowerCase();
-        const exists = medicines.find(m => m.Drug.toLowerCase() === newDrugNameLower);
-        if (exists) {
-          alert(`Medicine "${newDrugName}" already exists.`);
+        if (!newDrugName || typeof newDrugName !== 'string') {
+          const error = document.getElementById("medicineName-form-error");
+          error.textContent ='Invalid drug name';
           return;
         }
+        const newDrugNameLower = newDrugName.trim().toLowerCase();
+        const currentDrugNameLower = medicine.Drug.trim().toLowerCase();
+
+        // Only check for duplicates if the name has changed
+        if (newDrugNameLower !== currentDrugNameLower) {
+          const exists = medicines.find(m => m.id !== id && m.Drug.trim().toLowerCase() === newDrugNameLower);
+          if (exists) {
+            const error = document.getElementById("medicineName-form-error");
+            error.textContent = `Medicine "${newDrugName}" already exists.`;
+            return;
+          }
+        }
+
+
         // Update and save
         medicine.Drug = newDrugName;
         const updateRequest = store.put(medicine);
@@ -286,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (confirmDeleteBtn) {
     confirmDeleteBtn.addEventListener("click", async () => {
       const user = JSON.parse(localStorage.getItem("currentUser") || "null");
-      if (!user || !user.linkedId) {
+      if (!user) {
         console.error("No valid user found.");
         return;
       }
@@ -299,14 +313,26 @@ document.addEventListener("DOMContentLoaded", () => {
           const request = store.delete(Number(medicineToDelete));
 
           request.onsuccess = async () => {
-            await logCurrentUserActivity(
-              "deleteMedicine",
-              Number(medicineToDelete),
-              `User with ID ${user.linkedId} deleted a medicine`
-            );
-            if (typeof loadMedicines === "function") loadMedicines();
-            if (deleteModal) deleteModal.classList.add("hidden");
-            medicineToDelete = null;
+            if (user.role === 'doctor') {
+              await logCurrentUserActivity(
+                "deleteMedicine",
+                Number(medicineToDelete),
+                `Doctor with ID ${user.linkedId} deleted a medicine`
+              );
+              if (typeof loadMedicines === "function") loadMedicines();
+              if (deleteModal) deleteModal.classList.add("hidden");
+              medicineToDelete = null;
+            } else {
+              await logCurrentUserActivity(
+                "deleteMedicine",
+                Number(medicineToDelete),
+                `Admin deleted a medicine`
+              );
+              if (typeof loadMedicines === "function") loadMedicines();
+              if (deleteModal) deleteModal.classList.add("hidden");
+              medicineToDelete = null;
+            }
+             
           };
 
           request.onerror = () => {
