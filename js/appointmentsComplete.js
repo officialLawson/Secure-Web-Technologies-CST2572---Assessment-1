@@ -34,7 +34,7 @@
 
     function hideModal() {
       const m = document.getElementById('complete-modal');
-      if (m) m.classList.add('hidden'), m.setAttribute('aria-hidden', 'true');
+      if (m) m.classList.add('hidden'), m.setAttribute('hidden', 'true');
     }
     document.addEventListener('click', function (e) {
       const btn = e.target.closest('.complete-btn');
@@ -73,6 +73,7 @@
       try {
         await window.updateAppointmentStatus(id, 'Completed');
         console.log(`Appointment ${id} marked as Completed in IndexedDB`);
+        location.reload();
       } catch (err) {
         console.error('persistMarkCompleted failed:', err);
       }
@@ -90,7 +91,7 @@
       rows.forEach(row => {
         if (row.querySelector('.complete-btn')) return;
         const status = (row.dataset.status || '').toLowerCase();
-        if (status === 'completed') return;
+        if (status !== 'Completed') return;
 
         const actionsCell = row.querySelector('td.actions, td:last-child') || row.querySelector('td:nth-last-child(1)');
         const btn = document.createElement('button');
@@ -117,7 +118,7 @@
         const id = row.dataset.id;
         const dateStr = row.dataset.date;
         const status = (row.dataset.status || '').toLowerCase();
-        if (!id || !dateStr || status === 'completed') return;
+        if (!id || !dateStr || status === 'Completed') return;
 
         const apptDate = new Date(dateStr);
         if (isNaN(apptDate)) return;
@@ -191,4 +192,6 @@
       }
     }
   };
+
+
 })();
