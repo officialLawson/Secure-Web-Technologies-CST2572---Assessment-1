@@ -167,11 +167,11 @@ document.addEventListener("DOMContentLoaded", () => {
       };
 
       if (user.role.toLowerCase() === "patient") {
-        deletePatientCompletely(user.linkedId);
         await notifyAdmins(`Patient with NHS ${user.linkedId} has deleted their account and linked data`);
+        deletePatientCompletely(user.linkedId, user.username);
       } else if (user.role.toLowerCase() === "doctor") {
-        deleteDoctorCompletely(user.linkedId);
         await notifyAdmins(`Doctor with ID ${user.linkedId} has deleted their account and linked data`);
+        deleteDoctorCompletely(user.linkedId, user.username);
       }
     });
   }

@@ -21,7 +21,8 @@ async function checkNHSExists(regNHS) {
     return await new Promise((resolve, reject) => {
       request.onsuccess = () => {
         const patients = request.result || [];
-        const exists = patients.some(p => p.nhs === regNHS);
+        const exists = patients.some(p => p.NHS === regNHS);
+        const existingNHS = patients.find(p => p.NHS === regNHS);
         resolve(exists);
       };
       request.onerror = () => reject(false);
@@ -215,6 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const regDOB = document.getElementById("regDOB");
   const ageWarning = document.getElementById("ageWarning");
   const nhsWarning = document.getElementById("nhsWarning");
+  const nhsExists = document.getElementById("nhsExists");
   const emailWarning = document.getElementById("emailWarning");
   const phoneWarning = document.getElementById("phoneWarning");
   const allWarning = document.getElementById("allWarning");
@@ -461,7 +463,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ---------------------------
   // REGISTRATION FIELD VALIDATION
   // ---------------------------
-  openPasswordBtn.addEventListener("click", () => {
+  openPasswordBtn.addEventListener("click", async () => {
     const regNHS = document.getElementById("regNHS");
     const regFirstNameNormal = document.getElementById("regFirstName");
     const regLastNameNormal = document.getElementById("regLastName");
@@ -483,14 +485,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const nhsValue = regNHS.value.trim();
     const isValidNHS = /^\d{10}$/.test(nhsValue);
 
-    checkNHSExists(regNHS).then(exists => {
+    try {
+      const exists = await checkNHSExists(nhsValue);
       if (exists) {
-        nhsWarning.textContent = "This NHS number is already registered.";
-        nhsWarning.style.display = "block";
+        nhsExists.style.display = "block";
+        return;
       } else {
         nhsWarning.style.display = "none";
       }
-    });
+    } catch (err) {
+      console.error("Error checking NHS:", err);
+    }
 
     nhsWarning.style.display = isValidNHS ? "none" : "block";
     if (!isValidNHS) return;
