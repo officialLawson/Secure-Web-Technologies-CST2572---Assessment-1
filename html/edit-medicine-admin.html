@@ -172,13 +172,6 @@
             window.location.href = `dashboard-${userRole}.html`;
         } 
 
-        const back = document.getElementById('back');
-        back.addEventListener('click', (e) => {
-            e.preventDefault();
-            const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
-            window.location.href = `medicines-admin.html`;
-        });
-
         const profileButton = document.getElementById('profileButton');
         const profileModal = document.getElementById('profileModal');
 
