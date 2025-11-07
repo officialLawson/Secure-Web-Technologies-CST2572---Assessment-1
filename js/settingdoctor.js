@@ -1,4 +1,4 @@
-// settingdoctor.js – Ensure clean save (no extras)
+// settingdoctor.js — Fixed for proper data fetch/display
 
 document.addEventListener('DOMContentLoaded', async () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
@@ -28,29 +28,53 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             await clinicDB.openClinicDB();
             let record = await clinicDB.getItem('doctors', userId);
-            if (record) {
-                record = await clinicDB.decryptDoctorInfo(record);
-                // Extra cleanup here too
-                const extras = ['Title', 'NHS', 'Specialization', 'StaffID', 'first_name', 'last_name', 'email', 'gender'];
-                extras.forEach(key => delete record[key]);
-            }
-
+            
+            console.log('Raw doctor record:', record);
+            
             if (!record) {
-                showMsg('Doctor not found.', 'error');
+                showMsg('Doctor record not found.', 'error');
                 return;
             }
 
-            originalData = { ...record };
+            // Decrypt the doctor info
+            record = await clinicDB.decryptDoctorInfo(record);
+            
+            console.log('Decrypted doctor record:', record);
 
-            const fullNameStr = `Dr ${record.First || ''} ${record.Last || ''}`.trim();
+            // Handle multiple possible field names from JSON (fallbacks)
+            const firstName = record.first_name || record.First || record.firstName || '';
+            const lastName = record.last_name || record.Last || record.lastName || '';
+            const email = record.email || record.Email || '';
+            const gender = record.gender || record.Gender || '';
+            const address = record.Address || record.address || '';
+            const telephone = record.Telephone || record.telephone || record.phone || '';
+
+            if (!firstName || !lastName) {
+                showMsg(`Doctor profile incomplete - Name data: First="${firstName}", Last="${lastName}"`, 'error');
+                console.error('Available fields:', Object.keys(record));
+                return;
+            }
+
+            // Normalize to canonical field names from doctors.json
+            originalData = {
+                id: record.id,
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                gender: gender,
+                Address: address,
+                Telephone: telephone
+            };
+
+            const fullNameStr = `Dr ${originalData.first_name} ${originalData.last_name}`.trim();
             els.fullName.value = sanitize(fullNameStr);
-            els.email.value = sanitize(record.Email || '');
-            els.phone.value = sanitize(record.Telephone || '');
-            els.address.value = sanitize(record.Address || '');
+            els.email.value = sanitize(originalData.email);
+            els.phone.value = sanitize(originalData.Telephone);
+            els.address.value = sanitize(originalData.Address);
 
         } catch (err) {
-            console.error(err);
-            showMsg('Failed to load data.', 'error');
+            console.error('Load error:', err);
+            showMsg('Failed to load profile data: ' + err.message, 'error');
         }
     }
 
@@ -61,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function enableEdit() {
-        ['fullName','email','phone','address'].forEach(id => {
+        ['fullName', 'email', 'phone', 'address'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.readOnly = false;
@@ -74,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function disableEdit() {
-        ['fullName','email','phone','address'].forEach(id => {
+        ['fullName', 'email', 'phone', 'address'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.readOnly = true;
@@ -89,11 +113,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     els.editBtn.addEventListener('click', enableEdit);
 
     els.cancelBtn.addEventListener('click', () => {
-        const fullNameStr = `Dr ${originalData.First || ''} ${originalData.Last || ''}`.trim();
+        const fullNameStr = `Dr ${originalData.first_name} ${originalData.last_name}`.trim();
         els.fullName.value = sanitize(fullNameStr);
-        els.email.value = sanitize(originalData.Email || '');
-        els.phone.value = sanitize(originalData.Telephone || '');
-        els.address.value = sanitize(originalData.Address || '');
+        els.email.value = sanitize(originalData.email);
+        els.phone.value = sanitize(originalData.Telephone);
+        els.address.value = sanitize(originalData.Address);
         disableEdit();
         showMsg('Changes cancelled.');
     });
@@ -109,8 +133,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             showMsg('Enter first and last name.', 'error');
             return;
         }
-        const First = nameParts[0];
-        const Last = nameParts.slice(1).join(' ');
+        const first_name = nameParts[0];
+        const last_name = nameParts.slice(1).join(' ');
 
         if (!email.includes('@') || !email.includes('.')) {
             showMsg('Valid email required.', 'error');
@@ -118,31 +142,34 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         try {
+            // Use EXACT field names from doctors.json
             const updated = {
                 id: originalData.id,
-                First,
-                Last,
-                Email: email,
-                Gender: originalData.Gender || '',
-                Address: address,
-                Telephone: phone
+                first_name: first_name,
+                last_name: last_name,
+                email: email,              // lowercase — required for login index
+                gender: originalData.gender,
+                Address: address,          // capitalized as in schema
+                Telephone: phone           // capitalized as in schema
             };
 
-            // Explicitly remove any patient extras before encrypt
-            ['Title', 'NHS', 'DOB', 'Specialization', 'StaffID', 'first_name', 'last_name', 'email', 'gender'].forEach(key => delete updated[key]);
+            console.log('Updating with:', updated);
 
+            // Encrypt (only Address & Telephone are encrypted; email stays plain)
             const encrypted = await clinicDB.encryptDoctorInfo(updated);
+            console.log('Encrypted data:', encrypted);
+            
             await clinicDB.updateItem('doctors', encrypted);
 
-            // Reload fresh
+            // Reload fresh data
             const fresh = await clinicDB.getItem('doctors', userId);
             originalData = await clinicDB.decryptDoctorInfo(fresh);
 
             disableEdit();
-            showMsg('Updated successfully!', 'success');
+            showMsg('Profile updated successfully!', 'success');
         } catch (err) {
-            console.error(err);
-            showMsg('Save failed.', 'error');
+            console.error('Save error:', err);
+            showMsg('Save failed: ' + err.message, 'error');
         }
     });
 
@@ -173,7 +200,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('newPassword').value = '';
             document.getElementById('confirmPassword').value = '';
         } catch (err) {
-            alert('Password update failed.');
+            console.error('Password update error:', err);
+            showMsg('Password update failed.', 'error');
         }
     });
 

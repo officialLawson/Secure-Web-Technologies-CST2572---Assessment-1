@@ -95,53 +95,31 @@ async function decryptPatientInfo(p) {
 }
 
 async function encryptDoctorInfo(d) {
+  // Only encrypt sensitive fields that should NOT be in plain text
+  // Note: 'email' is intentionally NOT encrypted because login.js needs it plain for indexing
   const sensitive = {
-    Address: d.Address || '',
-    Telephone: d.Telephone || ''
+    Address: d.Address,
+    Telephone: d.Telephone
   };
-
-  const payload = await encryptData(JSON.stringify(sensitive));
-
-  const clean = {
-    id: d.id || d.StaffID || 1,
-    First: d.First || 'Unknown',
-    Last: d.Last || 'Unknown',
-    Email: d.Email || '',
-    Gender: d.Gender || ''
-  };
-
-  const extras = [
-    'Title', 'NHS', 'Specialization', 'StaffID', 'DOB', 'Phone',
-    'first_name', 'last_name', 'email', 'gender', 'address', 'telephone',
-    'firstName', 'lastName', 'staffId', 'specialization'
-  ];
-  extras.forEach(key => delete d[key]);
-
-  Object.keys(d).forEach(key => delete d[key]);
-
-  Object.assign(d, clean);
-  d.payload = payload;
-
+  d.payload = await encryptData(JSON.stringify(sensitive));
+  delete d.Address;
+  delete d.Telephone;
+  // Keep 'first_name', 'last_name', 'email', 'gender' in plain text
   return d;
 }
+
 async function decryptDoctorInfo(d) {
   if (d.payload) {
     try {
       const decrypted = await decryptData(d.payload);
       const sensitive = JSON.parse(decrypted);
-      d.Address = sensitive.Address || '';
-      d.Telephone = sensitive.Telephone || '';
+      d.Address = sensitive.Address;
+      d.Telephone = sensitive.Telephone;
+      // 'email' was never encrypted, so nothing to restore
     } catch (err) {
-      console.warn("Failed to decrypt doctor payload:", err);
+      console.warn("Failed to decrypt doctor info:", err);
     }
   }
-  const extras = [
-    'Title', 'NHS', 'Specialization', 'StaffID', 'DOB', 'Phone',
-    'first_name', 'last_name', 'email', 'gender', 'address', 'telephone',
-    'firstName', 'lastName', 'staffId', 'specialization'
-  ];
-  extras.forEach(key => delete d[key]);
-
   return d;
 }
 
