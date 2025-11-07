@@ -11,6 +11,7 @@
   <script src="../js/clinicDB.js" defer></script>
   <script src="../js/fetchImportData.js" defer></script>
   <script src="../js/activityLogs.js" defer></script>
+  <script src="../js/notification.js" defer></script>
   <script src="../js/importLoginData.js" defer></script>
   <script src="../js/login.js" defer></script>
 
@@ -47,15 +48,12 @@
       <div id="roleFields">
         <div class="input-box" data-role="doctor">
           <input type="email" id="doctorEmail" name="doctorEmail" placeholder="Email" required>
-          <i class='bx bx-envelope'></i>
         </div>
-        <div class="input-box" data-role="patient" hidden>
+        <div class="input-box" data-role="patient">
           <input type="text" id="patientNHS" name="patientNHS" placeholder="NHS e.g. 123456789" inputmode="numeric">
-          <i class='bx bx-id-card'></i>
         </div>
-        <div class="input-box" data-role="admin" hidden>
+        <div class="input-box" data-role="admin">
           <input type="text" id="adminUsername" name="adminUsername" placeholder="Username">
-          <i class='bx bx-user-voice'></i>
         </div>
       </div>
 

@@ -235,7 +235,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const savedTheme = localStorage.getItem("darkmode");
     if (
-      savedTheme === "dark" ||
+      savedTheme === "active" ||
       (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
     ) {
       document.body.classList.add("darkmode");
@@ -248,18 +248,33 @@ document.addEventListener("DOMContentLoaded", async () => {
   function switchToLogin() {
     container.classList.remove("active");
     updateBluePanelForLogin();
-    document.querySelector(".form-box.login").style.visibility = "visible";
-    document.querySelector(".form-box.register").style.visibility = "hidden";
+
+    const loginBox = document.querySelector(".form-box.login");
+    const registerBox = document.querySelector(".form-box.register");
+
+    loginBox.style.visibility = "visible";
+    loginBox.style.zIndex = "2";
+
+    registerBox.style.visibility = "hidden";
+    registerBox.style.zIndex = "1";
+
     console.log("Switched to Login");
   }
 
   function switchToRegister() {
     container.classList.add("active");
     updateBluePanelForRegister();
-    document.querySelector(".form-box.login").style.visibility = "hidden";
-    document.querySelector(".form-box.register").style.visibility = "visible";
-    const registerFormEl = document.querySelector(".form-box.register");
-    if (registerFormEl) registerFormEl.scrollTop = 0;
+
+    const loginBox = document.querySelector(".form-box.login");
+    const registerBox = document.querySelector(".form-box.register");
+
+    loginBox.style.visibility = "hidden";
+    loginBox.style.zIndex = "1";
+
+    registerBox.style.visibility = "visible";
+    registerBox.style.zIndex = "2";
+    registerBox.scrollTop = 0;
+
     console.log("Switched to Register");
   }
 
@@ -302,15 +317,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (loginRole) {
     loginRole.addEventListener("change", e => {
       const selected = e.target.value;
-      roleFields.forEach(field => {
-        const input = field.querySelector("input");
-        field.hidden = field.dataset.role !== selected;
-        if (input) input.required = !field.hidden;
+
+      document.querySelectorAll("#roleFields .input-box").forEach(box => {
+        const input = box.querySelector("input");
+        const isActive = box.dataset.role === selected;
+
+        box.style.display = isActive ? "block" : "none"; // or use visibility if preferred
+        if (input) {
+          input.required = isActive;
+          input.disabled = !isActive;
+        }
       });
     });
-    loginRole.dispatchEvent(new Event("change"));
-  }
 
+    loginRole.dispatchEvent(new Event("change"));
+
+    document.getElementById("loginForm").addEventListener("submit", e => {
+      document.querySelectorAll("#roleFields .input-box").forEach(box => {
+        const input = box.querySelector("input");
+        if (input) input.required = !input.disabled;
+      });
+    });
+  }
   // ===== REAL LOGIN HANDLER =====
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
@@ -628,6 +656,35 @@ document.addEventListener("DOMContentLoaded", async () => {
               }));
 
               confirmedPassword = null;
+
+              const notifyAdmins = async (message) => {
+                try {
+                  const db = await openClinicDB();
+                  const tx = db.transaction("admins", "readwrite");
+                  const store = tx.objectStore("admins");
+                  const request = store.getAll();
+
+                  request.onsuccess = async function () {
+                    const admins = request.result || [];
+                    admins.forEach(adm => {
+                      createNotificationForUser(
+                        "Patient Registered",
+                        message,
+                        adm.username,
+                        "admin"
+                      );
+                    });
+                  };
+
+                  request.onerror = function (e) {
+                    console.error("Failed to load admin info:", e.target.error);
+                  };
+                } catch (err) {
+                  console.warn("DB error:", err);
+                }
+              };
+
+              await notifyAdmins(`A new patient with NHS ${regNHS} has registered their account`);
               // 9. Redirect
               window.location.href = "../html/dashboard-patient.html";
             };

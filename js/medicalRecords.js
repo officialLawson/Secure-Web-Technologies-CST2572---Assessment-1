@@ -362,8 +362,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const recordId = params.get('recordId');
     const patientId = params.get('patientId');
 
-    console.log(recordId, patientId);
-
     if (recordId && patientId) {
         // Doctor viewing a specific record
         await loadSingleRecordView();
@@ -490,10 +488,6 @@ async function viewMedicalRecord(medicalrecordId) {
                     prescriptionsBody.innerHTML = sanitize("<tr><td colspan='4'>Medical record not found.</td></tr>");
                     return;
                 }
-                
-                // Debug logging
-                console.log('Medical record doctorId:', medicalrecord.doctorId, typeof medicalrecord.doctorId);
-                console.log('Available doctors:', decryptedDoctors.map(d => ({ id: d.id, type: typeof d.id, name: `${d.first_name} ${d.last_name}` })));
                 
                 // Try both strict and loose comparison
                 const currentUserData = decryptedDoctors.filter(d => d.id == medicalrecord.doctorId) || [];

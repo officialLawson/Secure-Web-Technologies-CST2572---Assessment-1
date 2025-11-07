@@ -29,8 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             await clinicDB.openClinicDB();
             let record = await clinicDB.getItem('doctors', userId);
             
-            console.log('Raw doctor record:', record);
-            
             if (!record) {
                 showMsg('Doctor record not found.', 'error');
                 return;
@@ -39,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Decrypt the doctor info
             record = await clinicDB.decryptDoctorInfo(record);
             
-            console.log('Decrypted doctor record:', record);
 
             // Handle multiple possible field names from JSON (fallbacks)
             const firstName = record.first_name || record.First || record.firstName || '';
@@ -153,11 +150,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 Telephone: phone           // capitalized as in schema
             };
 
-            console.log('Updating with:', updated);
 
             // Encrypt (only Address & Telephone are encrypted; email stays plain)
             const encrypted = await clinicDB.encryptDoctorInfo(updated);
-            console.log('Encrypted data:', encrypted);
             
             await clinicDB.updateItem('doctors', encrypted);
 
@@ -166,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             originalData = await clinicDB.decryptDoctorInfo(fresh);
 
             disableEdit();
+            await logCurrentUserActivity("updateAccount", userId, `Doctor with ID ${userId} has updated their account details`);
             showMsg('Profile updated successfully!', 'success');
         } catch (err) {
             console.error('Save error:', err);

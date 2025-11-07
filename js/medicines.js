@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // Load all medicines and populate the table
 async function loadMedicines() {
     const tbody = document.getElementById('medicinesBody');
-    tbody.innerHTML = ''; // Clear existing rows
+    if (tbody) tbody.innerHTML = ''; // Clear existing rows
     const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     try {
         const db = await openClinicDB();
@@ -72,7 +72,7 @@ async function loadMedicines() {
                 return;
             }
             
-            tbody.innerHTML = '';
+            if (tbody) tbody.innerHTML = '';
             allRenderedMedicines = []; // reset before loading
 
             medicines.forEach((med) => {
@@ -96,7 +96,7 @@ async function loadMedicines() {
                   <button class="btn-delete" data-id="${safeId}">Delete</button>
                 </td>
               `;
-              tbody.appendChild(row);
+              if (tbody) tbody.appendChild(row);
             });
         };
         medicinesReq.onerror = function() {
@@ -276,40 +276,64 @@ document.addEventListener('click', (e) => {
     document.getElementById('deleteModal').classList.remove('hidden');
   }
 });
-// Handle "Yes, Delete"
-document.getElementById('confirmDelete').addEventListener('click', async () => {
-  const user = JSON.parse(localStorage.getItem('currentUser'));
-  if (medicineToDelete !== null) {
-    try {
-      const db = await openClinicDB();
-      const tx = db.transaction('medicines', 'readwrite');
-      const store = tx.objectStore('medicines');
-      const request = store.delete(Number(medicineToDelete));
-      request.onsuccess = async function() {
-        await logCurrentUserActivity("deleteMedicine", Number(medicineToDelete), `User with ID ${user.linkedId} deleted a medicine`);
-        loadMedicines(); // Refresh the table
-        document.getElementById('deleteModal').classList.add('hidden');
-        medicineToDelete = null;
-      };
-      request.onerror = () => {
-        console.error('Error deleting medicine.');
-        medicineToDelete = null;
-      };
-    } catch (err) {
-      console.error('Delete failed:', err);
-      medicineToDelete = null;
-    }
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const confirmDeleteBtn = document.getElementById("confirmDelete");
+  const cancelDeleteBtn = document.getElementById("cancelDelete");
+  const deleteModal = document.getElementById("deleteModal");
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+      const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+      if (!user || !user.linkedId) {
+        console.error("No valid user found.");
+        return;
+      }
+
+      if (typeof medicineToDelete !== "undefined" && medicineToDelete !== null) {
+        try {
+          const db = await openClinicDB();
+          const tx = db.transaction("medicines", "readwrite");
+          const store = tx.objectStore("medicines");
+          const request = store.delete(Number(medicineToDelete));
+
+          request.onsuccess = async () => {
+            await logCurrentUserActivity(
+              "deleteMedicine",
+              Number(medicineToDelete),
+              `User with ID ${user.linkedId} deleted a medicine`
+            );
+            if (typeof loadMedicines === "function") loadMedicines();
+            if (deleteModal) deleteModal.classList.add("hidden");
+            medicineToDelete = null;
+          };
+
+          request.onerror = () => {
+            console.error("Error deleting medicine.");
+            medicineToDelete = null;
+          };
+        } catch (err) {
+          console.error("Delete failed:", err);
+          medicineToDelete = null;
+        }
+      }
+    });
   }
-});
-// Handle "Cancel" or close
-document.getElementById('cancelDelete').addEventListener('click', () => {
-  document.getElementById('deleteModal').classList.add('hidden');
-  medicineToDelete = null;
-});
-// Close modal if clicking outside
-document.getElementById('deleteModal').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) {
-    e.currentTarget.classList.add('hidden');
-    medicineToDelete = null;
+
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener("click", () => {
+      if (deleteModal) deleteModal.classList.add("hidden");
+      medicineToDelete = null;
+    });
+  }
+
+  if (deleteModal) {
+    deleteModal.addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) {
+        deleteModal.classList.add("hidden");
+        medicineToDelete = null;
+      }
+    });
   }
 });

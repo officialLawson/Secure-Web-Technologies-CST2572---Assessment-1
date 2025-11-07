@@ -3,7 +3,6 @@
 
 
 async function importLoginData(dataArray, storeName) {
-  console.log("Activated importLoginData");
   if (!Array.isArray(dataArray)) {
     console.warn(`importLoginData: expected array for ${storeName}, got`, dataArray);
     return { imported: 0, skipped: 0 };

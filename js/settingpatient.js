@@ -4,14 +4,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     /* ==================== 1. AUTH & ROLE CHECK ==================== */
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     if (!currentUser || !currentUser.role || !currentUser.linkedId) {
-        alert('Access denied. Redirecting to login...');
         window.location.href = '../html/login.html';
         return;
     }
-
     const role = currentUser.role.toLowerCase();
     if (role !== 'patient') {
-        window.location.href = '../html/login.html';
+        window.location.href = `dashboard-${role}.html`;
         return;
     }
 
@@ -88,6 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         els.editBtn.style.display = 'none';
         els.saveBtn.style.display = 'inline-block';
         els.cancelBtn.style.display = 'inline-block';
+        
     }
 
     function disableEdit() {
@@ -182,16 +181,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             encrypted.NHS = String(userId);
             await clinicDB.updateItem('patients', encrypted);
 
+
             const fresh = await clinicDB.getItem('patients', userId);
             if (!fresh) {
                 showMsg('Save failed: Record not found after update.', 'error');
                 return;
-        }
+            }
 
             // Update originalData for future edits/cancel
             originalData = { ...originalData, ...updated };
 
             disableEdit();
+            await logCurrentUserActivity("updateAccount", userId, `Patient with NHS ${userId} has updated their account details`);
             showMsg('Profile updated successfully!', 'success');
 
         } catch (err) {

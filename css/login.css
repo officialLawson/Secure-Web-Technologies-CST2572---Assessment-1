@@ -216,6 +216,8 @@ body {
 
 .form-box.login {
   visibility: visible;
+  scroll-behavior: smooth;
+  z-index: 5;
 }
 
 .form-box.register {

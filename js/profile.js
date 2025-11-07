@@ -139,8 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const user = JSON.parse(localStorage.getItem("currentUser"));
       if (!user || !user.role || !user.linkedId) return;
 
-      console.log(user);
-
       const notifyAdmins = async (message) => {
         try {
           const db = await openClinicDB();
