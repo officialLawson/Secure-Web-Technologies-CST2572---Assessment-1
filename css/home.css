@@ -107,13 +107,24 @@ body {
   padding: 0;
   background-color: var(--bg-body);
   color: var(--text-secondary);
+  padding-top: 70px;
 }
 
 /* ===== Navigation Bar ===== */
 .nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background-color: var(--bg-body);
   padding: 10px 0;
   box-shadow: 0 2px 8px var(--shadow-mid);
+  transition: background-color 0.3s ease;
+}
+
+.darkmode .nav {
+  background-color: var(--bg-body);
 }
 
 .nav .container {

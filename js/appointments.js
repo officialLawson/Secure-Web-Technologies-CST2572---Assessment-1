@@ -27,8 +27,8 @@ function normalizeTimeHHMM(str) {
 
 let appointmentToCancel = null;
 
-let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
-let allRenderedAppointments = []; // holds sanitized, display-ready rows
+let allRenderedCofirmedAppointments = [];
+let allRenderedAppointments = [];
 
 // Search Feature
 function renderConfirmedAppointments(data) {
