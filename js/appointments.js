@@ -28,6 +28,8 @@ function normalizeTimeHHMM(str) {
 
 let appointmentToCancel = null;
 
+let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
+let allRenderedAppointments = []; // holds sanitized, display-ready rows
 
 // Search Feature
 function renderConfirmedAppointments(data) {
@@ -151,14 +153,15 @@ function renderCancelledAppointments(data) {
 
 }
 
-let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
-let allRenderedAppointments = []; // holds sanitized, display-ready rows
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const confirmedInput = document.getElementById("searchConfirmed");
   if (confirmedInput) {
     confirmedInput.addEventListener("input", function () {
       const query = this.value.toLowerCase().trim();
+
+      console.log(query);
 
       const filtered = query === ""
         ? allRenderedCofirmedAppointments
@@ -170,6 +173,8 @@ document.addEventListener("DOMContentLoaded", () => {
             (app.date || "").toLowerCase().includes(query) ||
             (app.time || "").toLowerCase().includes(query)
           );
+
+        console.log(filtered);
 
       renderConfirmedAppointments(filtered);
     });
@@ -316,7 +321,6 @@ async function loadAppointments() {
                               </td>
                           `;
                           
-                          tbody.appendChild(row);
 
                           allRenderedAppointments.push({
                               html: row.innerHTML,
@@ -328,6 +332,9 @@ async function loadAppointments() {
                               time: app.time || ''
                             });
 
+
+                          tbody.appendChild(row);
+
                         } else if (app.status === "Cancelled") {
                           row.innerHTML = `
                               <td>${patientName}</td>
@@ -338,7 +345,6 @@ async function loadAppointments() {
                                 <button class="btn-delete" data-id="${safeId}">Delete</button>
                               </td>
                           `;
-                          tbody.appendChild(row);
 
                       allRenderedAppointments.push({
                           html: row.innerHTML,
@@ -349,6 +355,9 @@ async function loadAppointments() {
                           date: app.date || '',
                           time: app.time || ''
                         });
+
+                      tbody.appendChild(row);
+
                     }
                     });
                     break;
@@ -545,7 +554,7 @@ async function loadAppointments() {
                     });
                     });
                     // Add click handler for Mark Completed buttons
-                    tbodyConfirmed.querySelectorAll('.complete-btn').forEach(btn => {
+                    tbodyConfirmed.querySelectorAll('.confirm-complete').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                       const id = e.target.dataset.id;
                       try {
@@ -561,10 +570,10 @@ async function loadAppointments() {
                             appointment.completedAt = new Date().toISOString(); // optional
 
                             const updateReq = store.put(appointment);
-                            updateReq.onsuccess = () => {
+                            updateReq.onsuccess = async () => {
                               console.log(`Appointment ${id} marked as Completed`);
                               // Refresh the entire table
-                              loadAppointments();
+                              await loadAppointments();
                             
                             };
 
@@ -577,12 +586,6 @@ async function loadAppointments() {
                               btn.addEventListener('click', (e) => {
                                 const id = sanitize(e.target.dataset.id);
                                 cancelAppointment(id);
-                              });
-                            });
-
-                            tbodyConfirmed.querySelectorAll('.complete-btn').forEach(btn => {
-                              btn.addEventListener('click', async (e) => {
-                                // ...mark completed code...
                               });
                             });
 
@@ -879,11 +882,12 @@ async function addAppointment(event, doctorId, patientId, reason, date, time) {
         const appointmentId = generateAppointmentId();
 
         const fixedTime = normalizeTimeHHMM(time);
+        const fixedDoctorId = parseInt(doctorId);
 
         // Create the new appointment object
         const newAppointment = {
           appointmentId: appointmentId,
-          doctorId,
+          doctorId: fixedDoctorId,
           patientId,
           reason,
           date,
@@ -1053,7 +1057,7 @@ async function editAppointment(event, doctorId, patientId, reason, date, time) {
         const appointment = appointments.find(d => d.appointmentId === appointmentId) || [];
 
         const fixedTime = normalizeTimeHHMM(time);
-        const fixedDoctorId = parseInt(doctorId)
+        const fixedDoctorId = parseInt(doctorId);
 
         // Create the new appointment object
         const updatedAppointment = {

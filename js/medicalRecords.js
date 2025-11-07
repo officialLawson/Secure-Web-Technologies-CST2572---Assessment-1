@@ -307,8 +307,6 @@ async function loadSingleRecordView() {
         recordTreatment.textContent = sanitize(rec.treatment || '-');
 
         // Prescriptions
-        tbody.innerHTML = '';
-        const prescriptions = rec.prescriptions || [];
         if (prescriptions.length === 0) {
             tbody.innerHTML = '<tr><td colspan="4">No prescriptions</td></tr>';
         } else {
