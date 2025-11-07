@@ -1152,15 +1152,6 @@
     "status": "Confirmed"
   },
   {
-    "appointmentId": "AP3103",
-    "patientId": "7113173489",
-    "doctorId": 11,
-    "date": "2025-08-26",
-    "time": "11:30",
-    "reason": "Consultation",
-    "status": "Confirmed"
-  },
-  {
     "appointmentId": "AP2796",
     "patientId": "2427976946",
     "doctorId": 8,
