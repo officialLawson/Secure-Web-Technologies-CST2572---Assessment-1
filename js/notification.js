@@ -1,7 +1,5 @@
 /* ==================== NOTIFICATION SYSTEM ==================== */
-const notifButton = document.getElementById('notifButton');
-const notifPanel = document.getElementById('notificationPanel');
-const clearNotifsBtn = document.getElementById('clearNotifsBtn');
+
 const notificationsList = document.getElementById('notificationsList');
 let notifications = [];
 let clearedNotifications = [];
@@ -127,9 +125,9 @@ async function createNotificationForUser(title, message, recipientId, recipientR
 function renderNotifications() {
   const user = JSON.parse(localStorage.getItem('currentUser'));
   const sanitize = (dirty) => DOMPurify.sanitize(String(dirty), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-  notificationsList.innerHTML = '';
+  if (notificationsList) notificationsList.innerHTML = '';
   if (!notifications.length) {
-    notificationsList.innerHTML = sanitize(`<div class="empty-state"><p>No new notifications.</p></div>`);
+    if (notificationsList) notificationsList.innerHTML = sanitize(`<div class="empty-state"><p>No new notifications.</p></div>`);
     return;
   }
 
@@ -207,7 +205,7 @@ function renderNotifications() {
       
     }
     item.addEventListener('click', () => markAsRead(n.id));
-    notificationsList.appendChild(item);
+    if (notificationsList) notificationsList.appendChild(item);
     updateBadgeByNumber(userNotificationNumber);
   });
 }
@@ -306,29 +304,46 @@ function showUndo(){
     renderNotifications();
     btn.remove();
   };
-  notificationsList.appendChild(btn);
+  if (notificationsList) notificationsList.appendChild(btn);
   setTimeout(()=>btn.remove(),5000);
 }
-clearNotifsBtn?.addEventListener('click',clearAll);
-/* ---- Toggle dropdown ---- */
-notifButton.addEventListener('click', e=>{
-  e.stopPropagation();
-  const willOpen = notifPanel.classList.contains('hidden');
-  notifPanel.classList.toggle('hidden', !willOpen);
-  notifButton.setAttribute('aria-expanded', willOpen);
-});
-/* ---- Close when clicking outside ---- */
-document.addEventListener('click', e=>{
-  if(!e.target.closest('#notifButton') && !e.target.closest('#notificationPanel')){
-    notifPanel.classList.add('hidden');
-    notifButton.setAttribute('aria-expanded','false');
+document.addEventListener("DOMContentLoaded", () => {
+  const clearNotifsBtn = document.getElementById("clearNotifsBtn");
+  const notifButton = document.getElementById("notifButton");
+  const notifPanel = document.getElementById("notificationPanel");
+
+  // Clear all notifications
+  if (clearNotifsBtn && typeof clearAll === "function") {
+    clearNotifsBtn.addEventListener("click", clearAll);
   }
-});
-/* ---- Close with ESC ---- */
-document.addEventListener('keydown', e=>{
-  if(e.key==='Escape' && !notifPanel.classList.contains('hidden')){
-    notifPanel.classList.add('hidden');
-    notifButton.setAttribute('aria-expanded','false');
+
+  // Toggle dropdown
+  if (notifButton && notifPanel) {
+    notifButton.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const willOpen = notifPanel.classList.contains("hidden");
+      notifPanel.classList.toggle("hidden", !willOpen);
+      notifButton.setAttribute("aria-expanded", willOpen);
+    });
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+      if (
+        !e.target.closest("#notifButton") &&
+        !e.target.closest("#notificationPanel")
+      ) {
+        notifPanel.classList.add("hidden");
+        notifButton.setAttribute("aria-expanded", "false");
+      }
+    });
+
+    // Close with ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !notifPanel.classList.contains("hidden")) {
+        notifPanel.classList.add("hidden");
+        notifButton.setAttribute("aria-expanded", "false");
+      }
+    });
   }
 });
 
