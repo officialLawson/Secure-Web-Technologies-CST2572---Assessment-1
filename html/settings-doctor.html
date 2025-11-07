@@ -241,37 +241,41 @@
     <script src="../js/D-Lmode.js"></script>
     <script src="../js/sidebar.js"></script>
     <script src="../js/form.js"></script>
-    <script src="../js/settings.js"></script>
+    <script src="../js/settingdoctor.js"></script>
     <script src="../js/activityLogs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
     <script src="../js/exportData.js"></script>
     <script>
-        const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
-        if (userRole !== 'doctor') {
-            window.location.href = `dashboard-${userRole}.html`;
-        } 
-
-        const profileButton = document.getElementById('profileButton')
-        const profileModal = document.getElementById('profileModal')
-
-        profileButton.addEventListener("click", (e)=> {
-            e.stopPropagation();
-            profileModal.style.display =
-            profileModal.style.display === 'flex' ? 'none' : 'flex';
-
-        });
-
-        // Close if click outside modal
-        document.addEventListener('click', () => {
-            profileModal.style.display = 'none';
-        });
-
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-        if (!currentUser || currentUser.role?.toLowerCase() !== 'doctor') {
+        if (!currentUser || !currentUser.role || currentUser.role.toLowerCase() !== 'doctor') {
             window.location.href = 'login.html';
         }
 
+        const profileButton = document.getElementById('profileButton');
+        const profileModal = document.getElementById('profileModal');
+
+        if (profileButton && profileModal) {
+            profileButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                // Fixed: parentheses + single line or proper block
+                profileModal.style.display = (profileModal.style.display === 'flex') ? 'none' : 'flex';
+            });
+
+            // Close if click outside
+            document.addEventListener('click', (e) => {
+                if (!profileButton.contains(e.target) && !profileModal.contains(e.target)) {
+                    profileModal.style.display = 'none';
+                }
+            });
+
+            // Close on ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    profileModal.style.display = 'none';
+                }
+            });
+        }
     </script>
 </body>
 </html>

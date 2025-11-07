@@ -68,6 +68,8 @@ async function decryptData(encryptedObj) {
 //  Encryption Helpers for Patient & Doctor Info 
 
 async function encryptPatientInfo(p) {
+  const nhs = p.NHS;
+
   const sensitive = {
     Address: p.Address,
     Email: p.Email,
@@ -79,6 +81,7 @@ async function encryptPatientInfo(p) {
   delete p.Email;
   delete p.Telephone;
   delete p.DOB;
+  p.NHS = nhs;
   return p;
 }
 
@@ -95,15 +98,16 @@ async function decryptPatientInfo(p) {
 }
 
 async function encryptDoctorInfo(d) {
+  // Only encrypt sensitive fields that should NOT be in plain text
+  // Note: 'email' is intentionally NOT encrypted because login.js needs it plain for indexing
   const sensitive = {
-    Email: d.Email,
     Address: d.Address,
     Telephone: d.Telephone
   };
   d.payload = await encryptData(JSON.stringify(sensitive));
-  delete d.Email;
   delete d.Address;
   delete d.Telephone;
+  // Keep 'first_name', 'last_name', 'email', 'gender' in plain text
   return d;
 }
 
@@ -111,7 +115,10 @@ async function decryptDoctorInfo(d) {
   if (d.payload) {
     try {
       const decrypted = await decryptData(d.payload);
-      Object.assign(d, JSON.parse(decrypted));
+      const sensitive = JSON.parse(decrypted);
+      d.Address = sensitive.Address;
+      d.Telephone = sensitive.Telephone;
+      // 'email' was never encrypted, so nothing to restore
     } catch (err) {
       console.warn("Failed to decrypt doctor info:", err);
     }
