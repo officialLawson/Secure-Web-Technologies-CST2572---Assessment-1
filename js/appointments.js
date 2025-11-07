@@ -256,8 +256,8 @@ async function loadAppointments() {
                 request.onsuccess = function() {
                     const appointments = request.result;
                     if (!appointments || appointments.length === 0) {
-                      tbody.innerHTML = sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
-                      tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
+                      tbody.innerHTML = "<tr><td colspan='5'>No appointments found.</td></tr>";
+                      tbodyConfirmed.innerHTML= "<tr><td colspan='5'>No appointments found.</td></tr>";
                     
                       return;
                     }
@@ -266,8 +266,8 @@ async function loadAppointments() {
                     case 'doctor':
                         const appointmentsDoctor = appointments.filter(p => p.doctorId === user.linkedId) || [];
                         if (!appointmentsDoctor || appointmentsDoctor.length === 0) {
-                          tbody.innerHTML = sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
-                          tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
+                          tbody.innerHTML = "<tr><td colspan='5'>No appointments found.</td></tr>";
+                          tbodyConfirmed.innerHTML= "<tr><td colspan='5'>No appointments found.</td></tr>";
                         
                           return;
                         }
@@ -360,8 +360,8 @@ async function loadAppointments() {
                   const appointmentsPatient = appointments.filter(p => p.patientId === user.linkedId) || [];
                  
                   if (!appointmentsPatient || appointmentsPatient.length === 0) {
-                    tbody.innerHTML = sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
-                    tbodyConfirmed.innerHTML=sanitize("<tr><td colspan='5'>No appointments found.</td></tr>");
+                    tbody.innerHTML = "<tr><td colspan='5'>No appointments found.</td></tr>";
+                    tbodyConfirmed.innerHTML="<tr><td colspan='5'>No appointments found.</td></tr>";
                      
                       return;
                     }
@@ -518,7 +518,7 @@ async function loadAppointments() {
                         });
                         break;
                     default:
-                        tbody.innerHTML = sanitize("<tr><td colspan='5'>Unauthorized access.</td></tr>");
+                        tbody.innerHTML = "<tr><td colspan='5'>Unauthorized access.</td></tr>";
                         return;
                     }
                   
@@ -606,21 +606,21 @@ async function loadAppointments() {
                 };
                 request.onerror = function() {
                     console.error('Failed to load appointments:', request.error);
-                    tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading appointments.</td></tr>");
+                    tbody.innerHTML = "<tr><td colspan='5'>Error loading appointments.</td></tr>";
                 };
             };
             patientsReq.onerror = function() {
             console.error('Failed to load patients:', patientsReq.error);
-            tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading patients data.</td></tr>");
+            tbody.innerHTML = "<tr><td colspan='5'>Error loading patients data.</td></tr>";
             };
         };
         doctorsReq.onerror = function() {
           console.error('Failed to load doctors:', doctorsReq.error);
-          tbody.innerHTML = sanitize("<tr><td colspan='5'>Error loading doctors data.</td></tr>");
+          tbody.innerHTML = "<tr><td colspan='5'>Error loading doctors data.</td></tr>";
         };
       } catch (err) {
         console.error('Error opening DB:', err);
-        tbody.innerHTML = sanitize("<tr><td colspan='5'>Error connecting to database.</td></tr>");
+        tbody.innerHTML = "<tr><td colspan='5'>Error connecting to database.</td></tr>";
       }
       document.dispatchEvent(new Event('appointmentsRendered'));
 }

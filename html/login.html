@@ -10,130 +10,190 @@
   <link rel="icon" type="image/png" href="../images/logo.png">
   <script src="../js/clinicDB.js" defer></script>
   <script src="../js/fetchImportData.js" defer></script>
+  <script src="../js/activityLogs.js" defer></script>
   <script src="../js/importLoginData.js" defer></script>
   <script src="../js/login.js" defer></script>
+
 </head>
 <body>
 
+<!-- Home button -->
+<a href="home.html" class="home-btn"><i class='bx bx-home'></i> Home</a>
+<!-- Theme Switch -->
+<div id="theme-switch">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+    <path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280Z"/>
+  </svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
+    <path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/>
+  </svg>
+</div>
 
-  <!-- Theme Switch -->
-  <div id="theme-switch">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-      <path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/>
-    </svg>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
-      <path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/>
-    </svg>
-  </div>
+<div class="container">
+  <!-- LOGIN FORM -->
+  <div class="form-box login">
+    <form id="loginForm" action="#" method="get">
+      <h1>Login</h1>
+      <label class="field-label" for="loginRole">Login as</label>
+      <div class="select-wrap">
+        <select id="loginRole" name="loginRole" aria-label="Login as">
+          <option value="doctor" selected>Doctor</option>
+          <option value="patient">Patient</option>
+          <option value="admin">Admin</option>
+        </select>
+        <i class='bx bx-chevron-down select-icon' aria-hidden="true"></i>
+      </div>
 
-  <div class="container">
-    <!-- LOGIN FORM -->
-    <div class="form-box login">
-      <form id="loginForm" action="#" method="get">
-        <h1>Login</h1>
-        <label class="field-label" for="loginRole">Login as</label>
-        <div class="select-wrap">
-          <select id="loginRole" name="loginRole" aria-label="Login as">
-            <option value="doctor" selected>Doctor</option>
-            <option value="patient">Patient</option>
-            <option value="admin">Admin</option>
-          </select>
-          <i class='bx bx-chevron-down select-icon' aria-hidden="true"></i>
-        </div>
-
-        <div id="roleFields">
-          <div class="input-box" data-role="doctor">
-            <input type="email" id="doctorEmail" name="doctorEmail" placeholder="Email" required>
-            <i class='bx bx-envelope'></i>
-          </div>
-          <div class="input-box" data-role="patient" hidden>
-            <input type="text" id="patientNHS" name="patientNHS" placeholder="NHS e.g. 123456789" inputmode="numeric">
-            <i class='bx bx-id-card'></i>
-          </div>
-          <div class="input-box" data-role="admin" hidden>
-            <input type="text" id="adminUsername" name="adminUsername" placeholder="Username">
-            <i class='bx bx-user-voice'></i>
-          </div>
-        </div>
-
-        <div class="input-box">
-          <input type="password" id="loginPassword" placeholder="Password" required>
-          <i class='bx bx-lock'></i>
-        </div>
-
-        <button type="submit" class="btn">Login</button>
-      </form>
-    </div>
-
-    <!-- BLUE PANEL -->
-    <div class="blue-panel">
-      <h1>Hello, Welcome!</h1>
-      <p>Don't have an account?</p>
-      <button class="btn register-btn">Register</button>
-    </div>
-
-    <!-- REGISTER FORM -->
-    <div class="form-box register">
-      <form id="registerForm" action="#">
-        <h1>Register</h1>
-
-        <div class="input-box">
-          <input type="text" id="regNHS" name="nhs" placeholder="NHS Number" required>
-          <i class='bx bx-id-card'></i>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="regFirstName" name="firstName" placeholder="First Name" required>
-          <i class='bx bx-user'></i>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="regLastName" name="lastName" placeholder="Last Name" required>
-          <i class='bx bx-user'></i>
-        </div>
-
-        <div class="input-box">
-          <input type="date" id="regDOB" name="dob" required>
-          <i class='bx bx-calendar'></i>
-        </div>
-
-        <div class="select-wrap">
-          <select id="regGender" name="gender" required>
-            <option value="" disabled selected>Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-            <option value="prefer-not-to-say">Prefer not to say</option>
-          </select>
-          <i class='bx bx-chevron-down select-icon'></i>
-        </div>
-
-        <div class="input-box">
-          <input type="text" id="regAddress" name="address" placeholder="Address" required>
-          <i class='bx bx-home'></i>
-        </div>
-
-        <div class="input-box">
-          <input type="email" id="regEmail" name="email" placeholder="Email" required>
+      <div id="roleFields">
+        <div class="input-box" data-role="doctor">
+          <input type="email" id="doctorEmail" name="doctorEmail" placeholder="Email" required>
           <i class='bx bx-envelope'></i>
         </div>
-
-        <div class="input-box">
-          <input type="tel" id="regTelephone" name="telephone" placeholder="Telephone" required>
-          <i class='bx bx-phone'></i>
+        <div class="input-box" data-role="patient" hidden>
+          <input type="text" id="patientNHS" name="patientNHS" placeholder="NHS e.g. 123456789" inputmode="numeric">
+          <i class='bx bx-id-card'></i>
         </div>
-
-        <div class="input-box">
-          <input type="password" id="regPassword" name="password" placeholder="Password" required>
-          <i class='bx bx-lock'></i>
+        <div class="input-box" data-role="admin" hidden>
+          <input type="text" id="adminUsername" name="adminUsername" placeholder="Username">
+          <i class='bx bx-user-voice'></i>
         </div>
+      </div>
 
-        <button type="submit" class="btn">Register</button>
-      </form>
-    </div>
+      <div class="input-box">
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <i class='bx bx-lock'></i>
+      </div>
+
+      <p id="userError" class="error-msg"></p>
+
+      <a href="forget-password.html" class="forget-password">Forgot Password?</a>
+
+      <button type="submit" class="btn">Login</button>
+    </form>
   </div>
-    
-  <script src="../js/activityLogs.js"></script>
+
+  <!-- BLUE PANEL -->
+  <div class="blue-panel">
+    <h1>Hello, Welcome!</h1>
+    <p>Don't have an account?</p>
+    <button class="btn register-btn">Register</button>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div class="form-box register">
+    <form id="registerForm" action="#">
+      <h1>Register</h1>
+
+      <div class="input-box">
+        <input type="text" id="regNHS" name="nhs" placeholder="NHS Number" required>
+        <i class='bx bx-id-card'></i>
+      </div>
+      <small id="nhsWarning" style="display:none;color:red;">NHS number must be exactly 10 digits.</small>
+
+      <div class="input-box">
+        <input type="text" id="regFirstName" name="firstName" placeholder="First Name" required>
+        <i class='bx bx-user'></i>
+      </div>
+
+      <div class="input-box">
+        <input type="text" id="regLastName" name="lastName" placeholder="Last Name" required>
+        <i class='bx bx-user'></i>
+      </div>
+
+      <div class="select-wrap">
+        <select id="regGender" name="gender" required>
+          <option value="" disabled selected>Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+          <option value="prefer-not-to-say">Prefer not to say</option>
+        </select>
+        <i class='bx bx-chevron-down select-icon'></i>
+      </div>
+
+      <div class="input-box">
+        <input type="date" id="regDOB" name="dob" required>
+        <i class='bx bx-calendar'></i>
+      </div>
+      <small id="ageWarning" style="display:none;color:red;">You must be 16 years or older to register.</small>
+
+      <div class="input-box">
+        <input type="text" id="regAddress" name="address" placeholder="Address" required>
+        <i class='bx bx-home'></i>
+      </div>
+
+      <div class="input-box">
+        <input type="email" id="regEmail" name="email" placeholder="Email" required>
+        <i class='bx bx-envelope'></i>
+      </div>
+      <small id="emailWarning" style="display:none;color:red;">Please enter a valid email address (must include '@' and a domain).</small>
+
+      <div class="input-box">
+        <input type="tel" id="regTelephone" name="telephone" placeholder="Telephone" required>
+        <i class='bx bx-phone'></i>
+      </div>
+      <small id="phoneWarning" style="display:none;color:red;">Phone number must include a country code including the - after it (e.g. +230-51234567).</small>
+
+      <small id="allWarning" style="display:none;color:red;">Please complete all required fields before creating a password.</small>
+      <button type="button" id="openPasswordModal" class="btn">Create Password</button>
+
+    </form>
+  </div>
+</div>
+
+<!-- Create Password Modal -->
+<div id="passwordModal" class="modal hidden">
+  <div class="modal-content password-modal">
+    <button class="close-modal">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <h2>Create Password</h2>
+    <div class="input-box">
+      <input type="password" id="password1" placeholder="Enter password">
+      <i class='bx bx-lock'></i>
+    </div>
+    <div class="input-box">
+      <input type="password" id="password2" placeholder="Confirm password">
+      <i class='bx bx-lock'></i>
+    </div>
+    <div id="strengthBar">
+      <div id="strengthFill"></div>
+    </div>
+    <p id="strengthLabel">Strength: Weak</p>
+
+    <label class="policy-link-text"><input type="checkbox" id="agreePolicy" required> Agree to <a href="privacy.html" target="_blank">privacy and policy</a></label>
+    <p id="passwordError" class="error-msg"></p>
+    <button id="completeRegistration" class="btn">Complete Registration</button>
+  </div>
+</div>
+
+<!-- Email Verification Modal -->
+<div id="emailModal" class="modal hidden">
+  <div class="modal-content email-modal">
+    <button class="close-modal">&times;</button>
+    <h2>Email Verification</h2>
+    <p>An email verification code (OTP) has been sent to your registered email. (Please check the console!.)</p>
+    <p id="emailError" class="error-msg"></p>
+    <button id="openOtpModal" class="btn">Enter OTP</button>
+  </div>
+</div>
+
+<!-- OTP Verification Modal -->
+<div id="otpModal" class="modal hidden">
+  <div class="modal-content otp-modal">
+    <button class="close-modal">&times;</button>
+    <h2>Verify OTP</h2>
+    <p>Enter the 6-digit OTP sent to your email.</p>
+    <input type="text" id="otpInput" maxlength="6" placeholder="Enter OTP" inputmode="numeric" />
+    <p id="otpError" class="error-msg"></p>
+    <p id="otpSuccess" class="success-msg"></p>
+    <p id="otpTimer" class="error-msg" style="margin-top:5px;">OTP expires in 02:00</p>
+    <button id="resendOtp" class="btn">Resend OTP</button>
+    <button id="verifyOtp" class="btn">Verify</button>
+  </div>
+</div>
 
 </body>
 </html>
