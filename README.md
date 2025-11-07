@@ -18,26 +18,14 @@ This is a browser-based clinic management system built with HTML, CSS, and JavaS
 2. Open `html/home.html` using live server in VS code to start.
 3. Make sure JavaScript is enabled.
 4. All data is stored locally in the browser via IndexedDB.
+5. This website works on a single webpage.
 
 ## 📁 Folder Structure
 project-root/ 
-├── html/    
-    ├── login.html │   
-    ├── dashboard-doctor.html │   
-    ├── dashboard-patient.html │   
-    ├── dashboard-admin.html │   
-    |── forget-password.html 
-   
+├── html/   
 ├── js/ 
-    ├── auth-guard.js │   
-    ├── indexeddb.js │   
-    ├── dashboard.js │   
-    |── form-switcher.js 
-
 ├── css/  
-    └── styles.css
-
-
+├── image/
 
 ## 🔐 Authentication
 
