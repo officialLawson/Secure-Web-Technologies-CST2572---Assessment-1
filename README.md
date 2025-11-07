@@ -39,7 +39,7 @@ project-root/
 - JavaScript (ES6+)
 - IndexedDB (via `openClinicDB()`)
 
-Progressive Web App (PWA) & Service Worker Implementation (Planned)
+ ## Progressive Web App (PWA) & Service Worker Implementation (Planned)
 
 Although not yet activated in the live version, our project includes Progressive Web App (PWA) support files to enable offline access and app-like functionality.
 
