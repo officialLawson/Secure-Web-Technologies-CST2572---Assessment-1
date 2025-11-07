@@ -68,6 +68,8 @@ async function decryptData(encryptedObj) {
 //  Encryption Helpers for Patient & Doctor Info 
 
 async function encryptPatientInfo(p) {
+  const nhs = p.NHS;
+
   const sensitive = {
     Address: p.Address,
     Email: p.Email,
@@ -79,6 +81,7 @@ async function encryptPatientInfo(p) {
   delete p.Email;
   delete p.Telephone;
   delete p.DOB;
+  p.NHS = nhs;
   return p;
 }
 

@@ -1,4 +1,4 @@
-// settingspatient.js – Settings for Patient – XSS-PROTECTED with DOMPurify
+// settingpatient.js – Fixed for proper data handling and persistence
 
 document.addEventListener('DOMContentLoaded', async () => {
     /* ==================== 1. AUTH & ROLE CHECK ==================== */
@@ -10,20 +10,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const role = currentUser.role.toLowerCase();
-    const isPatient = role === 'patient';
-
-    if (!isPatient) {
+    if (role !== 'patient') {
         window.location.href = '../html/login.html';
         return;
     }
 
-    const currentPage = location.pathname.split('/').pop();
-    if (currentPage !== 'settings-patient.html') {
-        window.location.href = 'settings-patient.html';
-        return;
-    }
-
-    const userId = currentUser.linkedId;
+    const userId = String(currentUser.username);
 
     /* ==================== 2. DOM ELEMENTS ==================== */
     const els = {
@@ -40,53 +32,57 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let originalData = {};
 
-    /* ==================== 3. SANITIZE INPUT (DOMPurify) ==================== */
-    const sanitize = (input) => DOMPurify.sanitize(input.trim(), { ALLOWED_TAGS: [] }); // Text only
+    /* ==================== 3. SANITIZE INPUT ==================== */
+    const sanitize = (input) => DOMPurify.sanitize(String(input || '').trim(), { ALLOWED_TAGS: [] });
 
-    /* ==================== 4. LOAD USER DATA (SAFE) ==================== */
+    /* ==================== 4. LOAD USER DATA ==================== */
     async function loadUserData() {
         try {
             await clinicDB.openClinicDB();
 
             let record = await clinicDB.getItem('patients', userId);
+            if (!record) {
+                // Try as number just in case
+                const fallbackRecord = await clinicDB.getItem('patients', Number(userId));
+                if (fallbackRecord) {
+                    record = fallbackRecord;
+                    console.warn('Fetched patient using numeric NHS — data inconsistency detected.');
+                }
+            }
             if (record) {
-                record = await clinicDB.decryptPatientInfo(record); // Added decryption
+                record = await clinicDB.decryptPatientInfo(record);
             }
 
-            if (!record) {
-                showMsg(`No patient record found.`, 'error');
+            if (!record || !record.First || !record.Last) {
+                showMsg('Patient record not found or incomplete.', 'error');
                 return;
             }
 
+            // Store full original record for cancel/save
             originalData = { ...record };
 
-            // Sanitize before inserting into DOM
-            const fullNameStr = `${record.Title || ''} ${record.First || ''} ${record.Last || ''}`.trim();
-            const safeFullName = sanitize(fullNameStr);
-            const safeEmail    = sanitize(record.Email || '');
-            const safePhone    = sanitize(record.Telephone || record.Phone || '');
-            const safeAddress  = sanitize(record.Address || '');
-            const safeDOB      = sanitize(record.DOB || record.DateOfBirth || '');
-
-            els.fullName.value = safeFullName;
-            els.email.value    = safeEmail;
-            els.phone.value    = safePhone;
-            els.address.value  = safeAddress;
-            if (els.dob) els.dob.value = safeDOB;
+            // Display name WITHOUT Title (Title is read-only and not editable)
+            const fullNameStr = `${record.First} ${record.Last}`.trim();
+            els.fullName.value = sanitize(fullNameStr);
+            els.email.value = sanitize(record.Email || '');
+            els.phone.value = sanitize(record.Telephone || '');
+            els.address.value = sanitize(record.Address || '');
+            if (els.dob) els.dob.value = sanitize(record.DOB || '');
 
         } catch (err) {
-            console.error('Failed to load user data:', err);
+            console.error('Failed to load patient data:', err);
             showMsg('Failed to load your information.', 'error');
         }
     }
 
     /* ==================== 5. UI HELPERS ==================== */
     function enableEdit() {
-        document.querySelectorAll('#accountForm input').forEach(input => {
-            if (input && input.id !== 'dob') {
-            input.readOnly = false;
-            input.classList.remove('readonly');
-            input.classList.add('edit-mode');
+        ['fullName', 'email', 'phone', 'address'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.readOnly = false;
+                el.classList.remove('readonly');
+                el.classList.add('edit-mode');
             }
         });
         els.editBtn.style.display = 'none';
@@ -95,11 +91,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function disableEdit() {
-        document.querySelectorAll('#accountForm input').forEach(input => {
-            if (input) {
-            input.readOnly = true;
-            input.classList.add('readonly');
-            input.classList.remove('edit-mode');
+        ['fullName', 'email', 'phone', 'address'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.readOnly = true;
+                el.classList.add('readonly');
+                el.classList.remove('edit-mode');
             }
         });
         els.editBtn.style.display = 'inline-block';
@@ -108,8 +105,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function showMsg(text, type = 'success') {
-        // Sanitize message before display
-        const safeText = DOMPurify.sanitize(text, { ALLOWED_TAGS: ['strong', 'em'] });
+        const safeText = DOMPurify.sanitize(text, { ALLOWED_TAGS: [] });
         els.msgBox.innerHTML = safeText;
         els.msgBox.className = `msg ${type}`;
         setTimeout(() => els.msgBox.innerHTML = '', 5000);
@@ -119,136 +115,123 @@ document.addEventListener('DOMContentLoaded', async () => {
     els.editBtn.addEventListener('click', enableEdit);
 
     els.cancelBtn.addEventListener('click', () => {
-        const safeFullName = sanitize(`${originalData.First || ''} ${originalData.Last || ''}`);
-        const safeEmail    = sanitize(originalData.Email || '');
-        const safePhone    = sanitize(originalData.Telephone || originalData.Phone || '');
-        const safeAddress  = sanitize(originalData.Address || '');
-        const safeDOB      = sanitize(originalData.DOB || originalData.DateOfBirth || '');
-
-        els.fullName.value = safeFullName;
-        els.email.value    = safeEmail;
-        els.phone.value    = safePhone;
-        els.address.value  = safeAddress;
-        if (els.dob) els.dob.value = safeDOB;
+        const fullNameStr = `${originalData.First} ${originalData.Last}`.trim();
+        els.fullName.value = sanitize(fullNameStr);
+        els.email.value = sanitize(originalData.Email || '');
+        els.phone.value = sanitize(originalData.Telephone || '');
+        els.address.value = sanitize(originalData.Address || '');
+        if (els.dob) els.dob.value = sanitize(originalData.DOB || '');
 
         disableEdit();
         showMsg('Changes cancelled.');
     });
 
     els.saveBtn.addEventListener('click', async () => {
-        // Sanitize all inputs
-        const rawName = els.fullName.value;
-        const rawEmail = els.email.value;
-        const rawPhone = els.phone.value;
-        const rawAddress = els.address.value;
-        const rawDOB = els.dob ? els.dob.value : '';
+        const name = sanitize(els.fullName.value);
+        const email = sanitize(els.email.value);
+        const phone = sanitize(els.phone.value);
+        const address = sanitize(els.address.value);
+        const dob = els.dob ? sanitize(els.dob.value) : '';
 
-        const name = sanitize(rawName);
-        const email = sanitize(rawEmail);
-        const phone = sanitize(rawPhone);
-        const address = sanitize(rawAddress);
-        const dob = els.dob ? sanitize(rawDOB) : '';
-
+        // Parse First and Last name (Title is preserved from originalData)
         const nameParts = name.split(/\s+/).filter(Boolean);
         if (nameParts.length < 2) {
             showMsg('Please enter both first and last name.', 'error');
             return;
         }
-        const [first, ...lastParts] = nameParts;
-        const last = lastParts.join(' ');
+        const First = nameParts[0];
+        const Last = nameParts.slice(1).join(' ');
 
         if (!email.includes('@') || !email.includes('.')) {
             showMsg('Please enter a valid email address.', 'error');
             return;
         }
+
         if (!/^\+?[\d\s\-]{10,}$/.test(phone)) {
             showMsg('Please enter a valid phone number.', 'error');
             return;
         }
+
         if (!dob) {
             showMsg('Please enter your date of birth.', 'error');
             return;
         }
 
         try {
-            // PRESERVE ALL NON-SENSITIVE FIELDS (never encrypted)
-            const preserved = {
-                id: originalData.id,
-                Title: originalData.Title || '',
-                Gender: originalData.Gender || '',
-                NHS: userId,
-            };
-
-            // BUILD FINAL UPDATED RECORD
+            // Build updated record using exact field names from patients.json
             const updated = {
-                ...preserved,
-                First: first, 
-                Last: last,
+                id: originalData.id,
+                NHS: String(userId),
+                Title: originalData.Title || '',
+                First: First,
+                Last: Last,
+                Gender: originalData.Gender || '',
                 Email: email,
                 Telephone: phone,
                 Address: address,
-                DOB: dob,
-                NHS: userId
+                DOB: dob
             };
 
-            // Encrypt & save
+            if (!updated.NHS || typeof updated.NHS !== 'string') {
+                showMsg('Critical error: NHS number is missing or invalid.', 'error');
+                return;
+            }
+
+            // Encrypt sensitive fields and save
             const encrypted = await clinicDB.encryptPatientInfo(updated);
+            encrypted.NHS = String(userId);
             await clinicDB.updateItem('patients', encrypted);
 
-            // Update originalData so Cancel works + future edits preserve everything
+            const fresh = await clinicDB.getItem('patients', userId);
+            if (!fresh) {
+                showMsg('Save failed: Record not found after update.', 'error');
+                return;
+        }
+
+            // Update originalData for future edits/cancel
             originalData = { ...originalData, ...updated };
 
             disableEdit();
-            showMsg('Account updated successfully!', 'success');
+            showMsg('Profile updated successfully!', 'success');
+
         } catch (err) {
             console.error('Save failed:', err);
             showMsg('Failed to save changes. Please try again.', 'error');
         }
     });
 
-    /* ==================== 7. PASSWORD CHANGE  ==================== */
-    document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
+    /* ==================== 7. PASSWORD CHANGE ==================== */
+    document.getElementById('updatePasswordBtn')?.addEventListener('click', async () => {
         const current = document.getElementById('currentPassword').value;
         const newPass = document.getElementById('newPassword').value;
         const confirm = document.getElementById('confirmPassword').value;
 
-        if (!current || !newPass || newPass !== confirm) {
-            const error = document.getElementById('password-change-form-error');
-            error.innerText = sanitize('Please fill all fields and ensure passwords match.');
-            return;
-        }
-
-        if (newPass.length < 6) {
-            const error = document.getElementById('password-change-form-error');
-            error.innerText = sanitize('New password must be at least 6 characters.');
+        if (!current || !newPass || newPass !== confirm || newPass.length < 6) {
+            document.getElementById('password-change-form-error').innerText = sanitize('Check passwords.');
             return;
         }
 
         const loginCheck = await clinicDB.login(currentUser.username, current);
         if (!loginCheck.success) {
-            const error = document.getElementById('password-change-form-error');
-            error.innerText = sanitize('Current password is incorrect.');
+            document.getElementById('password-change-form-error').innerText = sanitize('Wrong current password.');
             return;
         }
 
         try {
-            const user = JSON.parse(localStorage.getItem('currentUser'));
             const encryptedNew = await clinicDB.encryptData(newPass);
-            const userRecord = await clinicDB.getItem('users', currentUser.username);
-            userRecord.password = encryptedNew;
-            await clinicDB.updateItem('users', userRecord);
-            await logCurrentUserActivity('Password Change', user.linkedId, `User with ID ${user.linkedId} has changed their password`)
-            const error = document.getElementById('password-change-form-success');
-            error.innerText = sanitize('Password updated successfully!');
-            document.getElementById('currentPassword').value =
-            document.getElementById('newPassword').value =
+            const userRec = await clinicDB.getItem('users', currentUser.username);
+            userRec.password = encryptedNew;
+            await clinicDB.updateItem('users', userRec);
+            document.getElementById('password-change-form-success').innerText = sanitize('Password changed!');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
             document.getElementById('confirmPassword').value = '';
         } catch (err) {
-            console.error('Password update failed:', err);
-            alert('Failed to update password.');
+            console.error('Password update error:', err);
+            showMsg('Password update failed.', 'error');
         }
     });
-
+    
     /* ==================== 8. INITIALIZE ==================== */
     await loadUserData();
 });
