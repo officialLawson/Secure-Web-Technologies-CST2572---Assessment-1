@@ -1,3 +1,4 @@
+/* ==================== 1. PAGE INITIALIZATION & AUTH CHECK ==================== */
 document.addEventListener('DOMContentLoaded', async () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
     if (!currentUser || currentUser.role?.toLowerCase() !== 'doctor') {
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const userId = currentUser.linkedId;
 
+/* ==================== 2. DOM ELEMENT CACHE ==================== */
     const els = {
         fullName: document.getElementById('fullName'),
         email: document.getElementById('email'),
@@ -20,8 +22,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let originalData = {};
 
+/* ==================== 3. SANITIZE INPUT ==================== */
     const sanitize = (input) => DOMPurify.sanitize(String(input || '').trim(), { ALLOWED_TAGS: [] });
 
+/* ==================== 4. LOAD DOCTOR PROFILE FROM INDEXEDDB ==================== */
     async function loadUserData() {
         try {
             await clinicDB.openClinicDB();
@@ -33,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             record = await clinicDB.decryptDoctorInfo(record);
-            
 
             const firstName = record.first_name || record.First || record.firstName || '';
             const lastName = record.last_name || record.Last || record.lastName || '';
@@ -70,12 +73,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+/* ==================== 5. DISPLAY TEMPORARY MESSAGES ==================== */
     function showMsg(text, type = 'success') {
         els.msgBox.innerHTML = sanitize(text);
         els.msgBox.className = `msg ${type}`;
         setTimeout(() => els.msgBox.innerHTML = '', 5000);
     }
 
+/* ==================== 6. ENABLE EDIT MODE ==================== */
     function enableEdit() {
         ['fullName', 'email', 'phone', 'address'].forEach(id => {
             const el = document.getElementById(id);
@@ -89,6 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         els.cancelBtn.style.display = 'inline-block';
     }
 
+/* ==================== 7. DISABLE EDIT MODE & RESTORE VALUES ==================== */
     function disableEdit() {
         ['fullName', 'email', 'phone', 'address'].forEach(id => {
             const el = document.getElementById(id);
@@ -102,8 +108,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         els.cancelBtn.style.display = 'none';
     }
 
+/* ==================== 8. EDIT BUTTON HANDLER ==================== */
     els.editBtn.addEventListener('click', enableEdit);
 
+/* ==================== 9. CANCEL BUTTON – REVERT CHANGES ==================== */
     els.cancelBtn.addEventListener('click', () => {
         const fullNameStr = `Dr ${originalData.first_name} ${originalData.last_name}`.trim();
         els.fullName.value = sanitize(fullNameStr);
@@ -114,6 +122,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         showMsg('Changes cancelled.');
     });
 
+/* ==================== 10. SAVE BUTTON – VALIDATE & UPDATE PROFILE ==================== */
     els.saveBtn.addEventListener('click', async () => {
         const name = sanitize(els.fullName.value);
         const email = sanitize(els.email.value);
@@ -158,7 +167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Password change
+/* ==================== 11. PASSWORD CHANGE ==================== */
     document.getElementById('updatePasswordBtn')?.addEventListener('click', async () => {
         const current = document.getElementById('currentPassword').value;
         const newPass = document.getElementById('newPassword').value;

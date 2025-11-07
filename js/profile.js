@@ -1,3 +1,4 @@
+/* ==================== 1. DOM ELEMENT ==================== */
 async function getUserInfo() {
     const els = {
         userFullName: document.getElementById("userFullName"),
@@ -14,16 +15,19 @@ async function getUserInfo() {
         userGender: document.getElementById("userGender")
     };
 
+/* ==================== 2. SANITIZE INPUT ==================== */
     const sanitize = (dirty) => DOMPurify.sanitize(String(dirty || ''), { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 
-    // === HELPER: Only set text if element exists ===
+/* ==================== 3. SET TEXT SAFELY ==================== */
     const setText = (el, text) => {
         if (el) el.innerText = sanitize(text);
     };
 
+/* ==================== 4. FETCH AND DISPLAY USER DATA ==================== */
     try {
         const db = await openClinicDB();
         const user = JSON.parse(localStorage.getItem('currentUser'));
+
         switch (user.role.toLowerCase()) {
             case 'doctor':
                 const doctorTx = db.transaction('doctors', 'readonly');
@@ -63,10 +67,9 @@ async function getUserInfo() {
                     setText(els.userRole, doctorRole);
                     setText(els.userId, `Staff ID: ${doctor.StaffID || doctor.id || ''}`);
                 };
-                doctorsReq.onerror = function() {
-                    console.error('Failed to load doctors info:', doctorsReq.error);
-                };
+                doctorsReq.onerror = () => console.error('Failed to load doctors info:', doctorsReq.error);
                 break;
+
             case 'patient':
                 const patientTx = db.transaction('patients', 'readonly');
                 const patientStore = patientTx.objectStore('patients');
@@ -105,7 +108,7 @@ async function getUserInfo() {
                     setText(els.userTelephone, patientTelephone);
                     setText(els.userRoleMain, patientRole);
                     setText(els.userRole, patientRole);
-                    };
+                };
                 patientsReq.onerror = function(event) {
                     console.error('Failed to load patients info:', patientsReq.error);
                 };
@@ -115,76 +118,78 @@ async function getUserInfo() {
         console.error('Error opening DB:', err);
     }
 }
-// Delete User Option
+
+/* ==================== 5. OPEN DELETE ACCOUNT MODAL ==================== */
 document.addEventListener('click', (e) => {
     if (e.target.classList.contains('btn-delete-account')) {
         e.preventDefault();
         document.getElementById('deleteModal').classList.remove('hidden');
     }
 });
+
+/* ==================== 6. DELETE ACCOUNT CONFIRMATION HANDLER ==================== */
 document.addEventListener("DOMContentLoaded", () => {
-  const confirmDeleteBtn = document.getElementById("confirmDelete");
-  const cancelDeleteBtn = document.getElementById("cancelDelete");
-  const deleteModal = document.getElementById("deleteModal");
+    const confirmDeleteBtn = document.getElementById("confirmDelete");
+    const cancelDeleteBtn = document.getElementById("cancelDelete");
+    const deleteModal = document.getElementById("deleteModal");
 
-  if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener("click", async () => {
-      const user = JSON.parse(localStorage.getItem("currentUser"));
-      if (!user || !user.role || !user.linkedId) return;
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener("click", async () => {
+            const user = JSON.parse(localStorage.getItem("currentUser"));
+            if (!user || !user.role || !user.linkedId) return;
 
-      const notifyAdmins = async (message) => {
-        try {
-          const db = await openClinicDB();
-          const tx = db.transaction("admins", "readwrite");
-          const store = tx.objectStore("admins");
-          const request = store.getAll();
+            const notifyAdmins = async (message) => {
+                try {
+                    const db = await openClinicDB();
+                    const tx = db.transaction("admins", "readwrite");
+                    const store = tx.objectStore("admins");
+                    const request = store.getAll();
 
-          request.onsuccess = async function () {
-            const admins = request.result || [];
-            admins.forEach(adm => {
-              createNotificationForUser(
-                "Account Deleted",
-                message,
-                adm.username,
-                "admin"
-              );
-            });
-          };
+                    request.onsuccess = async function () {
+                        const admins = request.result || [];
+                        admins.forEach(adm => {
+                            createNotificationForUser(
+                                "Account Deleted",
+                                message,
+                                adm.username,
+                                "admin"
+                            );
+                        });
+                    };
 
           request.onerror = function (e) {
             console.error("Failed to load admin info:", e.target.error);
           };
-        } catch (err) {
-          console.warn("DB error:", err);
-        }
-      };
+                } catch (err) {
+                    console.warn("DB error:", err);
+                }
+            };
 
-      if (user.role.toLowerCase() === "patient") {
-        await notifyAdmins(`Patient with NHS ${user.linkedId} has deleted their account and linked data`);
-        deletePatientCompletely(user.linkedId, user.username);
-      } else if (user.role.toLowerCase() === "doctor") {
-        await notifyAdmins(`Doctor with ID ${user.linkedId} has deleted their account and linked data`);
-        deleteDoctorCompletely(user.linkedId, user.username);
-      }
-    });
-  }
+            if (user.role.toLowerCase() === "patient") {
+                await notifyAdmins(`Patient with NHS ${user.linkedId} has deleted their account and linked data`);
+                deletePatientCompletely(user.linkedId, user.username);
+            } else if (user.role.toLowerCase() === "doctor") {
+                await notifyAdmins(`Doctor with ID ${user.linkedId} has deleted their account and linked data`);
+                deleteDoctorCompletely(user.linkedId, user.username);
+            }
+        });
+    }
 
-  if (cancelDeleteBtn) {
-    cancelDeleteBtn.addEventListener("click", () => {
-      if (deleteModal) deleteModal.classList.add("hidden");
-      userToDelete = null;
-    });
-  }
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener("click", () => {
+            if (deleteModal) deleteModal.classList.add("hidden");
+        });
+    }
 
-  if (deleteModal) {
-    deleteModal.addEventListener("click", (e) => {
-      if (e.target === e.currentTarget) {
-        deleteModal.classList.add("hidden");
-        userToDelete = null;
-      }
-    });
-  }
+    if (deleteModal) {
+        deleteModal.addEventListener("click", (e) => {
+            if (e.target === e.currentTarget) {
+                deleteModal.classList.add("hidden");
+            }
+        });
+    }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
     getUserInfo();
 });
