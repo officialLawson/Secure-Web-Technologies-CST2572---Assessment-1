@@ -167,52 +167,27 @@ function renderCancelledAppointments(data) {
 let allRenderedCofirmedAppointments = []; // holds sanitized, display-ready rows
 let allRenderedAppointments = []; // holds sanitized, display-ready rows
 
-const searchConfirmedInput = document.getElementById("searchConfirmed");
-
-if (searchConfirmedInput) {
-  searchConfirmedInput.addEventListener("input", function () {
-    const query = this.value.toLowerCase().trim();
-
-    const filtered = query === ""
-      ? allRenderedCofirmedAppointments
-      : allRenderedCofirmedAppointments.filter(app =>
-          app.doctorName.toLowerCase().includes(query) ||
-          app.patientName.toLowerCase().includes(query) ||
-          app.status.toLowerCase().includes(query) ||
-          app.reason.toLowerCase().includes(query) ||
-          app.date.toLowerCase().includes(query) ||
-          app.time.toLowerCase().includes(query)
-        );
-
-    renderConfirmedAppointments(filtered);
-  });
-} else {
-  console.warn("searchConfirmed input not found — skipping listener setup.");
-}
 
 
-const searchCancelledInput = document.getElementById("searchCancelled");
+  const searchConfirmedInput = document.getElementById("searchConfirmed");
+  const searchCancelledInput = document.getElementById("searchCancelled");
 
-if (searchCancelledInput) {
-  searchCancelledInput.addEventListener("input", function () {
-    const query = this.value.toLowerCase().trim();
-
-    const filtered = query === ""
-      ? allRenderedAppointments
-      : allRenderedAppointments.filter(app =>
-          app.doctorName.toLowerCase().includes(query) ||
-          app.patientName.toLowerCase().includes(query) ||
-          app.status.toLowerCase().includes(query) ||
-          app.reason.toLowerCase().includes(query) ||
-          app.date.toLowerCase().includes(query) ||
-          app.time.toLowerCase().includes(query)
-        );
-
-    renderCancelledAppointments(filtered);
-  });
-} else {
-  console.warn("searchCancelled input not found — skipping listener setup.");
-}
+  if (searchConfirmedInput) {
+    searchConfirmedInput.addEventListener("input", function () {
+      const q = this.value.toLowerCase().trim();
+      const f = q === ""
+        ? allRenderedConfirmedAppointments
+        : allRenderedConfirmedAppointments.filter(app =>
+            app.doctorName.toLowerCase().includes(q) ||
+            app.patientName.toLowerCase().includes(q) ||
+            app.status.toLowerCase().includes(q) ||
+            app.reason.toLowerCase().includes(q) ||
+            app.date.toLowerCase().includes(q) ||
+            app.time.toLowerCase().includes(q)
+          );
+      renderConfirmedAppointments(f);
+    });
+  }
 
 
 // Appointments Management
@@ -731,44 +706,65 @@ function deleteAppointment(id) {
   document.getElementById('deleteModal').classList.remove('hidden');
 }
 // Handle "Yes, Delete" in modal
-document.getElementById('confirmDelete').addEventListener('click', async () => {
-  const user = JSON.parse(localStorage.getItem('currentUser'));
+const confirmDeleteBtn = document.getElementById('confirmDelete');
+if (confirmDeleteBtn) {
+  confirmDeleteBtn.addEventListener('click', async () => {
+    const user = JSON.parse(localStorage.getItem('currentUser'));
 
-  if (appointmentToDelete) {
-    try {
-      const db = await openClinicDB();
-      const tx = db.transaction('appointments', 'readwrite');
-      const store = tx.objectStore('appointments');
-      store.delete(appointmentToDelete);
-      tx.oncomplete = async function() {
-        if (user.role.toLowerCase() === 'patient') {
-            await logCurrentUserActivity("deleteAppointment", appointmentToCancel, `Patient with NHS ${user.linkedId} deleted an appointment`);
-            loadAppointments(); // Refresh the table
-            document.getElementById('deleteModal').classList.add('hidden');
-            appointmentToDelete = null;
+    if (appointmentToDelete) {
+      try {
+        const db = await openClinicDB();
+        const tx = db.transaction('appointments', 'readwrite');
+        const store = tx.objectStore('appointments');
+        store.delete(appointmentToDelete);
+        tx.oncomplete = async function() {
+          if (user.role.toLowerCase() === 'patient') {
+            await logCurrentUserActivity(
+              "deleteAppointment",
+              appointmentToDelete, // fixed typo here
+              `Patient with NHS ${user.linkedId} deleted an appointment`
+            );
           } else if (user.role.toLowerCase() === 'doctor') {
-            await logCurrentUserActivity("deleteAppointment", appointmentToDelete, `Doctor with ID ${user.linkedId} deleted an appointment`);
-            loadAppointments(); // Refresh the table
-            document.getElementById('deleteModal').classList.add('hidden');
-            appointmentToDelete = null;
+            await logCurrentUserActivity(
+              "deleteAppointment",
+              appointmentToDelete,
+              `Doctor with ID ${user.linkedId} deleted an appointment`
+            );
           }
-      };
-      tx.onerror = () => {
+
+          loadAppointments(); // Refresh the table
+          const modal = document.getElementById('deleteModal');
+          if (modal) modal.classList.add('hidden');
+          appointmentToDelete = null;
+        };
+
+        tx.onerror = () => {
+          alert('Error deleting appointment.');
+          appointmentToDelete = null;
+        };
+      } catch (err) {
+        console.error("Delete failed:", err);
         alert('Error deleting appointment.');
         appointmentToDelete = null;
-      };
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert('Error deleting appointment.');
-      appointmentToDelete = null;
+      }
     }
-  }
-});
+  });
+} else {
+  console.warn("confirmDelete button not found — skipping listener setup.");
+}
+
 // Handle "Cancel"
-document.getElementById('cancelDelete').addEventListener('click', () => {
-  document.getElementById('deleteModal').classList.add('hidden');
-  userToDelete = null;
-});
+const cancelDeleteBtn = document.getElementById('cancelDelete');
+if (cancelDeleteBtn) {
+  cancelDeleteBtn.addEventListener('click', () => {
+    const modal = document.getElementById('deleteModal');
+    if (modal) modal.classList.add('hidden');
+    userToDelete = null;
+  });
+} else {
+  console.warn("cancelDelete button not found — skipping listener setup.");
+}
+
 
 let appointmentToCancel = null;
 function cancelAppointment(id) {
@@ -776,63 +772,76 @@ function cancelAppointment(id) {
   appointmentToCancel = sanitize(id);
   document.getElementById('cancelModal').classList.remove('hidden');
 }
-// Handle "Yes, Cancel" in modal
-document.getElementById('confirmCancel').addEventListener('click', async () => {
-  const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
-  if (appointmentToCancel) {
-    try {
-      const db = await openClinicDB();
-      const tx = db.transaction('appointments', 'readwrite');
-      const store = tx.objectStore('appointments');
-      const request = store.getAll();
-      request.onsuccess = function() {
-        const appointments = request.result || [];
-        const appointment = appointments.find(app => app.appointmentId === appointmentToCancel) || [];
-        if (appointment) {
-          appointment.status = "Cancelled"; // or whatever new status you want
-        }
-        const updateReq = store.put(appointment); // put replaces the record with the same key
-        updateReq.onsuccess = async function() {
-          if (userRole === 'patient') {
-            await createNotification("Appointment Cancelled", "Your appointment is cancelled.");
-            await createNotificationForUser("Appoinment Cancelled", "A patient has cancelled an appointment", appointment.doctorId, "doctor");
-            await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Patient with NHS ${appointment.patientId} cancelled an appointment`);
-            console.log("Appointment cancelled.");
-            loadAppointments(); // Refresh the table
-            document.getElementById('cancelModal').classList.add('hidden');
-            appointmentToCancel = null;
-          } else if (userRole === 'doctor') {
-            await createNotification("Appoinment Cancelled", "Your appointment is cancelled.");
-            await createNotificationForUser("Appointment Cancelled", "A doctor has cancelled an appointment", appointment.patientId, "patient");
-            await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Doctor with ID ${appointment.doctorId} cancelled an appointment`);
-            console.log("Appointment cancelled.");
-            loadAppointments(); // Refresh the table
-            document.getElementById('cancelModal').classList.add('hidden');
-            appointmentToCancel = null;
-          }
-        };
-        updateReq.onerror = () => {
-          console.error("Failed to update appointment:", updateReq.error);
-        };
-       
-      };
-      request.onerror = () => {
-        alert('Error deleting appointment.');
-        appointmentToCancel = null;
-      };
-    } catch (err) {
-      console.error("Cancel failed:", err);
-      alert('Error deleting appointment.');
-      appointmentToCancel = null;
-    }
-  }
-});
 
-// Handle "Cancel"
-document.getElementById('cancelCancel').addEventListener('click', () => {
-  document.getElementById('cancelModal').classList.add('hidden');
-  userToCancel = null;
-});
+// Handle "Yes, Cancel" in modal
+const confirmCancelBtn = document.getElementById('confirmCancel');
+if (confirmCancelBtn) {
+  confirmCancelBtn.addEventListener('click', async () => {
+    const userRole = JSON.parse(localStorage.getItem('currentUser')).role.toLowerCase();
+    if (appointmentToCancel) {
+      try {
+        const db = await openClinicDB();
+        const tx = db.transaction('appointments', 'readwrite');
+        const store = tx.objectStore('appointments');
+        const request = store.getAll();
+
+        request.onsuccess = function() {
+          const appointments = request.result || [];
+          const appointment = appointments.find(app => app.appointmentId === appointmentToCancel);
+          if (!appointment) return;
+
+          appointment.status = "Cancelled";
+          const updateReq = store.put(appointment);
+          updateReq.onsuccess = async function() {
+            if (userRole === 'patient') {
+              await createNotification("Appointment Cancelled", "Your appointment is cancelled.");
+              await createNotificationForUser("Appointment Cancelled", "A patient has cancelled an appointment", appointment.doctorId, "doctor");
+              await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Patient with NHS ${appointment.patientId} cancelled an appointment`);
+            } else if (userRole === 'doctor') {
+              await createNotification("Appointment Cancelled", "Your appointment is cancelled.");
+              await createNotificationForUser("Appointment Cancelled", "A doctor has cancelled an appointment", appointment.patientId, "patient");
+              await logCurrentUserActivity("cancelAppointment", appointmentToCancel, `Doctor with ID ${appointment.doctorId} cancelled an appointment`);
+            }
+
+            console.log("Appointment cancelled.");
+            loadAppointments();
+            const modal = document.getElementById('cancelModal');
+            if (modal) modal.classList.add('hidden');
+            appointmentToCancel = null;
+          };
+
+          updateReq.onerror = () => {
+            console.error("Failed to update appointment:", updateReq.error);
+          };
+        };
+
+        request.onerror = () => {
+          alert('Error fetching appointment.');
+          appointmentToCancel = null;
+        };
+      } catch (err) {
+        console.error("Cancel failed:", err);
+        alert('Error cancelling appointment.');
+        appointmentToCancel = null;
+      }
+    }
+  });
+} else {
+  console.warn("confirmCancel button not found — skipping listener setup.");
+}
+
+// Handle "Cancel" button in cancel modal
+const cancelCancelBtn = document.getElementById('cancelCancel');
+if (cancelCancelBtn) {
+  cancelCancelBtn.addEventListener('click', () => {
+    const modal = document.getElementById('cancelModal');
+    if (modal) modal.classList.add('hidden');
+    appointmentToCancel = null;
+  });
+} else {
+  console.warn("cancelCancel button not found — skipping listener setup.");
+}
+
 
 async function addAppointment(event, doctorId, patientId, reason, date, time) {
   // Prevent form submission reload
