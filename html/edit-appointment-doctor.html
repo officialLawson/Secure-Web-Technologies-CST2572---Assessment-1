@@ -133,14 +133,12 @@
                 <h2 class="content-title">Edit Appointment</h2>
                 
                 <div class="card-container">
-                    <form onsubmit="handleEditAppointment(event)" novalidate>
+                    <form onsubmit="handleEditAppointmentAsDoctor(event)" novalidate>
                         <div class="form-section">
                             <h2>Appointment Information</h2>
                             <p class="description">Basic appointment details.</p>
 
                             <div class="form-grid">
-                                <input type="hidden" id="doctorNameEdit" name="doctorNameEdit" required>
-                                <p id="doctorNameEdit-form-error" class="error-message"></p>
                                 <!-- DATE -->
                                 <div class="form-group">
                                     <label for="appointmentDateEdit">Date:</label>
@@ -208,7 +206,7 @@
             const role = params.get('role');
 
             if (id) {
-                loadAppointmentForEdit(id); // ✅ This runs on the correct page
+                loadAppointmentForEditAsDoctor(id); // ✅ This runs on the correct page
             }
         });
     </script>
