@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    const userId = String(currentUser.username);
+    const userId = currentUser.linkedId;
 
     /* ==================== 2. DOM ELEMENTS ==================== */
     const els = {

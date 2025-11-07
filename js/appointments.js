@@ -93,8 +93,6 @@ function renderConfirmedAppointments(data) {
     tbodyConfirmed.appendChild(row);
   });
 
-
-  attachAppointmentListeners();
 }
 
 
@@ -143,8 +141,6 @@ function renderCancelledAppointments(data) {
     tbody.appendChild(row);
   });
 
-  attachAppointmentListeners();
-  
   if (window.__markAppointmentCompletedClient && typeof window.__markAppointmentCompletedClient === 'function') {
       if (window.injectButtonsIntoRows) {
           try { window.injectButtonsIntoRows(); } catch (err) { console.error(err); }

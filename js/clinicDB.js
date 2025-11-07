@@ -466,21 +466,21 @@ async function deleteLinkedRecords(tableName, indexName, linkedId) {
 
 
 // Deleting Patient and all records
-async function deletePatientCompletely(patientId) {
+async function deletePatientCompletely(patientId, username) {
   const results = [];
 
   results.push(await deleteLinkedRecords("medicalRecord", "patientId", patientId));
   results.push(await deleteLinkedRecords("appointments", "patientId", patientId));
   results.push(await deleteLinkedRecords("notifications", "recipientId", patientId));
   results.push(await deleteLinkedRecords("activityLogs", "userId", patientId));
-  results.push(await deleteItem("users", patientId));
+  results.push(await deleteItem("users", username));
   results.push(await deleteItem("patients", patientId));
 
   console.log("Deleted Patient Account.");
   window.location.href = '../html/login.html';
 }
 
-async function deleteDoctorCompletely(doctorId) {
+async function deleteDoctorCompletely(doctorId, username) {
   const results = [];
 
   try {
