@@ -258,6 +258,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     registerBox.style.visibility = "hidden";
     registerBox.style.zIndex = "1";
 
+    // Re-trigger role field logic
+    loginRole?.dispatchEvent(new Event("change"));
+
+
     console.log("Switched to Login");
   }
 
@@ -274,6 +278,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     registerBox.style.visibility = "visible";
     registerBox.style.zIndex = "2";
     registerBox.scrollTop = 0;
+
+    // Hide and disable all login role fields to prevent autofill/validation issues
+    document.querySelectorAll("#roleFields .input-box").forEach(box => {
+      const input = box.querySelector("input");
+      box.style.display = "none";
+      if (input) {
+        input.disabled = true;
+        input.required = false;
+      }
+    });
+
 
     console.log("Switched to Register");
   }
@@ -458,7 +473,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const regTelephone = document.getElementById("regTelephone");
 
     if (
-      !regNHS.value || !regFirstName.value || !regLastName.value ||
+      !regNHS.value || !regFirstNameNormal.value || !regLastNameNormal.value ||
       !regGender.value || !regAddress.value || !regEmail.value || !regTelephone.value
     ) {
       allWarning.style.display = "block";
@@ -552,8 +567,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     otpError.textContent = "";
     if (otpInput.value.trim() === currentOTP) {
       const regEmail = document.getElementById("regEmail").value.trim();
-      const regFirstName = document.getElementById("regFirstName").value.trim();
-      const regLastName = document.getElementById("regLastName").value.trim();
+      const regFirstNameNormal = document.getElementById("regFirstName");
+      const regLastNameNormal = document.getElementById("regLastName");
+      const regFirstName = capitalizeFirst(regFirstNameNormal.value.trim());
+      const regLastName = capitalizeFirst(regLastNameNormal.value.trim());
       const userData = {
         nhs: document.getElementById("regNHS").value,
         name: regFirstName + " " + regLastName,
@@ -571,8 +588,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
           // 1. Collect registration fields
           const regNHS = document.getElementById("regNHS").value.trim();
-          const regFirstName = document.getElementById("regFirstName").value.trim();
-          const regLastName = document.getElementById("regLastName").value.trim();
+          const regFirstNameNormal = document.getElementById("regFirstName");
+          const regLastNameNormal = document.getElementById("regLastName");
+          const regFirstName = capitalizeFirst(regFirstNameNormal.value.trim());
+          const regLastName = capitalizeFirst(regLastNameNormal.value.trim());
           const regGender = document.getElementById("regGender").value.trim();
           const unformattedRegDOB = document.getElementById("regDOB").value.trim();
           const regDOB = formatDateToDDMMYYYY(unformattedRegDOB);
@@ -635,8 +654,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
               // 6. Encrypt password
               const encryptedPassword = await encryptPassword(regPassword);
-              console.log(regPassword);
-              console.log(encryptedPassword);
 
               // 7. Store in users table
               const addUserTx = db.transaction("users", "readwrite");
@@ -657,34 +674,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
               confirmedPassword = null;
 
-              const notifyAdmins = async (message) => {
-                try {
-                  const db = await openClinicDB();
-                  const tx = db.transaction("admins", "readwrite");
-                  const store = tx.objectStore("admins");
-                  const request = store.getAll();
-
-                  request.onsuccess = async function () {
-                    const admins = request.result || [];
-                    admins.forEach(adm => {
-                      createNotificationForUser(
-                        "Patient Registered",
-                        message,
-                        adm.username,
-                        "admin"
-                      );
-                    });
-                  };
-
-                  request.onerror = function (e) {
-                    console.error("Failed to load admin info:", e.target.error);
-                  };
-                } catch (err) {
-                  console.warn("DB error:", err);
-                }
-              };
-
-              await notifyAdmins(`A new patient with NHS ${regNHS} has registered their account`);
               // 9. Redirect
               window.location.href = "../html/dashboard-patient.html";
             };
@@ -761,8 +750,10 @@ verifyOtpBtn.addEventListener("click", () => {
     otpError.textContent = "";
     if (otpInput.value.trim() === currentOTP) {
       const regEmail = document.getElementById("regEmail").value.trim();
-      const regFirstName = document.getElementById("regFirstName").value.trim();
-      const regLastName = document.getElementById("regLastName").value.trim();
+      const regFirstNameNormal = document.getElementById("regFirstName");
+      const regLastNameNormal = document.getElementById("regLastName");
+      const regFirstName = capitalizeFirst(regFirstNameNormal.value.trim());
+      const regLastName = capitalizeFirst(regLastNameNormal.value.trim());
       const userData = {
         nhs: document.getElementById("regNHS").value,
         name: regFirstName + " " + regLastName,
@@ -780,8 +771,10 @@ verifyOtpBtn.addEventListener("click", () => {
 
           // 1. Collect registration fields
           const regNHS = document.getElementById("regNHS").value.trim();
-          const regFirstName = document.getElementById("regFirstName").value.trim();
-          const regLastName = document.getElementById("regLastName").value.trim();
+          const regFirstNameNormal = document.getElementById("regFirstName");
+          const regLastNameNormal = document.getElementById("regLastName");
+          const regFirstName = capitalizeFirst(regFirstNameNormal.value.trim());
+          const regLastName = capitalizeFirst(regLastNameNormal.value.trim());
           const regGender = document.getElementById("regGender").value.trim();
           const unformattedRegDOB = document.getElementById("regDOB").value.trim();
           const regDOB = formatDateToDDMMYYYY(unformattedRegDOB);
